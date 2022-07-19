@@ -125,14 +125,6 @@ module.exports = {
 }
 ```
 
-To prevent the self signed certificate error, either provide the certificates (TODO)
-or set the following environment varialble:
-
-```js
-// Prevent the DEPTH_ZERO_SELF_SIGNED_CERT error when downloading from an HTTPS dev-server
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-```
-
 ### `package.json`
 
 The standalone `make-federated-types` script writes types to the _dist/@types_ folder, the same way as the plugin does.
