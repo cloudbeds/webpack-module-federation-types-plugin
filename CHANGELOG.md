@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.0.0...v1.0.1) (2022-07-19)
+
+
+### Bug Fixes
+
+* automatically create destination folders ([12bb309](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/12bb3092afc2aee9a026419640aaf5aabc346f13))
+
 # 1.0.0 (2022-07-19)
 
 
