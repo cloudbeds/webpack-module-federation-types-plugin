@@ -33,13 +33,15 @@ After a month of waiting this package was built
 
 ## Feature comparison tables
 
-| Package                            | Webpack Plugin | Standalone | Polyrepo support | Dynamic microapp imports | Include external typings |
+| Package                            | Webpack Plugin | Standalone | Polyrepo support | Runtime microapp imports | Include external typings |
 |------------------------------------|----------------|------------|------------------|--------------------------|--------------------------|
 | @touk/federated-types              | -              | +          | -                | -                        | -                        |
 | ruanyl/dts-loader                  | +              | -          | +                | -                        | -                        |
 | ruanyl/webpack-remote-types-plugin | +              | -          | +                | -                        | -                        |
 | @module-federation/typescript      | +              | -          | +                | -                        | -                        |
 | @cloudbeds/wmf-types-plugin        | +              | +          | +                | +                        | -                        |
+
+* _Runtime microapp imports_ refers to the [module-federation/external-remotes-plugin](https://github.com/module-federation/external-remotes-plugin)
 
 | Package                            | Webpack aliases | Exposed aliases | Synchronization/[compile hooks](https://webpack.js.org/api/compiler-hooks/)             |
 |------------------------------------|-----------------|-----------------|-----------------------------------------------------------------------------------------|
