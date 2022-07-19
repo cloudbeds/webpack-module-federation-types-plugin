@@ -166,6 +166,30 @@ Configure tsconfig to start using typings in the _@remote-types_ folder.
 }
 ```
 
+Paths to global types should be added to `typeRoots`
+
+```json
+{
+  "compilerOptions": {
+    "typeRoots": [
+      "node_modules/@types",
+      "src/@types"
+    ]
+  }
+}
+```
+
+Such types should be added to a subfolder so that they can be discovered by the invoked Typescript compiler, e.g.:
+
+```
+src/
+└── @types/
+    └── shared/
+        ├── index.d.ts
+        ├── utility.d.ts
+        └── wmf-remotes.d.ts
+```
+
 ### Importing from self as from remote
 
 It is also possible to add self as a remote entry to allow importing from self like from a remote.
