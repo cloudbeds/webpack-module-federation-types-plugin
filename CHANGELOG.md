@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.0.2...v1.1.0) (2022-07-19)
+
+
+### Features
+
+* added ability to download remote entry configs (manifest files for microapp bundles) ([c50c0ee](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/c50c0ee983dfe98df6d385ed5616922a6411ae89))
+
 ## [1.0.2](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.0.1...v1.0.2) (2022-07-19)
 
 
