@@ -13,7 +13,7 @@
     "dist"
   ],
   "bin": {
-    "make-federated-types": "dist/make-federated-types"
+    "make-federated-types": "dist/make-federated-types.js"
   },
   "scripts": {
     "build": "tsc"
