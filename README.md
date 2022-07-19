@@ -26,10 +26,10 @@ Inspired by several existing solutions:
 - [@module-federation/typescript](https://app.privjs.com/buy/packageDetail?pkg=@module-federation/typescript)
   from the creator of Webpack Module Federation, Zack Jackson (aka [ScriptAlchemy](https://twitter.com/ScriptedAlchemy))
 
-Zack
-Jackson [was asked several questions](https://github.com/module-federation/module-federation-examples/issues/20#issuecomment-1153131082)
-around his plugin hoping that he can suggest some solutions to the exposed problems to no avail.
-After a month of waiting this package was built
+Zack Jackson was asked for help with
+[several issues](https://github.com/module-federation/module-federation-examples/issues/20#issuecomment-1153131082)
+around his plugin. There was a hope that he can suggest some solutions to the exposed problems, to no avail.
+After a month of waiting this package was built.
 
 ## Feature comparison tables
 
@@ -41,7 +41,8 @@ After a month of waiting this package was built
 | @module-federation/typescript      | +              | -          | +                | -                        | -                        |
 | @cloudbeds/wmf-types-plugin        | +              | +          | +                | +                        | -                        |
 
-* _Runtime microapp imports_ refers to the [module-federation/external-remotes-plugin](https://github.com/module-federation/external-remotes-plugin)
+*_Runtime microapp imports_ refers to templated remote URLs that are resolved in runtime using
+  [module-federation/external-remotes-plugin](https://github.com/module-federation/external-remotes-plugin)
 
 | Package                            | Webpack aliases | Exposed aliases | Synchronization/[compile hooks](https://webpack.js.org/api/compiler-hooks/)              |
 |------------------------------------|-----------------|-----------------|------------------------------------------------------------------------------------------|
@@ -189,6 +190,7 @@ This way downloaded types will always correspond to the latest compatible versio
 
 ## Plugin Options
 
-|                       Option | Description                                                                                                                                                                                    |
-|-----------------------------:|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `syncTypesIntervalInSeconds` | Synchronize types continusouly with a specified value in seconds. To disable continuous synchronization this should be set to `0`. To completely disable the plugin this should be set to `-1` |
+|                       Option |        Value        | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+|-----------------------------:|:-------------------:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `syncTypesIntervalInSeconds` | `number`, `0`, `-1` | Synchronize types continusouly with a specified value in seconds. <br><br> `0` - disables continuous synchronization. <br> `-1` - disables the plugin                                                                                                                                                                                                                                                                                                                               |
+|   `externalTemplatedRemotes` |      `object`       | URLs to the external remotes that are substituted in runtime. <br><br> _Example:_ for a remote entry <br> `{ mfdCommon: 'mfdCommon@[mfdCommon]/remoteEntry.js' }`, <br> the `[mfdCommon]` placeholder (that refers to `window.mfdCommon` in runtime) and `remoteEntry.js` are replaced by value from: <br> `{ externalTemplatedRemotes: { mfdCommon: 'https://localhost:9082/remoteEntry.js' } }` <br> and then the origin `https://localhost:9082` is used to fetch the types from |

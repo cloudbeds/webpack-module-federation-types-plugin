@@ -3,17 +3,18 @@ import path from 'path';
 import { Compiler, container, WebpackPluginInstance } from 'webpack';
 
 import { DEFAULT_SYNC_TYPES_INTERVAL_IN_SECONDS, DIR_DOWNLOADED, DIR_EMITTED } from './constants';
-import { compile, isValidUrl, rewritePathsWithExposedFederatedModules } from './helpers';
+import { compile, rewritePathsWithExposedFederatedModules } from './helpers';
 import { FederationConfig } from './types';
 
 type ModuleFederationPluginOptions = ConstructorParameters<typeof container.ModuleFederationPlugin>[0];
 
-type MFTypesPluginOptions = {
+type ModuleFederationTypesPluginOptions = {
+  externalTemplatedRemotes?: Record<string, string>,
   syncTypesIntervalInSeconds?: number;
 }
 
 export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
-  constructor(public options?: MFTypesPluginOptions) {}
+  constructor(public options?: ModuleFederationTypesPluginOptions) {}
 
   apply(compiler: Compiler): void {
     if (this.options?.syncTypesIntervalInSeconds === -1) {
@@ -33,17 +34,17 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
     const outFile = path.join(distPath, DIR_EMITTED, `${name}.d.ts`);
 
     // Create types for exposed modules
-    function emitTypes() {
+    const emitTypes = () => {
       if (!exposes) { return; }
 
       const { isSuccess, fileContent } = compile(exposes as string[], outFile);
       if (isSuccess) {
         rewritePathsWithExposedFederatedModules(federationPluginOptions as FederationConfig, outFile, fileContent);
       }
-    }
+    };
 
     // Import types from remote modules
-    function downloadTypes() {
+    const downloadTypes = () => {
       if (!remotes) { return; }
 
       Object.values(remotes).map(async remote => {
@@ -51,7 +52,9 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
         const remoteLocation = remote.split('@')[1]
         let remoteDistUrl: string = '';
 
-        if (isValidUrl(remoteLocation)) {
+        if (this.options?.externalTemplatedRemotes?.[remoteName]) {
+          remoteDistUrl = new URL(this.options.externalTemplatedRemotes[remoteName]).origin;
+        } else {
           remoteDistUrl = new URL(remoteLocation).origin;
         }
 
@@ -62,7 +65,7 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
           console.error(remote, 'is not a valid remote federated module URL');
         }
       });
-    }
+    };
 
     let recompileIntervalId: ReturnType<typeof setInterval>;
     const shouldRecompileOnInterval = (compiler.options.mode === 'development')

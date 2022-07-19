@@ -12,18 +12,6 @@ export function assertRunningFromRoot(): void {
   }
 }
 
-export function isValidUrl(value: string): boolean {
-  let url;
-
-  try {
-    url = new URL(value);
-  } catch (err) {
-    return false;
-  }
-
-  return ['http:', 'https:'].includes(url.protocol);
-}
-
 export function getFederationConfig(customConfigPath?: string): FederationConfig {
   const federationConfigPath = path.resolve(customConfigPath || FEDERATION_CONFIG_FILE);
   if (!federationConfigPath) {
