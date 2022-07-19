@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.0.1...v1.0.2) (2022-07-19)
+
+
+### Bug Fixes
+
+* cli bin path ([42e4b6e](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/42e4b6e5e91585da0496aeb16e23e379ec4c1533))
+
 ## [1.0.1](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.0.0...v1.0.1) (2022-07-19)
 
 
