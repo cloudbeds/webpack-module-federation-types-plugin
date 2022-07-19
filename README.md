@@ -8,7 +8,7 @@ ambient type definitions for your packages so TypeScript can resolve the dynamic
 While using `@ts-ignore` on your imports works, it is a bummer to lose intellisense and type-checking capabilities.
 
 This package exposes a Webpack plugin and a node CLI command called `make-federated-types`.
-It writes a typings file in _dist/@types_ folder and downloads remote types into _src/@types/federated_ folder.
+It writes a typings file in _dist/@types_ folder and downloads remote types into _@remote-types_ folder.
 
 Synchronization of types happens after every compilation and with a 1-minute interval when idle.
 
@@ -42,7 +42,9 @@ After a month of waiting this package was built.
 | @cloudbeds/wmf-types-plugin        | +              | +          | +                | +                        | -                        |
 
 *_Runtime microapp imports_ refers to templated remote URLs that are resolved in runtime using
-  [module-federation/external-remotes-plugin](https://github.com/module-federation/external-remotes-plugin)
+[module-federation/external-remotes-plugin](https://github.com/module-federation/external-remotes-plugin)
+
+<br>
 
 | Package                            | Webpack aliases | Exposed aliases | Synchronization/[compile hooks](https://webpack.js.org/api/compiler-hooks/)              |
 |------------------------------------|-----------------|-----------------|------------------------------------------------------------------------------------------|
@@ -51,6 +53,8 @@ After a month of waiting this package was built.
 | ruanyl/webpack-remote-types-plugin | -               | -               | download on `beforeRun`, `watchRun`                                                      |
 | @module-federation/typescript      | -               | -               | sync on `afterCompile` (leads to double compile), every 1 minute                         |
 | @cloudbeds/wmf-types-plugin        | +               | +               | download on `initialize`, compile on `afterEmit`, sync every 1 minute or custom interval |
+
+<br>
 
 | Package                            | Emitted destination                             | Download destination |
 |------------------------------------|-------------------------------------------------|----------------------|
@@ -145,21 +149,20 @@ npx make-federated-types
 
 ## Consuming remote types
 
-When you build your microapp, the plugin will download typings to _src/@types/federated_ folder in the root of the
+When you build your microapp, the plugin will download typings to _@remote-types_ folder in the root of the
 repository.
 
 ### `tsconfig.json`
 
-Configure tsconfig to start using typings in the _src/@types/federated_ folder.
+Configure tsconfig to start using typings in the _@remote-types_ folder.
 
 ```json
 {
-  "compilerOptions": {
-    "typeRoots": [
-      "node_modules/@types",
-      "src/@types"
-    ]
-  }
+  "include": [
+    "@remote-types",
+    "src/**/*.ts",
+    "webpack/**/*.ts"
+  ]
 }
 ```
 
@@ -170,7 +173,7 @@ Example for an `mfdCommon` microapp:
 
 ```js
 remotes: {
-  mfdCommon: 'mfdCommon@[URL]/remoteEntry.js',
+  mfdCommon: 'mfdCommon@[mfdCommon]/remoteEntry.js'
 }
 ```
 
@@ -190,7 +193,31 @@ This way downloaded types will always correspond to the latest compatible versio
 
 ## Plugin Options
 
-|                       Option |        Value        | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-|-----------------------------:|:-------------------:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `syncTypesIntervalInSeconds` | `number`, `0`, `-1` | Synchronize types continusouly with a specified value in seconds. <br><br> `0` - disables continuous synchronization. <br> `-1` - disables the plugin                                                                                                                                                                                                                                                                                                                               |
-|   `externalTemplatedRemotes` |      `object`       | URLs to the external remotes that are substituted in runtime. <br><br> _Example:_ for a remote entry <br> `{ mfdCommon: 'mfdCommon@[mfdCommon]/remoteEntry.js' }`, <br> the `[mfdCommon]` placeholder (that refers to `window.mfdCommon` in runtime) and `remoteEntry.js` are replaced by value from: <br> `{ externalTemplatedRemotes: { mfdCommon: 'https://localhost:9082/remoteEntry.js' } }` <br> and then the origin `https://localhost:9082` is used to fetch the types from |
+|                       Option |        Value        | Description                                                                                                                                           |
+|-----------------------------:|:-------------------:|:------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `syncTypesIntervalInSeconds` | `number`, `0`, `-1` | Synchronize types continusouly with a specified value in seconds. <br><br> `0` - disables continuous synchronization. <br> `-1` - disables the plugin |
+|   `externalTemplatedRemotes` |      `object`       | URLs to the external remotes that are substituted in runtime. More details available in [this section](#templated-remote-urls)                        |
+
+## Templated Remote URLs
+
+URLs to the external remotes that are substituted in runtime.
+
+_Example:_ for a remote entry`
+
+```js
+{ mfdCommon: 'mfdCommon@[mfdCommon]/remoteEntry.js' }
+```
+
+the `[mfdCommon]` placeholder (that refers to `window.mfdCommon` in runtime) and `remoteEntry.js` are replaced by value
+from:
+
+```js
+new ModuleFederationTypesPlugin({
+  externalTemplatedRemotes: {
+    mfdCommon: 'https://localhost:9082/remoteEntry.js',
+  }
+})
+```
+
+and then the origin `https://localhost:9082` is used to fetch the types from
+
