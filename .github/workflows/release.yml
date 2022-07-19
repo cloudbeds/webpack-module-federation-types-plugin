@@ -1,0 +1,12 @@
+name: Build and publish npm package
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  publish:
+    uses: cloudbeds/workflows/.github/workflows/npm-test-build-release.yml@main
+    secrets:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

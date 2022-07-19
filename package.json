@@ -1,0 +1,29 @@
+{
+  "name": "@cloudbeds/webpack-module-federation-types-plugin",
+  "version": "1.0.0",
+  "description": "Webpack module federation tools to share types among module-federated apps/components",
+  "license": "UNLICENSED",
+  "author": "Stepan Prybylynskyi <stepan.prybylynskyi@cloudbeds.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cloudbeds/webpack-module-federation-types-plugin.git"
+  },
+  "main": "dist/plugin.js",
+  "files": [
+    "dist"
+  ],
+  "bin": {
+    "make-federated-types": "dist/make-federated-types"
+  },
+  "scripts": {
+    "build": "tsc --newLine lf"
+  },
+  "dependencies": {
+    "download": "^8.0.0",
+    "typescript": "^4.7.4"
+  },
+  "devDependencies": {
+    "@types/download": "^8.0.1",
+    "ts-node": "^10.8.1"
+  }
+}

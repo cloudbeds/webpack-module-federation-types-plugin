@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "lib": [
+      "esnext",
+    ],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "strict": true,
+    "target": "es5",
+    "outDir": "./dist",
+    "allowSyntheticDefaultImports": true,
+    "declaration": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "sourceMap": true
+  },
+  "include": [
+    "./src"
+  ]
+}

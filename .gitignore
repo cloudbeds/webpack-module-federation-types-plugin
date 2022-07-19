@@ -1,0 +1,13 @@
+# Build
+dist
+
+# Dependencies
+node_modules
+
+# IDE
+.idea
+.vscode
+
+# Mac
+*.DS_Store
+**/*.DS_Store
