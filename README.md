@@ -43,13 +43,13 @@ After a month of waiting this package was built
 
 * _Runtime microapp imports_ refers to the [module-federation/external-remotes-plugin](https://github.com/module-federation/external-remotes-plugin)
 
-| Package                            | Webpack aliases | Exposed aliases | Synchronization/[compile hooks](https://webpack.js.org/api/compiler-hooks/)             |
-|------------------------------------|-----------------|-----------------|-----------------------------------------------------------------------------------------|
-| @touk/federated-types              | -               | +               | -                                                                                       |
-| ruanyl/dts-loader                  | -               | -               | -                                                                                       |
-| ruanyl/webpack-remote-types-plugin | -               | -               | download on `beforeRun`, `watchRun`                                                     |
-| @module-federation/typescript      | -               | -               | sync on `afterCompile` (leads to double compile), every 1 minute                        |
-| @cloudbeds/wmf-types-plugin        | +               | +               | download on `beforeRun`, compile on `afterEmit`, sync every 1 minute or custom interval |
+| Package                            | Webpack aliases | Exposed aliases | Synchronization/[compile hooks](https://webpack.js.org/api/compiler-hooks/)              |
+|------------------------------------|-----------------|-----------------|------------------------------------------------------------------------------------------|
+| @touk/federated-types              | -               | +               | -                                                                                        |
+| ruanyl/dts-loader                  | -               | -               | -                                                                                        |
+| ruanyl/webpack-remote-types-plugin | -               | -               | download on `beforeRun`, `watchRun`                                                      |
+| @module-federation/typescript      | -               | -               | sync on `afterCompile` (leads to double compile), every 1 minute                         |
+| @cloudbeds/wmf-types-plugin        | +               | +               | download on `initialize`, compile on `afterEmit`, sync every 1 minute or custom interval |
 
 | Package                            | Emitted destination                             | Download destination |
 |------------------------------------|-------------------------------------------------|----------------------|

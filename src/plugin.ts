@@ -1,6 +1,6 @@
 import download from 'download';
 import path from 'path';
-import { Compiler, container } from 'webpack';
+import { Compiler, container, WebpackPluginInstance } from 'webpack';
 
 import { DEFAULT_SYNC_TYPES_INTERVAL_IN_SECONDS, DIR_DOWNLOADED, DIR_EMITTED } from './constants';
 import { compile, isValidUrl, rewritePathsWithExposedFederatedModules } from './helpers';
@@ -12,7 +12,7 @@ type MFTypesPluginOptions = {
   syncTypesIntervalInSeconds?: number;
 }
 
-export class ModuleFederationTypesPlugin {
+export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
   constructor(public options?: MFTypesPluginOptions) {}
 
   apply(compiler: Compiler): void {

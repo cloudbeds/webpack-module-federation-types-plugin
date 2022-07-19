@@ -1,23 +1,27 @@
 {
   "compilerOptions": {
-    "esModuleInterop": true,
-    "lib": [
-      "esnext",
-    ],
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "strict": true,
-    "target": "es5",
-    "outDir": "./dist",
     "allowSyntheticDefaultImports": true,
     "declaration": true,
+    "esModuleInterop": true,
+    "lib": ["esnext"],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "newLine": "lf",
     "noImplicitAny": true,
     "noImplicitThis": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "sourceMap": true
+    "outDir": "./dist",
+    "sourceMap": true,
+    "strict": true,
+    "target": "esnext"
   },
   "include": [
-    "./src"
-  ]
+    "src"
+  ],
+  "ts-node": {
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
+  }
 }
