@@ -1,4 +1,5 @@
 import fs from 'fs';
+import mkdirp from 'mkdirp';
 import path from 'path';
 import ts from 'typescript';
 
@@ -120,5 +121,6 @@ export function rewritePathsWithExposedFederatedModules(
     ].join('\n');
   });
 
+  mkdirp.sync(path.dirname(outFile));
   fs.writeFileSync(outFile, typingsUpdated);
 }

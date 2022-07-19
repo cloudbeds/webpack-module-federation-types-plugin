@@ -1,4 +1,5 @@
 import download from 'download';
+import mkdirp from 'mkdirp';
 import path from 'path';
 import { Compiler, container, WebpackPluginInstance } from 'webpack';
 
@@ -46,6 +47,8 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
     // Import types from remote modules
     const downloadTypes = () => {
       if (!remotes) { return; }
+
+      mkdirp.sync(path.join(distPath, DIR_EMITTED));
 
       Object.values(remotes).map(async remote => {
         const remoteName = remote.split('@')[0]

@@ -19,7 +19,9 @@
     "build": "tsc"
   },
   "dependencies": {
-    "download": "^8.0.0"
+    "@types/mkdirp": "^1.0.2",
+    "download": "^8.0.0",
+    "mkdirp": "^1.0.4"
   },
   "devDependencies": {
     "@types/download": "^8.0.1",
