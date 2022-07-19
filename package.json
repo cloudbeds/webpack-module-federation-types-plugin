@@ -16,15 +16,19 @@
     "make-federated-types": "dist/make-federated-types.js"
   },
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "test": "jest"
   },
   "dependencies": {
-    "@types/mkdirp": "^1.0.2",
     "download": "^8.0.0",
     "mkdirp": "^1.0.4"
   },
   "devDependencies": {
     "@types/download": "^8.0.1",
+    "@types/jest": "^28.1.6",
+    "@types/mkdirp": "^1.0.2",
+    "jest": "^28.1.3",
+    "ts-jest": "^28.0.7",
     "ts-node": "^10.8.1"
   },
   "peerDependencies": {

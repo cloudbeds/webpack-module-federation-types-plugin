@@ -209,31 +209,34 @@ This way downloaded types will always correspond to the latest compatible versio
 
 ## Plugin Options
 
-|                       Option |        Value        | Description                                                                                                                                           |
-|-----------------------------:|:-------------------:|:------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `syncTypesIntervalInSeconds` | `number`, `0`, `-1` | Synchronize types continusouly with a specified value in seconds. <br><br> `0` - disables continuous synchronization. <br> `-1` - disables the plugin |
-|   `externalTemplatedRemotes` |      `object`       | URLs to the external remotes that are substituted in runtime. More details available in [this section](#templated-remote-urls)                        |
+|                       Option |        Value         | Description                                                                                                                                                                   |
+|-----------------------------:|:--------------------:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `syncTypesIntervalInSeconds` | `number`, `0`, `-1`  | Synchronize types continusouly with a specified value in seconds. <br><br> `0` - disables continuous synchronization. <br> `-1` - disables the plugin                         |
+|         `remoteManifestUrls` | `RemoteManifestUrls` | URLs to remote config manifests. A manifest contains a URL to a remote entry that is substituted in runtime. More details available in [this section](#templated-remote-urls) |
 
 ## Templated Remote URLs
 
-URLs to the external remotes that are substituted in runtime.
+Templated URLs are URLs to the external remotes that are substituted in runtime using a syntax that is used in
+[module-federation/external-remotes-plugin](https://github.com/module-federation/external-remotes-plugin)
 
-_Example:_ for a remote entry`
+_Example:_ for a `mfdCommon` remote entry:
 
 ```js
 { mfdCommon: 'mfdCommon@[mfdCommon]/remoteEntry.js' }
 ```
 
-the `[mfdCommon]` placeholder (that refers to `window.mfdCommon` in runtime) and `remoteEntry.js` are replaced by value
-from:
+The `[mfdCommon]` placeholder refers to `window.mfdCommon` in runtime
+That part is replaced by URL that is fetched from a remote manifest file:
 
 ```js
 new ModuleFederationTypesPlugin({
-  externalTemplatedRemotes: {
-    mfdCommon: 'https://localhost:9082/remoteEntry.js',
+  remoteManifestUrls: {
+    mfdCommon: 'https://localhost:4480/remotes/dev/mfd-common-remote-entry.json',
+    registry: 'https://localhost:4480/remotes/dev/remote-entries.json',
   }
 })
 ```
 
-and then the origin `https://localhost:9082` is used to fetch the types from
+See [`RemoteManifest` and `RemotesRegistryManifest` in types.ts](src/types.ts) to observe the signature.
 
+Eventually the origin, e.g. `https://localhost:9082` is used to fetch the types from

@@ -3,33 +3,7 @@ import mkdirp from 'mkdirp';
 import path from 'path';
 import ts from 'typescript';
 
-import { FEDERATION_CONFIG_FILE } from './constants';
-import { CompileResult, FederationConfig } from './types';
-
-export function assertRunningFromRoot(): void {
-  if (!fs.readdirSync('./').includes('node_modules')) {
-    console.error('ERROR: Script must be run from the root directory of the project');
-    process.exit(1);
-  }
-}
-
-export function getFederationConfig(customConfigPath?: string): FederationConfig {
-  const federationConfigPath = path.resolve(customConfigPath || FEDERATION_CONFIG_FILE);
-  if (!federationConfigPath) {
-    console.error(`ERROR: Could not find ${FEDERATION_CONFIG_FILE} in project's root directory`);
-    process.exit(1);
-  }
-
-  const config: FederationConfig = require(federationConfigPath);
-  if (!config || !Object.keys(config?.exposes || {}).length) {
-    console.error(`ERROR: Invalid ${FEDERATION_CONFIG_FILE}`);
-    process.exit(1);
-  }
-
-  console.log(`Using config file: ${federationConfigPath}`);
-
-  return config;
-}
+import { CompileTypesResult, FederationConfig } from '../types';
 
 export function getTSConfigCompilerOptions(): ts.CompilerOptions {
   const tsconfigPath = path.resolve('tsconfig.json');
@@ -47,7 +21,7 @@ export function reportCompileDiagnostic(diagnostic: ts.Diagnostic): void {
   console.log('         at', `${diagnostic.file!.fileName}:${line + 1}`, '\n');
 }
 
-export function compile(exposedComponents: string[], outFile: string): CompileResult {
+export function compileTypes(exposedComponents: string[], outFile: string): CompileTypesResult {
   const exposedFileNames = Object.values(exposedComponents);
   const { moduleResolution, ...compilerOptions } = getTSConfigCompilerOptions();
   Object.assign(compilerOptions, {
@@ -67,7 +41,7 @@ export function compile(exposedComponents: string[], outFile: string): CompileRe
 
   return {
     isSuccess: !emitSkipped,
-    fileContent,
+    typeDefinitions: fileContent,
   };
 }
 
