@@ -95,6 +95,31 @@ Requirements:
 Spread these properties into your `ModuleFederationPlugin` configuration and add `ModuleFederationTypesPlugin` to every
 microapp, like so:
 
+```js
+import webpack from 'webpack';
+import { ModuleFederationTypesPlugin } from '@cloudbeds/webpack-module-federation-types-plugin';
+
+import federationConfig from '../federation.config.json';
+
+const { ModuleFederationPlugin } = webpack.container;
+
+module.exports = {
+  /* ... */
+  plugins: [
+    new ModuleFederationPlugin({
+      ...federationConfig,
+      filename: 'remoteEntry.js',
+      shared: {
+        ...require('./package.json').dependencies,
+      },
+    }),
+    new ModuleFederationTypesPlugin({
+      syncTypesIntervalInSeconds: 120,
+    }),
+  ],
+}
+```
+
 To prevent the self signed certificate error, either provide the certificates (TODO)
 or set the following environment varialble:
 
