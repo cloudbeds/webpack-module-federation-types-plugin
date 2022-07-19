@@ -19,6 +19,7 @@ function installPlugin(
   const pluginInstance = new ModuleFederationTypesPlugin(typesPluginOptions);
 
   pluginInstance.apply({
+    getInfrastructureLogger: jest.fn() as Compiler['infrastructureLogger'],
     options: {
       plugins: [
         new ModuleFederationPlugin(moduleFederationPluginOptions),
@@ -31,7 +32,7 @@ function installPlugin(
       afterEmit: {
         tap: mockAfterEmit as unknown,
       },
-    } as Compiler['hooks'],
+    },
   } as Compiler);
 
   return pluginInstance;
