@@ -82,7 +82,7 @@ export function rewritePathsWithExposedFederatedModules(
 
     let federatedModulePath = exposePath
       ? `${federationConfig.name}/${exposePath}`
-      : `${federationConfig.name}/@types/${importPath}`;
+      : `${federationConfig.name}@remote-types/${importPath}`;
 
     federatedModulePath = federatedModulePath.replace(/\/index$/, '')
 
