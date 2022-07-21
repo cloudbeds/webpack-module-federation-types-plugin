@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.2.0...v1.3.0) (2022-07-21)
+
+
+### Features
+
+* use Cloudbeds remote manifests by default, making it a drop-in configuration-less plugin ([d154b38](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/d154b3832d5db37003fb5da0aa546118cb730e46))
+
 # [1.2.0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.1.0...v1.2.0) (2022-07-21)
 
 
