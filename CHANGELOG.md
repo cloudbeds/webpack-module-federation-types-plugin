@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.3.0...v1.3.1) (2022-07-21)
+
+
+### Bug Fixes
+
+* [@remote-types](https://github.com/remote-types) path in generated typings file ([76964b1](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/76964b189958f5681f7d39c7afff0a0e14f4149e))
+
 # [1.3.0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.2.0...v1.3.0) (2022-07-21)
 
 
