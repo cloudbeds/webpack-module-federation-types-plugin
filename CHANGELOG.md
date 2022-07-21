@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.1.0...v1.2.0) (2022-07-21)
+
+
+### Features
+
+* added Cloudbeds remote manifest files support ([9be6a53](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/9be6a53da8e0de1b4e00fad767af8644f6a6231b))
+
 # [1.1.0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.0.2...v1.1.0) (2022-07-19)
 
 
