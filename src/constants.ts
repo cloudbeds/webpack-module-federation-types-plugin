@@ -12,3 +12,7 @@ export const CLOUDBEDS_DEV_FRONTEND_ASSETS_DOMAIN = 'https://cb-front.cloudbeds-
 export const CLOUDBEDS_MFD_COMMON_MANIFEST_FILE_NAME = 'mfd-common-remote-entry.json';
 export const CLOUDBEDS_REMOTES_MANIFEST_FILE_NAME = 'remote-entries.json';
 export const CLOUDBEDS_DEPLOYMENT_ENV_WITH_DISABLED_REMOTE_TYPES_DOWNLOAD = 'devbox';
+
+export enum CloudbedsMicrofrontend {
+  Common = 'mfdCommon',
+}

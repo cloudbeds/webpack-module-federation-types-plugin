@@ -8,7 +8,11 @@ import {
   DIR_EMITTED_TYPES
 } from './constants';
 import { getRemoteManifestUrls } from './helpers/cloudbedsRemoteManifests';
-import { compileTypes, rewritePathsWithExposedFederatedModules } from './helpers/compileTypes';
+import {
+  compileTypes,
+  includeTypesFromNodeModules,
+  rewritePathsWithExposedFederatedModules
+} from './helpers/compileTypes';
 import { downloadTypes } from './helpers/downloadTypes';
 import { getLoggerHint, setLogger } from './helpers/logger';
 import { isEveryUrlValid } from './helpers/validation';
@@ -62,7 +66,8 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
     const compileTypesHook = () => {
       const { isSuccess, typeDefinitions } = compileTypes(exposes as string[], outFile);
       if (isSuccess) {
-        rewritePathsWithExposedFederatedModules(federationPluginOptions as FederationConfig, outFile, typeDefinitions);
+        const typings = includeTypesFromNodeModules(federationPluginOptions as FederationConfig, typeDefinitions);
+        rewritePathsWithExposedFederatedModules(federationPluginOptions as FederationConfig, outFile, typings);
       } else {
         logger.warn('Failed to compile types for exposed modules.', getLoggerHint(compiler));
       }

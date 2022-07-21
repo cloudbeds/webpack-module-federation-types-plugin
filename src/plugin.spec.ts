@@ -3,6 +3,7 @@ import webpack, { Compilation, Compiler } from 'webpack';
 import { downloadTypes } from './helpers/downloadTypes';
 import { ModuleFederationTypesPlugin } from './plugin';
 import { ModuleFederationPluginOptions, ModuleFederationTypesPluginOptions } from './types';
+import { CloudbedsMicrofrontend } from './constants';
 
 jest.mock('./helpers/downloadTypes');
 
@@ -48,15 +49,15 @@ describe('ModuleFederationTypesPlugin', () => {
 
   test('remoteManifestUrls setting initiates download of remote entry manifest files on startup', () => {
     const moduleFederationPluginOptions = {
-      name: 'mfdCommon',
+      name: 'mfdDashboard',
       remotes: {
-        mfdCommon: 'mfdCommon@[mfdCommon]/remoteEntry.js',
-        mfdTranslations: 'mfdTranslations@[mfdTranslations]/remoteEntry.js',
+        [CloudbedsMicrofrontend.Common]: `${CloudbedsMicrofrontend.Common}@[mfdCommonUrl]/remoteEntry.js`,
+        mfdTranslations: 'mfdTranslations@[mfdTranslationsUrl]/remoteEntry.js',
       }
     };
     const typesPluginOptions = {
       remoteManifestUrls: {
-        mfdCommon: 'https://example.com/mfd-common-remote-entries.json',
+        [CloudbedsMicrofrontend.Common]: 'https://example.com/mfd-common-remote-entries.json',
         registry: 'https://example.com/remote-entries.json',
       }
     };

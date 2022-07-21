@@ -59,6 +59,40 @@ export function compileTypes(exposedComponents: string[], outFile: string): Comp
   };
 }
 
+export function includeTypesFromNodeModules(federationConfig: FederationConfig, typings: string): string {
+  const logger = getLogger();
+  let typingsWithNpmPackages = typings;
+
+  const exposedNpmPackages = Object.entries(federationConfig.exposes)
+    .filter(([, path]) => !path.startsWith('.') || path.startsWith('./node_modules/'))
+    .map(([exposedModuleKey, exposeTargetPath]) => [
+      exposedModuleKey.replace(/^\.\//, ''),
+      exposeTargetPath.replace('./node_modules/', ''),
+    ]);
+
+  // language=TypeScript
+  const createNpmModule = (exposedModuleKey: string, packageName: string) => `
+    declare module "${federationConfig.name}/${exposedModuleKey}" {
+      export * from "${packageName}"
+    }
+  `;
+
+  if (exposedNpmPackages.length) {
+    logger.log('Including typings for npm packages:', exposedNpmPackages);
+  }
+
+  try {
+    exposedNpmPackages.forEach(([exposedModuleKey, packageName]) => {
+      typingsWithNpmPackages += `\n${createNpmModule(exposedModuleKey, packageName)}`;
+    });
+  } catch (err) {
+    logger.warn('Typings was not included for npm package:', (err as Dict)?.url);
+    logger.log(err);
+  }
+
+  return typingsWithNpmPackages;
+}
+
 export function rewritePathsWithExposedFederatedModules(
   federationConfig: FederationConfig,
   outFile: string,
@@ -86,12 +120,12 @@ export function rewritePathsWithExposedFederatedModules(
 
   // Replace and prefix paths by exposed remote names
   moduleImportPaths.forEach((importPath) => {
-    const [exposePath, ...aliases] = Object.keys(federationConfig.exposes)
+    const [exposedModuleKey, ...exposedModuleNameAliases] = Object.keys(federationConfig.exposes)
       .filter(key => federationConfig.exposes[key].endsWith(substituteAliases(importPath)))
       .map(key => key.replace(/^\.\//, ''));
 
-    let federatedModulePath = exposePath
-      ? `${federationConfig.name}/${exposePath}`
+    let federatedModulePath = exposedModuleKey
+      ? `${federationConfig.name}/${exposedModuleKey}`
       : `@not-for-import/${federationConfig.name}/${importPath}`;
 
     federatedModulePath = federatedModulePath.replace(/\/index$/, '')
@@ -105,7 +139,7 @@ export function rewritePathsWithExposedFederatedModules(
 
     typingsUpdated = [
       typingsUpdated.replace(RegExp(`"${importPath}"`, 'g'), `"${federatedModulePath}"`),
-      ...aliases.map(createAliasModule),
+      ...exposedModuleNameAliases.map(createAliasModule),
     ].join('\n');
   });
 
