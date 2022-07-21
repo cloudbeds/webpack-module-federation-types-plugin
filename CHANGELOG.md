@@ -1,3 +1,10 @@
+## [1.3.2](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.3.1...v1.3.2) (2022-07-21)
+
+
+### Bug Fixes
+
+* crlf in typings ([0b1c7b0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/0b1c7b04e133b80231175c4172d1807bbbadc66a))
+
 ## [1.3.1](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.3.0...v1.3.1) (2022-07-21)
 
 
