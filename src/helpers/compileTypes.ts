@@ -3,12 +3,15 @@ import mkdirp from 'mkdirp';
 import path from 'path';
 import ts from 'typescript';
 
+import { getLogger } from './logger';
+
 import { CompileTypesResult, FederationConfig } from '../types';
 
 export function getTSConfigCompilerOptions(): ts.CompilerOptions {
+  const logger = getLogger();
   const tsconfigPath = path.resolve('tsconfig.json');
   if (!tsconfigPath) {
-    console.error('ERROR: Could not find a valid tsconfig.json');
+    logger.error('ERROR: Could not find a valid tsconfig.json');
     process.exit(1);
   }
 
@@ -16,9 +19,10 @@ export function getTSConfigCompilerOptions(): ts.CompilerOptions {
 }
 
 export function reportCompileDiagnostic(diagnostic: ts.Diagnostic): void {
+  const logger = getLogger();
   const { line } = diagnostic.file!.getLineAndCharacterOfPosition(diagnostic.start!);
-  console.log('TS Error', diagnostic.code, ':', ts.flattenDiagnosticMessageText(diagnostic.messageText, ts.sys.newLine));
-  console.log('         at', `${diagnostic.file!.fileName}:${line + 1}`, '\n');
+  logger.log('TS Error', diagnostic.code, ':', ts.flattenDiagnosticMessageText(diagnostic.messageText, ts.sys.newLine));
+  logger.log('         at', `${diagnostic.file!.fileName}:${line + 1}`, '\n');
 }
 
 export function compileTypes(exposedComponents: string[], outFile: string): CompileTypesResult {

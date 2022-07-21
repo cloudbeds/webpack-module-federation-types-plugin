@@ -4,9 +4,6 @@ import path from 'path';
 import { FEDERATION_CONFIG_FILE } from '../constants';
 import { FederationConfig } from '../types';
 
-export * from './compileTypes';
-export * from './downloadTypes';
-
 export function assertRunningFromRoot(): void {
   if (!fs.readdirSync('./').includes('node_modules')) {
     console.error('ERROR: Script must be run from the root directory of the project');

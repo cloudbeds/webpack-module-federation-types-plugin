@@ -24,7 +24,9 @@ export type RemotesRegistryManifest = {
 export type RemoteManifestUrls = Record<'registry' | string, string>;
 
 export type ModuleFederationPluginOptions = ConstructorParameters<typeof container.ModuleFederationPlugin>[0];
+
 export type ModuleFederationTypesPluginOptions = {
+  cloudbedsRemoteManifestsBaseUrl?: string;
   remoteManifestUrls?: RemoteManifestUrls,
   syncTypesIntervalInSeconds?: number;
 }

@@ -1,9 +1,8 @@
-import webpack, { Compiler } from 'webpack';
+import webpack, { Compilation, Compiler } from 'webpack';
 
+import { downloadTypes } from './helpers/downloadTypes';
 import { ModuleFederationTypesPlugin } from './plugin';
-import { downloadTypes } from './helpers';
 import { ModuleFederationPluginOptions, ModuleFederationTypesPluginOptions } from './types';
-import { DIR_DIST } from './constants';
 
 jest.mock('./helpers/downloadTypes');
 
@@ -12,6 +11,13 @@ const mockWatchRun = jest.fn();
 const mockAfterEmit = jest.fn();
 const { ModuleFederationPlugin } = webpack.container;
 
+const mockLogger = {
+  log: jest.fn() as Compilation['logger']['log'],
+  info: jest.fn() as Compilation['logger']['info'],
+  warn: jest.fn() as Compilation['logger']['warn'],
+  error: jest.fn() as Compilation['logger']['error'],
+} as Compilation['logger'];
+
 function installPlugin(
   moduleFederationPluginOptions: ModuleFederationPluginOptions = {},
   typesPluginOptions?: ModuleFederationTypesPluginOptions
@@ -19,7 +25,7 @@ function installPlugin(
   const pluginInstance = new ModuleFederationTypesPlugin(typesPluginOptions);
 
   pluginInstance.apply({
-    getInfrastructureLogger: jest.fn() as Compiler['infrastructureLogger'],
+    getInfrastructureLogger: jest.fn().mockReturnValue(mockLogger) as Compiler['infrastructureLogger'],
     options: {
       plugins: [
         new ModuleFederationPlugin(moduleFederationPluginOptions),
@@ -44,7 +50,7 @@ describe('ModuleFederationTypesPlugin', () => {
     expect(mockWatchRun).not.toBeCalled();
   });
 
-  test('remoteManifestUrls setting initiates download of remote entry configs', () => {
+  test('remoteManifestUrls setting initiates download of remote entry manifest files on startup', () => {
     const moduleFederationPluginOptions = {
       name: 'mfdCommon',
       remotes: {
@@ -60,9 +66,7 @@ describe('ModuleFederationTypesPlugin', () => {
     };
     installPlugin(moduleFederationPluginOptions, typesPluginOptions);
 
-    mockWatchRun.mock.calls[0][1]();
     expect(mockDownloadTypes.mock.calls[0]).toEqual([
-      DIR_DIST,
       moduleFederationPluginOptions.remotes,
       typesPluginOptions.remoteManifestUrls,
     ]);

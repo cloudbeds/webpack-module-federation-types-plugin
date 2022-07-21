@@ -1,23 +1,36 @@
 import path from 'path';
 import { Compiler, WebpackPluginInstance } from 'webpack';
 
-import { DEFAULT_SYNC_TYPES_INTERVAL_IN_SECONDS, DIR_DIST, DIR_EMITTED, PLUGIN_NAME } from './constants';
+import { DEFAULT_SYNC_TYPES_INTERVAL_IN_SECONDS, DIR_DIST, DIR_EMITTED } from './constants';
+import { getRemoteManifestUrls } from './helpers/cloudbedsRemoteManifests';
+import { compileTypes, rewritePathsWithExposedFederatedModules } from './helpers/compileTypes';
+import { downloadTypes } from './helpers/downloadTypes';
+import { setLogger } from './helpers/logger';
+import { isEveryUrlValid } from './helpers/validation';
 import {
   FederationConfig,
   ModuleFederationPluginOptions,
   ModuleFederationTypesPluginOptions,
   SyncTypesOption,
 } from './types';
-import { compileTypes, downloadTypes, rewritePathsWithExposedFederatedModules } from './helpers';
 
 export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
   constructor(public options?: ModuleFederationTypesPluginOptions) {}
 
-  apply(compiler: Compiler): void {
-    const logger = compiler.getInfrastructureLogger(PLUGIN_NAME);
+  async apply(compiler: Compiler): Promise<void> {
+    const PLUGIN_NAME = this.constructor.name;
+    let logger = setLogger(compiler.getInfrastructureLogger(PLUGIN_NAME));
+
+    const remoteManifestUrls = getRemoteManifestUrls(this.options);
+
+    if (!isEveryUrlValid(Object.values(remoteManifestUrls || {}))) {
+      logger.warn('One or more remote manifest URLs are invalid:', remoteManifestUrls);
+      logger.log('Plugin disabled');
+      return;
+    }
 
     if (this.options?.syncTypesIntervalInSeconds === SyncTypesOption.DisablePlugin) {
-      logger.log(PLUGIN_NAME, 'is disabled');
+      logger.log('Plugin disabled');
       return;
     }
     const distPath = compiler.options.devServer?.static?.directory || compiler.options.output?.path || DIR_DIST;
@@ -47,11 +60,7 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
     const downloadTypesHook = async () => {
       if (!remotes) { return; }
 
-      return downloadTypes(
-        distPath,
-        remotes as Record<string, string>,
-        this.options?.remoteManifestUrls,
-      );
+      return downloadTypes(remotes as Record<string, string>, remoteManifestUrls);
     };
 
     let recompileIntervalId: ReturnType<typeof setInterval>;
@@ -65,9 +74,8 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
       clearInterval(recompileIntervalId);
       recompileIntervalId = setInterval(
         () => {
-          logger.log(PLUGIN_NAME, 'synchronizing types every', syncTypesIntervalInSeconds, 'seconds');
+          logger.log(new Date().toLocaleString(), 'Downloading types every', syncTypesIntervalInSeconds, 'seconds');
           downloadTypesHook();
-          compileTypesHook();
         },
         1000 * syncTypesIntervalInSeconds,
       );
@@ -75,18 +83,16 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
       compileTypesHook();
     };
 
-    compiler.hooks.watchRun.tapPromise(PLUGIN_NAME, () => {
-      logger.log(PLUGIN_NAME, 'downloading types on watchRun event');
-      return downloadTypesHook();
-    });
+    logger.log('Downloading types on startup');
+    await downloadTypesHook();
 
     if (shouldSyncContinuously) {
       compiler.hooks.afterEmit.tap(PLUGIN_NAME, () => {
-        logger.log(PLUGIN_NAME, 'compiling types on afterEmit event');
+        logger.log('Compiling types on afterEmit event');
         compileTypesContinuouslyHook();
       });
     } else {
-      logger.log(PLUGIN_NAME, 'synchronizing types on startup only');
+      logger.log('Compile types on startup only');
       compileTypesHook();
     }
   }

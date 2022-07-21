@@ -2,10 +2,9 @@
 
 import path from 'path';
 
-import { assertRunningFromRoot, getFederationConfig}
-  from './helpers';
 import { DIR_DIST, DIR_EMITTED } from './constants';
 import { compileTypes, rewritePathsWithExposedFederatedModules } from './helpers/compileTypes';
+import { assertRunningFromRoot, getFederationConfig } from './helpers/cli';
 
 assertRunningFromRoot();
 
