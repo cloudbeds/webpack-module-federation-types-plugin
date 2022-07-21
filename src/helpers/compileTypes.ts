@@ -100,5 +100,5 @@ export function rewritePathsWithExposedFederatedModules(
   });
 
   mkdirp.sync(path.dirname(outFile));
-  fs.writeFileSync(outFile, typingsUpdated);
+  fs.writeFileSync(outFile, typingsUpdated.replace(/\r\n/g, '\n'));
 }
