@@ -28,7 +28,7 @@ async function downloadRemoteEntryTypes(dtsUrl: string): Promise<void> {
   }
 
   if (shouldWriteFile) {
-    logger.log('Writing', outFile);
+    logger.info('Updating', outFile);
     fs.writeFileSync(outFile, types);
   } else {
     logger.log('Skipping', outFile);
