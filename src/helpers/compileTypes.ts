@@ -79,9 +79,9 @@ export function includeTypesFromNodeModules(federationConfig: FederationConfig, 
     ]);
 
   // language=TypeScript
-  const createNpmModule = (exposedModuleKey: string, packageName: string) => `
+  const createNpmModule = (exposedModuleKey: string, packageTypings: string) => `
     declare module "${federationConfig.name}/${exposedModuleKey}" {
-      export * from "${packageName}"
+      ${packageTypings}
     }
   `;
 
@@ -91,7 +91,26 @@ export function includeTypesFromNodeModules(federationConfig: FederationConfig, 
 
   try {
     exposedNpmPackages.forEach(([exposedModuleKey, packageName]) => {
-      typingsWithNpmPackages += `\n${createNpmModule(exposedModuleKey, packageName)}`;
+      /* TODO:
+         Either readFileSync every d.ts file of an npm package and rewrite paths
+         in every `import` and `export` statement, that is to append typings in a single d.ts file
+         Or better copy/pack the contents of all d.ts files of an npm package and create a single index.d.ts file
+
+         But that's not all. We need to rewrite paths that target the npm package itself
+         e.g. in Chakra monorepo the `checkbox/dist/declarations/src/checkbox.d.ts` file has the following line:
+           export declare const Checkbox: import("@chakra-ui/system").ComponentWithAs<"input", CheckboxProps>;
+         where "@chakra-ui/system" refers to `node_modules/@chakra-ui/system`
+
+         meaning that if we just copy d.ts files
+            from `node_modules/@chakra-ui/dist/declarations/*.d.ts`
+            to `dist/@types/@chakra-ui/dist/declarations/*.d.ts`
+         the ts compiler will not be able to resolve `@chakra-ui/system`
+       */
+      const indexDtsPath = JSON.parse(fs.readFileSync(`node_modules/${packageName}/package.json`).toString()).types;
+      if (indexDtsPath) {
+        const packageTypings = fs.readFileSync(`node_modules/${packageName}/${indexDtsPath}`).toString();
+        typingsWithNpmPackages += `\n${createNpmModule(exposedModuleKey, packageTypings)}`;
+      }
     });
   } catch (err) {
     logger.warn('Typings was not included for npm package:', (err as Dict)?.url);
