@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.4.5...v1.5.0) (2022-07-22)
+
+
+### Features
+
+* added options to disable compilation of types and download of remote types ([f426c5d](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/f426c5d6fe14549e48a3c49a3e468cd8b1a5f00d))
+
 ## [1.4.5](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.4.4...v1.4.5) (2022-07-22)
 
 
