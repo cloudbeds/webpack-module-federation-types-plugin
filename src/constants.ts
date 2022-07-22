@@ -1,10 +1,10 @@
 export const FEDERATION_CONFIG_FILE = 'federation.config.json';
 
-export const DIR_EMITTED = '@types';
-
 export const DIR_DIST = 'dist';
-export const DIR_TYPES = 'src/@types';
-export const DIR_DOWNLOADED = `${DIR_TYPES}/remotes`;
+export const DIR_EMITTED_TYPES = '@types';
+
+export const DIR_SRC_TYPES = 'src/@types';
+export const DIR_DOWNLOADED_TYPES = `${DIR_SRC_TYPES}/remotes`;
 
 export const DEFAULT_SYNC_TYPES_INTERVAL_IN_SECONDS = 60;
 

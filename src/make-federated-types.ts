@@ -2,7 +2,7 @@
 
 import path from 'path';
 
-import { DIR_DIST, DIR_EMITTED } from './constants';
+import { DIR_DIST, DIR_EMITTED_TYPES } from './constants';
 import { compileTypes, rewritePathsWithExposedFederatedModules } from './helpers/compileTypes';
 import { assertRunningFromRoot, getFederationConfig } from './helpers/cli';
 
@@ -11,7 +11,7 @@ assertRunningFromRoot();
 const federationConfig = getFederationConfig();
 const compileFiles = Object.values(federationConfig.exposes);
 
-const outFile = path.join(DIR_DIST, DIR_EMITTED, 'index.d.ts');
+const outFile = path.join(DIR_DIST, DIR_EMITTED_TYPES, 'index.d.ts');
 
 console.log(`Emitting types for ${compileFiles.length} exposed module(s)`);
 

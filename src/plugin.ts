@@ -1,7 +1,7 @@
 import path from 'path';
 import { Compiler, WebpackPluginInstance } from 'webpack';
 
-import { DEFAULT_SYNC_TYPES_INTERVAL_IN_SECONDS, DIR_DIST, DIR_EMITTED } from './constants';
+import { DEFAULT_SYNC_TYPES_INTERVAL_IN_SECONDS, DIR_DIST, DIR_EMITTED_TYPES } from './constants';
 import { getRemoteManifestUrls } from './helpers/cloudbedsRemoteManifests';
 import { compileTypes, rewritePathsWithExposedFederatedModules } from './helpers/compileTypes';
 import { downloadTypes } from './helpers/downloadTypes';
@@ -44,7 +44,7 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
     }
 
     const { exposes, remotes } = federationPluginOptions;
-    const outFile = path.join(distPath, DIR_EMITTED, 'index.d.ts');
+    const outFile = path.join(distPath, DIR_EMITTED_TYPES, 'index.d.ts');
 
     // Create types for exposed modules
     const compileTypesHook = () => {

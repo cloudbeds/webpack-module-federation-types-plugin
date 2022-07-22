@@ -5,7 +5,7 @@ import ts from 'typescript';
 
 import { getLogger } from './logger';
 
-import { DIR_TYPES } from '../constants';
+import { DIR_SRC_TYPES } from '../constants';
 import { CompileTypesResult, FederationConfig } from '../types';
 import { getAllFilePaths } from './files';
 
@@ -43,8 +43,9 @@ export function compileTypes(exposedComponents: string[], outFile: string): Comp
   const host = ts.createCompilerHost(compilerOptions);
   host.writeFile = (_fileName: string, contents: string) => fileContent = contents;
 
-  if (fs.existsSync(DIR_TYPES)) {
-    exposedFileNames.push(...getAllFilePaths(`./${DIR_TYPES}`).filter(path => path.endsWith('.d.ts')));
+  // Including global type definitions from `src/@types` directory
+  if (fs.existsSync(DIR_SRC_TYPES)) {
+    exposedFileNames.push(...getAllFilePaths(`./${DIR_SRC_TYPES}`).filter(path => path.endsWith('.d.ts')));
   }
   logger.log('Including a set of root files in compilation', exposedFileNames);
 
