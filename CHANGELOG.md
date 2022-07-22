@@ -1,3 +1,10 @@
+## [1.4.1](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.4.0...v1.4.1) (2022-07-22)
+
+
+### Bug Fixes
+
+* use of existing types in src/[@types](https://github.com/types) ([c5910a9](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/c5910a9572e213eb716b3ad516878406a04e658c))
+
 # [1.4.0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.3.2...v1.4.0) (2022-07-22)
 
 
