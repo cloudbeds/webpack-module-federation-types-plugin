@@ -1,3 +1,10 @@
+## [1.5.1](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.5.0...v1.5.1) (2022-07-22)
+
+
+### Bug Fixes
+
+* changed name for downloadTypesWhenIdleIntervalInSeconds field ([832819a](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/832819ae5916c444f9563c3966a5ccd70b7f4355))
+
 # [1.5.0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.4.5...v1.5.0) (2022-07-22)
 
 
