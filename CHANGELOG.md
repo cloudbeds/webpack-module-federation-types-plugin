@@ -1,3 +1,10 @@
+## [1.4.3](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.4.2...v1.4.3) (2022-07-22)
+
+
+### Bug Fixes
+
+* relative path for readDir ([feb207c](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/feb207c86d747578a2e2edf98ef71f8cb53e362c))
+
 ## [1.4.2](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.4.1...v1.4.2) (2022-07-22)
 
 
