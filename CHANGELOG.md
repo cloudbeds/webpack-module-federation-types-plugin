@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.3.2...v1.4.0) (2022-07-22)
+
+
+### Features
+
+* changed destination path for downloaded types ([521485f](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/521485fe4f741b0fe4788bddaebda3ef0eeed912))
+
 ## [1.3.2](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.3.1...v1.3.2) (2022-07-21)
 
 
