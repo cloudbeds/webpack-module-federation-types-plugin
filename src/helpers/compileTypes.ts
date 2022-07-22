@@ -42,7 +42,7 @@ export function compileTypes(exposedComponents: string[], outFile: string): Comp
   host.writeFile = (_fileName: string, contents: string) => fileContent = contents;
 
   if (fs.existsSync(DIR_TYPES)) {
-    exposedFileNames.push(...getAllFilePaths(DIR_TYPES).filter(path => path.endsWith('.d.ts')));
+    exposedFileNames.push(...getAllFilePaths(`./${DIR_TYPES}`).filter(path => path.endsWith('.d.ts')));
   }
 
   const program = ts.createProgram(exposedFileNames, compilerOptions, host);
