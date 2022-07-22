@@ -11,7 +11,6 @@ import {
   FederationConfig,
   ModuleFederationPluginOptions,
   ModuleFederationTypesPluginOptions,
-  SyncTypesOption,
 } from './types';
 
 export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
@@ -29,8 +28,8 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
       return;
     }
 
-    if (this.options?.syncTypesIntervalInSeconds === SyncTypesOption.DisablePlugin) {
-      logger.log('Plugin disabled');
+    if (this.options?.disableTypeCompilation && this.options.disableDownladingRemoteTypes) {
+      logger.log('Plugin disabled as both type compilation and download features are turned off');
       return;
     }
     const distPath = compiler.options.devServer?.static?.directory || compiler.options.output?.path || DIR_DIST;
@@ -40,6 +39,7 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
     });
     const federationPluginOptions: ModuleFederationPluginOptions = (federationOptions as any)?._options;
     if (!federationPluginOptions?.name) {
+      logger.log('Plugin disabled as ModuleFederationPlugin is not configured properly. The `name` option is missing.');
       return;
     }
 
@@ -48,8 +48,6 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
 
     // Create types for exposed modules
     const compileTypesHook = () => {
-      if (!exposes) { return; }
-
       const { isSuccess, typeDefinitions } = compileTypes(exposes as string[], outFile);
       if (isSuccess) {
         rewritePathsWithExposedFederatedModules(federationPluginOptions as FederationConfig, outFile, typeDefinitions);
@@ -60,42 +58,46 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
 
     // Import types from remote modules
     const downloadTypesHook = async () => {
-      if (!remotes) { return; }
-
       return downloadTypes(remotes as Record<string, string>, remoteManifestUrls);
     };
 
     let recompileIntervalId: ReturnType<typeof setInterval>;
     const shouldSyncContinuously = (compiler.options.mode === 'development')
-      && (this.options?.syncTypesIntervalInSeconds !== SyncTypesOption.StartupOnly)
+      && (this.options?.syncTypesIntervalInSeconds !== -1)
     const syncTypesIntervalInSeconds = this.options?.syncTypesIntervalInSeconds
       || DEFAULT_SYNC_TYPES_INTERVAL_IN_SECONDS;
 
     const compileTypesContinuouslyHook = () => {
       // Reset and create an Interval to recompile and redownload types every 60 seconds after compilation
-      clearInterval(recompileIntervalId);
-      recompileIntervalId = setInterval(
-        () => {
-          logger.log(new Date().toLocaleString(), 'Downloading types every', syncTypesIntervalInSeconds, 'seconds');
-          downloadTypesHook();
-        },
-        1000 * syncTypesIntervalInSeconds,
-      );
+      if (remotes && !this.options?.disableDownladingRemoteTypes) {
+        clearInterval(recompileIntervalId);
+        recompileIntervalId = setInterval(
+          () => {
+            logger.log(new Date().toLocaleString(), 'Downloading types every', syncTypesIntervalInSeconds, 'seconds');
+            downloadTypesHook();
+          },
+          1000 * syncTypesIntervalInSeconds,
+        );
+      }
 
       compileTypesHook();
     };
 
-    logger.log('Downloading types on startup');
-    await downloadTypesHook();
+    if (remotes && !this.options?.disableDownladingRemoteTypes) {
+      logger.log('Downloading types on startup');
+      await downloadTypesHook();
+    }
 
-    if (shouldSyncContinuously) {
-      compiler.hooks.afterEmit.tap(PLUGIN_NAME, () => {
-        logger.log('Compiling types on afterEmit event');
-        compileTypesContinuouslyHook();
-      });
-    } else {
-      logger.log('Compile types on startup only');
-      compileTypesHook();
+    if (exposes && !this.options?.disableTypeCompilation) {
+      if (shouldSyncContinuously) {
+        compiler.hooks.afterEmit.tap(PLUGIN_NAME, () => {
+          logger.log('Compiling types on afterEmit event');
+          compileTypesContinuouslyHook();
+        });
+      } else {
+        logger.log('Compile types on startup only');
+        compileTypesHook();
+      }
     }
   }
 }
