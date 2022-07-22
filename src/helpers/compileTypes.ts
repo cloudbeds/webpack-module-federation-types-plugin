@@ -36,7 +36,7 @@ export function compileTypes(exposedComponents: string[], outFile: string): Comp
     declaration: true,
     emitDeclarationOnly: true,
     outFile,
-  });
+  } as ts.CompilerOptions);
 
   // Create a Program with an in-memory emit to avoid a case when wrong typings are downloaded
   let fileContent: string = '';
@@ -91,7 +91,7 @@ export function rewritePathsWithExposedFederatedModules(
 
     let federatedModulePath = exposePath
       ? `${federationConfig.name}/${exposePath}`
-      : `@remote-types/${federationConfig.name}/${importPath}`;
+      : `@not-for-import/${federationConfig.name}/${importPath}`;
 
     federatedModulePath = federatedModulePath.replace(/\/index$/, '')
 
