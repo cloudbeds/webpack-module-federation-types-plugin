@@ -1,7 +1,7 @@
 import path from 'path';
 import { Compiler, WebpackPluginInstance } from 'webpack';
 
-import { DEFAULT_SYNC_TYPES_INTERVAL_IN_SECONDS, DIR_DIST, DIR_EMITTED_TYPES } from './constants';
+import { DEFAULT_DOWNLOAD_TYPES_INTERVAL_IN_SECONDS, DIR_DIST, DIR_EMITTED_TYPES } from './constants';
 import { getRemoteManifestUrls } from './helpers/cloudbedsRemoteManifests';
 import { compileTypes, rewritePathsWithExposedFederatedModules } from './helpers/compileTypes';
 import { downloadTypes } from './helpers/downloadTypes';
@@ -22,18 +22,20 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
 
     const remoteManifestUrls = getRemoteManifestUrls(this.options);
 
+    // Disable plugin when manifest URLs are not valid
     if (!isEveryUrlValid(Object.values(remoteManifestUrls || {}))) {
       logger.warn('One or more remote manifest URLs are invalid:', remoteManifestUrls);
       logger.log('Plugin disabled');
       return;
     }
 
+    // Disable plugin when both compilation and downloading of types is disabled
     if (this.options?.disableTypeCompilation && this.options.disableDownladingRemoteTypes) {
       logger.log('Plugin disabled as both type compilation and download features are turned off');
       return;
     }
-    const distPath = compiler.options.devServer?.static?.directory || compiler.options.output?.path || DIR_DIST;
 
+    // Get ModuleFederationPlugin config
     const federationOptions = compiler.options.plugins.find((plugin) => {
       return plugin.constructor.name === 'ModuleFederationPlugin';
     });
@@ -43,7 +45,9 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
       return;
     }
 
+    // Define path for the emitted typings file
     const { exposes, remotes } = federationPluginOptions;
+    const distPath = compiler.options.devServer?.static?.directory || compiler.options.output?.path || DIR_DIST;
     const outFile = path.join(distPath, DIR_EMITTED_TYPES, 'index.d.ts');
 
     // Create types for exposed modules
@@ -61,22 +65,27 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
       return downloadTypes(remotes as Record<string, string>, remoteManifestUrls);
     };
 
+    // Determine whether compilation of types should be performed continuously
+    // followed by downloading of types when idle for a certain period of time
     let recompileIntervalId: ReturnType<typeof setInterval>;
     const shouldSyncContinuously = (compiler.options.mode === 'development')
-      && (this.options?.syncTypesIntervalInSeconds !== -1)
-    const syncTypesIntervalInSeconds = this.options?.syncTypesIntervalInSeconds
-      || DEFAULT_SYNC_TYPES_INTERVAL_IN_SECONDS;
+      && (this.options?.downloadTypesWhenIdleIntervalInSeconds !== -1)
+    const downloadTypesWhenIdleIntervalInSeconds = this.options?.downloadTypesWhenIdleIntervalInSeconds
+      || DEFAULT_DOWNLOAD_TYPES_INTERVAL_IN_SECONDS;
 
     const compileTypesContinuouslyHook = () => {
-      // Reset and create an Interval to recompile and redownload types every 60 seconds after compilation
+      // Reset and create an Interval to redownload types every 60 seconds after compilation
       if (remotes && !this.options?.disableDownladingRemoteTypes) {
         clearInterval(recompileIntervalId);
         recompileIntervalId = setInterval(
           () => {
-            logger.log(new Date().toLocaleString(), 'Downloading types every', syncTypesIntervalInSeconds, 'seconds');
+            logger.log(
+              new Date().toLocaleString(),
+              'Downloading types every', downloadTypesWhenIdleIntervalInSeconds, 'seconds',
+            );
             downloadTypesHook();
           },
-          1000 * syncTypesIntervalInSeconds,
+          1000 * downloadTypesWhenIdleIntervalInSeconds,
         );
       }
 

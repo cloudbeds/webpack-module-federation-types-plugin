@@ -31,5 +31,5 @@ export type ModuleFederationTypesPluginOptions = {
   disableTypeCompilation?: boolean,
   doNotUseCloudbedsRemoteManifests?: boolean,
   remoteManifestUrls?: RemoteManifestUrls,
-  syncTypesIntervalInSeconds?: number,
+  downloadTypesWhenIdleIntervalInSeconds?: number,
 }

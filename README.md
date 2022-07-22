@@ -120,7 +120,7 @@ module.exports = {
       },
     }),
     new ModuleFederationTypesPlugin({
-      syncTypesIntervalInSeconds: 120,
+      downloadTypesWhenIdleIntervalInSeconds: 120,
     }),
   ],
 }
@@ -188,7 +188,7 @@ to avoid failing workflows.
 |     `disableDownladingRemoteTypes` |      `boolean`       |       `false`       | Disable downloading of remote types                                                                                                                                                                                                                  |
 |  `cloudbedsRemoteManifestsBaseUrl` |       `string`       | `'/remotes/dev-ga'` | Base URL for remote manifest files (a.k.a remote entry configs) that is specific to Cloudbeds microapps <br><br> _Examples:_ <br> `http://localhost:4480/remotes/dev` <br> `https://cb-front.cloudbeds-dev.com/remotes/[env]` <br> `use-devbox-name` |
 | `doNotUseCloudbedsRemoteManifests` |      `boolean`       |       `false`       | Disable downloading default remote manifest files for Cloudbeds microapps (`mfd-common-remote-entry.json` and `mfd-remote-entries.json` files) and download only those provided via `remoteManifestUrls`                                             |
-|       `syncTypesIntervalInSeconds` |    `number`, `-1`    |        `60`         | Synchronize types continusouly - compile types after every compilation, download when idle with a specified delay value in seconds. <br><br> `-1` - disables continuous synchronization (compile and download will happen only on startup).          |
+|       `downloadTypesWhenIdleIntervalInSeconds` |    `number`, `-1`    |        `60`         | Synchronize types continusouly - compile types after every compilation, download when idle with a specified delay value in seconds. <br><br> `-1` - disables continuous synchronization (compile and download will happen only on startup).          |
 |               `remoteManifestUrls` | `RemoteManifestUrls` |        `{}`         | URLs to remote manifest files. A manifest contains a URL to a remote entry that is substituted in runtime. Multiple remote entries is supported via `registry` field. <br><br> More details available in [this section](#templated-remote-urls)      |
 
 ## Templated Remote URLs
