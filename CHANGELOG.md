@@ -1,3 +1,10 @@
+## [1.4.5](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.4.4...v1.4.5) (2022-07-22)
+
+
+### Bug Fixes
+
+* changed prefix for types that must not be imported ([1d71479](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/1d7147972a79ecffa6541c5699b656b308683ef0))
+
 ## [1.4.4](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.4.3...v1.4.4) (2022-07-22)
 
 
