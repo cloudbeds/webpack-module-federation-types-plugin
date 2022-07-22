@@ -7,7 +7,6 @@ import { ModuleFederationPluginOptions, ModuleFederationTypesPluginOptions } fro
 jest.mock('./helpers/downloadTypes');
 
 const mockDownloadTypes = downloadTypes as jest.MockedFunction<typeof downloadTypes>;
-const mockWatchRun = jest.fn();
 const mockAfterEmit = jest.fn();
 const { ModuleFederationPlugin } = webpack.container;
 
@@ -32,9 +31,6 @@ function installPlugin(
       ],
     },
     hooks: {
-      watchRun: {
-        tapPromise: mockWatchRun as unknown,
-      },
       afterEmit: {
         tap: mockAfterEmit as unknown,
       },
@@ -45,9 +41,9 @@ function installPlugin(
 }
 
 describe('ModuleFederationTypesPlugin', () => {
-  test('does nothing by default', () => {
+  test('does nothing when options are not provided to the ModuleFederationPlugin', () => {
     installPlugin();
-    expect(mockWatchRun).not.toBeCalled();
+    expect(mockAfterEmit).not.toBeCalled();
   });
 
   test('remoteManifestUrls setting initiates download of remote entry manifest files on startup', () => {
