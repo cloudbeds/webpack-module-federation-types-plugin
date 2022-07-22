@@ -3,7 +3,7 @@ export const FEDERATION_CONFIG_FILE = 'federation.config.json';
 export const DIR_EMITTED = '@types';
 
 export const DIR_DIST = 'dist';
-export const DIR_DOWNLOADED = '@remote-types';
+export const DIR_DOWNLOADED = 'src/@types/remotes';
 
 export const DEFAULT_SYNC_TYPES_INTERVAL_IN_SECONDS = 60;
 

@@ -11,8 +11,7 @@ assertRunningFromRoot();
 const federationConfig = getFederationConfig();
 const compileFiles = Object.values(federationConfig.exposes);
 
-const outDir = path.join(DIR_DIST, DIR_EMITTED);
-const outFile = path.resolve(outDir, `${federationConfig.name}.d.ts`);
+const outFile = path.join(DIR_DIST, DIR_EMITTED, 'index.d.ts');
 
 console.log(`Emitting types for ${compileFiles.length} exposed module(s)`);
 

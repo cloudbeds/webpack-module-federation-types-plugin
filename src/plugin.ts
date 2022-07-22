@@ -5,7 +5,7 @@ import { DEFAULT_SYNC_TYPES_INTERVAL_IN_SECONDS, DIR_DIST, DIR_EMITTED } from '.
 import { getRemoteManifestUrls } from './helpers/cloudbedsRemoteManifests';
 import { compileTypes, rewritePathsWithExposedFederatedModules } from './helpers/compileTypes';
 import { downloadTypes } from './helpers/downloadTypes';
-import { setLogger } from './helpers/logger';
+import { getLoggerHint, setLogger } from './helpers/logger';
 import { isEveryUrlValid } from './helpers/validation';
 import {
   FederationConfig,
@@ -43,8 +43,8 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
       return;
     }
 
-    const { name, exposes, remotes } = federationPluginOptions;
-    const outFile = path.join(distPath, DIR_EMITTED, `${name}.d.ts`);
+    const { exposes, remotes } = federationPluginOptions;
+    const outFile = path.join(distPath, DIR_EMITTED, 'index.d.ts');
 
     // Create types for exposed modules
     const compileTypesHook = () => {
@@ -53,6 +53,8 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
       const { isSuccess, typeDefinitions } = compileTypes(exposes as string[], outFile);
       if (isSuccess) {
         rewritePathsWithExposedFederatedModules(federationPluginOptions as FederationConfig, outFile, typeDefinitions);
+      } else {
+        logger.warn('Failed to compile types for exposed modules.', getLoggerHint(compiler));
       }
     };
 

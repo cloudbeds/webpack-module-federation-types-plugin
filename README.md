@@ -8,7 +8,7 @@ ambient type definitions for your packages so TypeScript can resolve the dynamic
 While using `@ts-ignore` on your imports works, it is a bummer to lose intellisense and type-checking capabilities.
 
 This package exposes a Webpack plugin and a node CLI command called `make-federated-types`.
-It writes a typings file in _dist/@types_ folder and downloads remote types into _@remote-types_ folder.
+It writes a typings file in _dist/@types_ folder and downloads remote types into _src/@types/remotes_ folder.
 
 Synchronization of types happens after every compilation and with a 1-minute interval when idle.
 
@@ -58,7 +58,7 @@ Every time a `d.ts` file is downloaded, webpack recompiles the whole bundle beca
 | ruanyl/dts-loader                  | folders in <br> `.wp_federation`                     | -                    | -                                                                                                        |
 | ruanyl/webpack-remote-types-plugin | -                                                    | `types/[name]-dts`   | download on `beforeRun` and `watchRun`                                                                   |
 | @module-federation/typescript      | folders in <br> `dist/@mf-typescript`                | `@mf-typescript`     | compile and download on `afterCompile` (leads to double compile), <br> redo every 1 minute when idle     |
-| @cloudbeds/wmf-types-plugin        | file in <br> `dist/@types`                           | `@remote-types`      | download on startup, <br> compile `afterEmit`, <br> download every 1 minute or custom interval when idle |
+| @cloudbeds/wmf-types-plugin        | file in <br> `dist/@types`                           | `src/@types/remotes` | download on startup, <br> compile `afterEmit`, <br> download every 1 minute or custom interval when idle |
 
 
 ## Installation
@@ -146,46 +146,7 @@ npx make-federated-types
 
 ## Consuming remote types
 
-When you build your microapp, the plugin will download typings to _@remote-types_ folder in the root of the
-repository.
-
-### `tsconfig.json`
-
-Configure tsconfig to start using typings in the _@remote-types_ folder.
-
-```json
-{
-  "include": [
-    "@remote-types",
-    "src/**/*.ts",
-    "webpack/**/*.ts"
-  ]
-}
-```
-
-Paths to global types should be added to `typeRoots`
-
-```json
-{
-  "compilerOptions": {
-    "typeRoots": [
-      "node_modules/@types",
-      "src/@types"
-    ]
-  }
-}
-```
-
-Such types should be added to a subfolder so that they can be discovered by the invoked Typescript compiler, e.g.:
-
-```
-src/
-└── @types/
-    └── shared/
-        ├── index.d.ts
-        ├── utility.d.ts
-        └── wmf-remotes.d.ts
-```
+When you build your microapp, the plugin will download typings to _src/@types/remotes_ folder
 
 ### Importing from self as from remote
 
@@ -200,10 +161,13 @@ remotes: {
 
 ## CI/CD
 
-It is suggested to put the folder with downloaded types to `.gitignore`
-and commit the types using your CI in PRs that target `main`/`dev` branch.
+It is suggested to download types in a CI workflow only when a branch in a PR targets `main` branch.
 
-This way downloaded types will always correspond to the latest compatible version of microapps.
+This way the downloaded types will always correspond to the latest versions of dependent microapps
+and result in valid static type checking.
+
+Branches may need to use dev branches of other microfrontends, thus will have to commit those types
+to avoid failing workflows.
 
 ### `.gitignore`
 

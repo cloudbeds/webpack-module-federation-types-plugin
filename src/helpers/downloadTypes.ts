@@ -15,11 +15,14 @@ async function downloadRemoteEntryManifest(url: string): Promise<unknown> {
   return JSON.parse(json);
 }
 
-async function downloadRemoteEntryTypes(dtsUrl: string): Promise<void> {
+async function downloadRemoteEntryTypes(remoteName: string, dtsUrl: string): Promise<void> {
   const logger = getLogger();
   const types = (await download(dtsUrl, downloadOptions)).toString();
-  const outFile = path.join(DIR_DOWNLOADED, path.basename(dtsUrl));
+  const outDir = path.join(DIR_DOWNLOADED, remoteName);
+  const outFile = path.join(outDir, 'index.d.ts');
   let shouldWriteFile = true;
+
+  mkdirp.sync(outDir);
 
   // Prevent webpack from recompiling the bundle by not writing the file if it has not changed
   if (fs.existsSync(outFile)) {
@@ -83,14 +86,13 @@ export async function downloadTypes(
   }
 
   const promises: Promise<void>[] = [];
-  mkdirp.sync(DIR_DOWNLOADED);
 
   Object.entries(remotes).forEach(([remoteName, remoteLocation]) => {
     try {
       const remoteEntryUrl = remoteEntryURLs[remoteName] || remoteLocation.split('@')[1];
       const remoteEntryBaseUrl = remoteEntryUrl.split('/').slice(0, -1).join('/');
 
-      promises.push(downloadRemoteEntryTypes(`${remoteEntryBaseUrl}/${DIR_EMITTED}/${remoteName}.d.ts`));
+      promises.push(downloadRemoteEntryTypes(remoteName, `${remoteEntryBaseUrl}/${DIR_EMITTED}/index.d.ts`));
     } catch (err) {
       logger.error(`${remoteName}: '${remoteLocation}' is not a valid remote federated module URL`);
       logger.log(err);

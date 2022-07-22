@@ -39,6 +39,7 @@ export function compileTypes(exposedComponents: string[], outFile: string): Comp
   const host = ts.createCompilerHost(compilerOptions);
   host.writeFile = (_fileName: string, contents: string) => fileContent = contents;
 
+  exposedFileNames.push('./src/@types/utility.d.ts');
   const program = ts.createProgram(exposedFileNames, compilerOptions, host);
   const { diagnostics, emitSkipped } = program.emit();
   diagnostics.forEach(reportCompileDiagnostic);
