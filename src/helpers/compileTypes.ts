@@ -28,6 +28,8 @@ export function reportCompileDiagnostic(diagnostic: ts.Diagnostic): void {
 }
 
 export function compileTypes(exposedComponents: string[], outFile: string): CompileTypesResult {
+  const logger = getLogger();
+
   const exposedFileNames = Object.values(exposedComponents);
   const { moduleResolution, ...compilerOptions } = getTSConfigCompilerOptions();
   Object.assign(compilerOptions, {
@@ -44,6 +46,7 @@ export function compileTypes(exposedComponents: string[], outFile: string): Comp
   if (fs.existsSync(DIR_TYPES)) {
     exposedFileNames.push(...getAllFilePaths(`./${DIR_TYPES}`).filter(path => path.endsWith('.d.ts')));
   }
+  logger.log('Including a set of root files in compilation', exposedFileNames);
 
   const program = ts.createProgram(exposedFileNames, compilerOptions, host);
   const { diagnostics, emitSkipped } = program.emit();
