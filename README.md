@@ -2,18 +2,21 @@
 
 ## Description
 
-Having Webpack 5 module federation architecture in place it's tedious to manually create/maintain
-ambient type definitions for your packages so TypeScript can resolve the dynamic imports to their proper types.
-
-While using `@ts-ignore` on your imports works, it is a bummer to lose intellisense and type-checking capabilities.
-
 This package exposes a Webpack plugin and a node CLI command called `make-federated-types`.
-It writes a typings file in _dist/@types_ folder and downloads remote types into _src/@types/remotes_ folder.
+
+
+It compiles types into a _dist/@types/index.d.ts_ file and downloads such
+compiled remote types from other microapps into _src/@types/remotes_ folder.
 Global type definitions from _src/@types/*.d.ts_ are included in compilation.
 
 Synchronization of types happens after every compilation and with a 1-minute interval when idle.
 
 ## History
+
+Having Webpack 5 module federation architecture in place it's tedious to manually create/maintain
+ambient type definitions for your packages so TypeScript can resolve the dynamic imports to their proper types.
+
+While using `@ts-ignore` on your imports works, it is a bummer to lose intellisense and type-checking capabilities.
 
 Inspired by several existing solutions:
 
