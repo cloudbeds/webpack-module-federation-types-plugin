@@ -1,3 +1,10 @@
+## [1.4.4](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.4.3...v1.4.4) (2022-07-22)
+
+
+### Bug Fixes
+
+* excessive relative path prefix ([5e782fe](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/5e782fedb7d021a6ed63d3b326f1d1fbac40a7d8))
+
 ## [1.4.3](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.4.2...v1.4.3) (2022-07-22)
 
 
