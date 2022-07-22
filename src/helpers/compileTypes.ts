@@ -5,7 +5,9 @@ import ts from 'typescript';
 
 import { getLogger } from './logger';
 
+import { DIR_TYPES } from '../constants';
 import { CompileTypesResult, FederationConfig } from '../types';
+import { getAllFilePaths } from './files';
 
 export function getTSConfigCompilerOptions(): ts.CompilerOptions {
   const logger = getLogger();
@@ -39,7 +41,10 @@ export function compileTypes(exposedComponents: string[], outFile: string): Comp
   const host = ts.createCompilerHost(compilerOptions);
   host.writeFile = (_fileName: string, contents: string) => fileContent = contents;
 
-  exposedFileNames.push('./src/@types/utility.d.ts');
+  if (fs.existsSync(DIR_TYPES)) {
+    exposedFileNames.push(...getAllFilePaths(DIR_TYPES).filter(path => path.endsWith('.d.ts')));
+  }
+
   const program = ts.createProgram(exposedFileNames, compilerOptions, host);
   const { diagnostics, emitSkipped } = program.emit();
   diagnostics.forEach(reportCompileDiagnostic);
