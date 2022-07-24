@@ -1,3 +1,10 @@
+# [1.6.0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.5.1...v1.6.0) (2022-07-24)
+
+
+### Features
+
+* added awareness for devbox DEPLOYMENT_ENV to minimize configuration in microapps ([5fc80f7](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/5fc80f77c8101568ad57b4928970e8bb870cbea3))
+
 ## [1.5.1](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.5.0...v1.5.1) (2022-07-22)
 
 
