@@ -1,3 +1,10 @@
+# [1.7.0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.6.0...v1.7.0) (2022-07-24)
+
+
+### Features
+
+* include types from node_modules ([1512c84](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/1512c84dd28ae64fe633fed15a664f0e6c811ea1))
+
 # [1.6.0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.5.1...v1.6.0) (2022-07-24)
 
 
