@@ -1,7 +1,12 @@
 import path from 'path';
 import { Compiler, WebpackPluginInstance } from 'webpack';
 
-import { DEFAULT_DOWNLOAD_TYPES_INTERVAL_IN_SECONDS, DIR_DIST, DIR_EMITTED_TYPES } from './constants';
+import {
+  CLOUDBEDS_DEPLOYMENT_ENV_WITH_DISABLED_REMOTE_TYPES_DOWNLOAD,
+  DEFAULT_DOWNLOAD_TYPES_INTERVAL_IN_SECONDS,
+  DIR_DIST,
+  DIR_EMITTED_TYPES
+} from './constants';
 import { getRemoteManifestUrls } from './helpers/cloudbedsRemoteManifests';
 import { compileTypes, rewritePathsWithExposedFederatedModules } from './helpers/compileTypes';
 import { downloadTypes } from './helpers/downloadTypes';
@@ -21,6 +26,9 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
     let logger = setLogger(compiler.getInfrastructureLogger(PLUGIN_NAME));
 
     const remoteManifestUrls = getRemoteManifestUrls(this.options);
+    const isCompilationDisabled = !!this.options?.disableTypeCompilation;
+    const isDownloadDisabled = this.options?.disableDownladingRemoteTypes
+      ?? process.env.DEPLOYMENT_ENV === CLOUDBEDS_DEPLOYMENT_ENV_WITH_DISABLED_REMOTE_TYPES_DOWNLOAD;
 
     // Disable plugin when manifest URLs are not valid
     if (!isEveryUrlValid(Object.values(remoteManifestUrls || {}))) {
@@ -30,7 +38,7 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
     }
 
     // Disable plugin when both compilation and downloading of types is disabled
-    if (this.options?.disableTypeCompilation && this.options.disableDownladingRemoteTypes) {
+    if (isCompilationDisabled && isDownloadDisabled) {
       logger.log('Plugin disabled as both type compilation and download features are turned off');
       return;
     }
@@ -97,7 +105,7 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
       await downloadTypesHook();
     }
 
-    if (exposes && !this.options?.disableTypeCompilation) {
+    if (exposes && !isCompilationDisabled) {
       if (shouldSyncContinuously) {
         compiler.hooks.afterEmit.tap(PLUGIN_NAME, () => {
           logger.log('Compiling types on afterEmit event');
