@@ -98,30 +98,22 @@ export function rewritePathsWithExposedFederatedModules(
   outFile: string,
   typings: string,
 ): void {
-  const declareRegex = /declare module "(.*)"/g;
-  const moduleImportPaths: string[] = [];
+  const regexDeclareModule = /declare module "(.*)"/g;
+  const declaredModulePaths: string[] = [];
 
+  // Collect all instances of `declare module "..."`
   let execResults: null | string[] = [];
-  while ((execResults = declareRegex.exec(typings)) !== null) {
-    moduleImportPaths.push(execResults[1]);
+  while ((execResults = regexDeclareModule.exec(typings)) !== null) {
+    declaredModulePaths.push(execResults[1]);
   }
 
   let typingsUpdated: string = typings;
 
-  // Support aliases in paths (e.g. @/)
-  // Aliases are not included in emitted declarations thus they have to be removed from the exposed path
-  const aliasPaths = Object.values(getTSConfigCompilerOptions().paths || {}).map(alias => alias[0]);
-  function substituteAliases(modulePath: string): string {
-    aliasPaths.forEach(aliasPath => {
-      modulePath = modulePath.replace(aliasPath, '');
-    });
-    return modulePath;
-  }
-
   // Replace and prefix paths by exposed remote names
-  moduleImportPaths.forEach((importPath) => {
+  declaredModulePaths.forEach((importPath) => {
+    // Aliases are not included in the emitted declarations hence the need to use `endsWith`
     const [exposedModuleKey, ...exposedModuleNameAliases] = Object.keys(federationConfig.exposes)
-      .filter(key => federationConfig.exposes[key].endsWith(substituteAliases(importPath)))
+      .filter(key => federationConfig.exposes[key].endsWith(importPath))
       .map(key => key.replace(/^\.\//, ''));
 
     let federatedModulePath = exposedModuleKey
@@ -142,6 +134,8 @@ export function rewritePathsWithExposedFederatedModules(
       ...exposedModuleNameAliases.map(createAliasModule),
     ].join('\n');
   });
+
+  typingsUpdated = includeTypesFromNodeModules(federationConfig, typingsUpdated);
 
   mkdirp.sync(path.dirname(outFile));
   fs.writeFileSync(outFile, typingsUpdated.replace(/\r\n/g, '\n'));
