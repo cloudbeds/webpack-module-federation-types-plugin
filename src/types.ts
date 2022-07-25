@@ -26,7 +26,7 @@ export type RemoteManifestUrls = Record<'registry' | string, string>;
 export type ModuleFederationPluginOptions = ConstructorParameters<typeof container.ModuleFederationPlugin>[0];
 
 export type ModuleFederationTypesPluginOptions = {
-  cloudbedsRemoteManifestsBaseUrl?: string | 'use-devbox-name',
+  cloudbedsRemoteManifestsBaseUrl?: string | 'use-domain-name',
   disableDownladingRemoteTypes?: boolean,
   disableTypeCompilation?: boolean,
   doNotUseCloudbedsRemoteManifests?: boolean,
