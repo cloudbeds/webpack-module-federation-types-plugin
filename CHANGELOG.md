@@ -1,3 +1,10 @@
+## [1.7.1](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.7.0...v1.7.1) (2022-07-25)
+
+
+### Bug Fixes
+
+* node_module types for CLI tool ([68c384d](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/68c384d41128531c39e032195520d5a7bd39c931))
+
 # [1.7.0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.6.0...v1.7.0) (2022-07-24)
 
 
