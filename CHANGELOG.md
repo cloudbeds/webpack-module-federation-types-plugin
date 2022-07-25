@@ -1,3 +1,10 @@
+## [1.7.2](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.7.1...v1.7.2) (2022-07-25)
+
+
+### Bug Fixes
+
+* use-domain-name keyword to define remotes URL ([0d9b349](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/0d9b3490e44d40275749a62ded855a3dd9e51f2c))
+
 ## [1.7.1](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.7.0...v1.7.1) (2022-07-25)
 
 
