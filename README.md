@@ -7,21 +7,6 @@ compiled remote types from other federated microapps into _src/@types/remotes_ f
 
 Global type definitions from _src/@types/*.d.ts_ are included in compilation.
 
-- [@touk/federated-types](https://github.com/touk/federated-types)
-  a fork of [pixability/federated-types](https://github.com/pixability/federated-types)
-- [ruanyl/dts-loader](https://github.com/ruanyl/dts-loader)
-- [ruanyl/webpack-remote-types-plugin](https://github.com/ruanyl/webpack-remote-types-plugin), a wmf remotes-aware
-  downloader
-  of typings that can be used also with files emitted using `@touk/federated-types`
-  . [Example](https://github.com/jrandeniya/federated-types-sample).
-- [@module-federation/typescript](https://app.privjs.com/buy/packageDetail?pkg=@module-federation/typescript)
-  from the creator of Webpack Module Federation, Zack Jackson (aka [ScriptAlchemy](https://twitter.com/ScriptedAlchemy))
-
-Zack Jackson was asked for help with
-[several issues](https://github.com/module-federation/module-federation-examples/issues/20#issuecomment-1153131082)
-around his plugin. There was a hope that he can suggest some solutions to the exposed problems, to no avail.
-After a month of waiting this package was built.
-
 ## Feature comparison tables
 
 | Feature                            | @touk/<br>federated-types | ruanyl/dts-loader | ruanyl/webpack-remote-types-plugin | @module-federation/typescript | @cloudbeds/wmf-types-plugin |
