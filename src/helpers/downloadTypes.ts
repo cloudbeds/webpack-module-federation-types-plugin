@@ -3,7 +3,6 @@ import fs from 'fs';
 import mkdirp from 'mkdirp';
 import path from 'path';
 
-import { DIR_DOWNLOADED_TYPES, DIR_EMITTED_TYPES } from '../constants';
 import { RemoteManifest, RemoteManifestUrls, RemotesRegistryManifest } from '../types';
 
 import { getLogger } from './logger';
@@ -15,10 +14,10 @@ async function downloadRemoteEntryManifest(url: string): Promise<unknown> {
   return JSON.parse(json);
 }
 
-async function downloadRemoteEntryTypes(remoteName: string, dtsUrl: string): Promise<void> {
+async function downloadRemoteEntryTypes(remoteName: string, dtsUrl: string, dirDownloadedTypes: string): Promise<void> {
   const logger = getLogger();
   const types = (await download(dtsUrl, downloadOptions)).toString();
-  const outDir = path.join(DIR_DOWNLOADED_TYPES, remoteName);
+  const outDir = path.join(dirDownloadedTypes, remoteName);
   const outFile = path.join(outDir, 'index.d.ts');
   let shouldWriteFile = true;
 
@@ -71,6 +70,8 @@ export async function downloadRemoteEntryURLsFromManifests(remoteManifestUrls?: 
 }
 
 export async function downloadTypes(
+  dirEmittedTypes: string,
+  dirDownloadedTypes: string,
   remotes: Record<string, string>,
   remoteManifestUrls?: RemoteManifestUrls,
 ): Promise<void> {
@@ -91,8 +92,13 @@ export async function downloadTypes(
     try {
       const remoteEntryUrl = remoteEntryURLs[remoteName] || remoteLocation.split('@')[1];
       const remoteEntryBaseUrl = remoteEntryUrl.split('/').slice(0, -1).join('/');
+      const promiseDownload = downloadRemoteEntryTypes(
+        remoteName,
+        `${remoteEntryBaseUrl}/${dirEmittedTypes}/index.d.ts`,
+        dirDownloadedTypes,
+      )
 
-      promises.push(downloadRemoteEntryTypes(remoteName, `${remoteEntryBaseUrl}/${DIR_EMITTED_TYPES}/index.d.ts`));
+      promises.push(promiseDownload);
     } catch (err) {
       logger.error(`${remoteName}: '${remoteLocation}' is not a valid remote federated module URL`);
       logger.log(err);

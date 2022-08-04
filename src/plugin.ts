@@ -3,9 +3,11 @@ import { Compiler, WebpackPluginInstance } from 'webpack';
 
 import {
   CLOUDBEDS_DEPLOYMENT_ENV_WITH_DISABLED_REMOTE_TYPES_DOWNLOAD,
+  DEFAULT_DIR_DIST,
+  DEFAULT_DIR_DOWNLOADED_TYPES,
+  DEFAULT_DIR_EMITTED_TYPES,
+  DEFAULT_DIR_GLOBAL_TYPES,
   DEFAULT_DOWNLOAD_TYPES_INTERVAL_IN_SECONDS,
-  DIR_DIST,
-  DIR_EMITTED_TYPES
 } from './constants';
 import { getRemoteManifestUrls } from './helpers/cloudbedsRemoteManifests';
 import { compileTypes, rewritePathsWithExposedFederatedModules } from './helpers/compileTypes';
@@ -55,12 +57,18 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
 
     // Define path for the emitted typings file
     const { exposes, remotes } = federationPluginOptions;
-    const distPath = compiler.options.devServer?.static?.directory || compiler.options.output?.path || DIR_DIST;
-    const outFile = path.join(distPath, DIR_EMITTED_TYPES, 'index.d.ts');
+
+    const dirDist = compiler.options.devServer?.static?.directory
+      || compiler.options.output?.path
+      || DEFAULT_DIR_DIST;
+    const dirEmittedTypes = this.options?.dirEmittedTypes || DEFAULT_DIR_EMITTED_TYPES;
+    const dirGlobalTypes = this.options?.dirGlobalTypes || DEFAULT_DIR_GLOBAL_TYPES;
+    const dirDownloadedTypes = this.options?.dirDownloadedTypes || DEFAULT_DIR_DOWNLOADED_TYPES;
+    const outFile = path.join(dirDist, dirEmittedTypes, 'index.d.ts');
 
     // Create types for exposed modules
     const compileTypesHook = () => {
-      const { isSuccess, typeDefinitions } = compileTypes(exposes as string[], outFile);
+      const { isSuccess, typeDefinitions } = compileTypes(exposes as string[], outFile, dirGlobalTypes);
       if (isSuccess) {
         rewritePathsWithExposedFederatedModules(federationPluginOptions as FederationConfig, outFile, typeDefinitions);
       } else {
@@ -70,7 +78,7 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
 
     // Import types from remote modules
     const downloadTypesHook = async () => {
-      return downloadTypes(remotes as Record<string, string>, remoteManifestUrls);
+      return downloadTypes(dirEmittedTypes, dirDownloadedTypes, remotes as Record<string, string>, remoteManifestUrls);
     };
 
     // Determine whether compilation of types should be performed continuously
