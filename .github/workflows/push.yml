@@ -1,0 +1,13 @@
+name: Push to branch
+
+on:
+  push:
+    branches:
+      - '**'
+      - '!main'
+
+jobs:
+  push:
+    uses: cloudbeds/workflows/.github/workflows/npm-test-build.yml@main
+    secrets:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
