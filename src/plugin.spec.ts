@@ -3,7 +3,7 @@ import webpack, { Compilation, Compiler } from 'webpack';
 import { downloadTypes } from './helpers/downloadTypes';
 import { ModuleFederationTypesPlugin } from './plugin';
 import { ModuleFederationPluginOptions, ModuleFederationTypesPluginOptions } from './types';
-import { CloudbedsMicrofrontend } from './constants';
+import { CloudbedsMicrofrontend, DEFAULT_DIR_DOWNLOADED_TYPES, DEFAULT_DIR_EMITTED_TYPES } from './constants';
 
 jest.mock('./helpers/downloadTypes');
 
@@ -64,6 +64,8 @@ describe('ModuleFederationTypesPlugin', () => {
     installPlugin(moduleFederationPluginOptions, typesPluginOptions);
 
     expect(mockDownloadTypes.mock.calls[0]).toEqual([
+      DEFAULT_DIR_EMITTED_TYPES,
+      DEFAULT_DIR_DOWNLOADED_TYPES,
       moduleFederationPluginOptions.remotes,
       typesPluginOptions.remoteManifestUrls,
     ]);

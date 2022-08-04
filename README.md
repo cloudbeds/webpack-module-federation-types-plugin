@@ -7,20 +7,7 @@ compiled remote types from other federated microapps into _src/@types/remotes_ f
 
 Global type definitions from _src/@types/*.d.ts_ are included in compilation.
 
-- [@touk/federated-types](https://github.com/touk/federated-types)
-  a fork of [pixability/federated-types](https://github.com/pixability/federated-types)
-- [ruanyl/dts-loader](https://github.com/ruanyl/dts-loader)
-- [ruanyl/webpack-remote-types-plugin](https://github.com/ruanyl/webpack-remote-types-plugin), a wmf remotes-aware
-  downloader
-  of typings that can be used also with files emitted using `@touk/federated-types`
-  . [Example](https://github.com/jrandeniya/federated-types-sample).
-- [@module-federation/typescript](https://app.privjs.com/buy/packageDetail?pkg=@module-federation/typescript)
-  from the creator of Webpack Module Federation, Zack Jackson (aka [ScriptAlchemy](https://twitter.com/ScriptedAlchemy))
-
-Zack Jackson was asked for help with
-[several issues](https://github.com/module-federation/module-federation-examples/issues/20#issuecomment-1153131082)
-around his plugin. There was a hope that he can suggest some solutions to the exposed problems, to no avail.
-After a month of waiting this package was built.
+Paths can be customized to meet your environment.
 
 ## Feature comparison tables
 
@@ -83,6 +70,13 @@ Or it can be added to `package.json`:
   }
 }
 ```
+
+### CLI options
+
+| Option                        | Default value | Description                                                                    |
+|-------------------------------|---------------|--------------------------------------------------------------------------------|
+| `--output-types-folder`, `-o` | `dist/@types` | Path to the output folder, absolute or relative to the working directory       |
+| `--global-types`, `-g`        | `src/@types`  | Path to project's global ambient type definitions, relative to the working dir |
 
 ## Plugin Configuration
 
@@ -151,14 +145,16 @@ To enable verbose logging add folowing in webpack config:
 
 ### Plugin Options
 
-|                                   Option |        Value         |       Default       | Description                                                                                                                                                                                                                                           |
-|-----------------------------------------:|:--------------------:|:-------------------:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|                 `disableTypeCompilation` |      `boolean`       |       `false`       | Disable compilation of types                                                                                                                                                                                                                          |
-|           `disableDownladingRemoteTypes` |      `boolean`       |       `false`       | Disable downloading of remote types                                                                                                                                                                                                                   |
-|        `cloudbedsRemoteManifestsBaseUrl` |       `string`       | `'/remotes/dev-ga'` | Base URL for remote manifest files (a.k.a remote entry configs) that is specific to Cloudbeds microapps <br><br> _ Examples:_ <br> `http://localhost:4480/remotes/dev` <br> `https://cb-front.cloudbeds-dev.com/remotes/[env]` <br> `use-domain-name` |
-|       `doNotUseCloudbedsRemoteManifests` |      `boolean`       |       `false`       | Disable downloading default remote manifest files for Cloudbeds microapps (`mfd-common-remote-entry.json` and `mfd-remote-entries.json` files) and download only those provided via `remoteManifestUrls`                                              |
-| `downloadTypesWhenIdleIntervalInSeconds` |    `number`, `-1`    |        `60`         | Synchronize types continusouly - compile types after every compilation, download when idle with a specified delay value in seconds. <br><br> `-1` - disables continuous synchronization (compile and download will happen only on startup).           |
-|                     `remoteManifestUrls` | `RemoteManifestUrls` |        `{}`         | URLs to remote manifest files. A manifest contains a URL to a remote entry that is substituted in runtime. Multiple remote entries is supported via `registry` field. <br><br> More details available in [this section](#templated-remote-urls)       |
+|                                  Setting |        Value         |       Default        | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+|-----------------------------------------:|:--------------------:|:--------------------:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|                        `dirEmittedTypes` |       `string`       |       `@types`       | Path to the output folder for emitted types, relative to the distribution folder                                                                                                                                                                                                                                                                                                                                                                                                    |
+|                         `dirGlobalTypes` |       `string`       |     `src/@types`     | Path to project's global ambient type definitions, relative to the working dir                                                                                                                                                                                                                                                                                                                                                                                                      |
+|                     `dirDownloadedTypes` |       `string`       | `src/@types/remotes` | Path to the output folder for downloaded types                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+|                 `disableTypeCompilation` |      `boolean`       |       `false`        | Disable compilation of types                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+|           `disableDownladingRemoteTypes` |      `boolean`       |       `false`        | Disable downloading of remote types                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| `downloadTypesWhenIdleIntervalInSeconds` |    `number`, `-1`    |         `60`         | Synchronize types continusouly - compile types after every compilation, download when idle with a specified delay value in seconds. <br><br> `-1` - disables continuous synchronization (compile and download will happen only on startup).                                                                                                                                                                                                                                         |
+|                     `remoteManifestUrls` | `RemoteManifestUrls` |         `{}`         | URLs to remote manifest files. A manifest contains a URL to a remote entry that is substituted in runtime. Multiple remote entries is supported via `registry` field. <br><br> More details available in [this section](#templated-remote-urls)                                                                                                                                                                                                                                     |
+|        `cloudbedsRemoteManifestsBaseUrl` |       `string`       | `'/remotes/dev-ga'`  | Base URL for remote manifest files (a.k.a remote entry configs) that is specific to Cloudbeds microapps <br><br> _ Examples:_ <br> `http://localhost:4480/remotes/dev` <br> `https://cb-front.cloudbeds-dev.com/remotes/[env]` <br> `use-domain-name`. <br><br> Following remote manifest files are downloaded: `mfd-common-remote-entry.json` and `mfd-remote-entries.json` files). <br><br> `remoteManifestUrls` is ignored when this setting has a value other than `undefined`. |
 
 
 ## Consuming remote types

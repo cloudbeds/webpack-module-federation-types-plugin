@@ -7,7 +7,7 @@ import {
 import { ModuleFederationTypesPluginOptions, RemoteManifestUrls } from '../types';
 
 export function getRemoteManifestUrls(options?: ModuleFederationTypesPluginOptions): RemoteManifestUrls | undefined {
-  if (!options?.doNotUseCloudbedsRemoteManifests) {
+  if (options?.cloudbedsRemoteManifestsBaseUrl !== undefined) {
     let baseUrl = options?.cloudbedsRemoteManifestsBaseUrl;
     if (!baseUrl || baseUrl === 'use-domain-name') {
       baseUrl = `${CLOUDBEDS_DEV_FRONTEND_ASSETS_DOMAIN}/remotes/dev-ga`;

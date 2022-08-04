@@ -26,10 +26,14 @@ export type RemoteManifestUrls = Record<'registry' | string, string>;
 export type ModuleFederationPluginOptions = ConstructorParameters<typeof container.ModuleFederationPlugin>[0];
 
 export type ModuleFederationTypesPluginOptions = {
-  cloudbedsRemoteManifestsBaseUrl?: string | 'use-domain-name',
+  dirEmittedTypes?: string,
+  dirGlobalTypes?: string;
+  dirDownloadedTypes?: string;
+
   disableDownladingRemoteTypes?: boolean,
   disableTypeCompilation?: boolean,
-  doNotUseCloudbedsRemoteManifests?: boolean,
-  remoteManifestUrls?: RemoteManifestUrls,
   downloadTypesWhenIdleIntervalInSeconds?: number,
+  remoteManifestUrls?: RemoteManifestUrls,
+
+  cloudbedsRemoteManifestsBaseUrl?: string | 'use-domain-name',
 }

@@ -1,21 +1,31 @@
 #!/usr/bin/env node
 
+import parseArgs from 'minimist';
 import path from 'path';
 
-import { DIR_DIST, DIR_EMITTED_TYPES } from './constants';
+import { DEFAULT_DIR_DIST, DEFAULT_DIR_EMITTED_TYPES, DEFAULT_DIR_GLOBAL_TYPES } from './constants';
 import { compileTypes, rewritePathsWithExposedFederatedModules } from './helpers/compileTypes';
 import { assertRunningFromRoot, getFederationConfig } from './helpers/cli';
 
 assertRunningFromRoot();
 
+const argv = parseArgs(process.argv.slice(2), {
+  alias: {
+    'global-types': 'g',
+    'output-types-folder': 'o',
+  },
+});
+
 const federationConfig = getFederationConfig();
 const compileFiles = Object.values(federationConfig.exposes);
 
-const outFile = path.join(DIR_DIST, DIR_EMITTED_TYPES, 'index.d.ts');
+const outDir = argv['output-types-folder'] || path.join(DEFAULT_DIR_DIST, DEFAULT_DIR_EMITTED_TYPES);
+const outFile = path.join(outDir, 'index.d.ts');
+const dirGlobalTypes = argv['global-types'] || DEFAULT_DIR_GLOBAL_TYPES;
 
 console.log(`Emitting types for ${compileFiles.length} exposed module(s)`);
 
-const { isSuccess, typeDefinitions } = compileTypes(compileFiles as string[], outFile);
+const { isSuccess, typeDefinitions } = compileTypes(compileFiles as string[], outFile, dirGlobalTypes);
 if (!isSuccess) {
   process.exit(1);
 }
