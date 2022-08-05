@@ -1,3 +1,15 @@
+# [1.8.0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.7.2...v1.8.0) (2022-08-05)
+
+
+### Bug Fixes
+
+* docs: remove duplicate feature tables ([ebd3802](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/ebd380290fc7a3a4d09f876f7b520b6d566716df))
+
+
+### Features
+
+* added options to configure paths ([6022a8d](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/6022a8dde87323b89c0f7d3bec427087b2e1d096))
+
 ## [1.7.2](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.7.1...v1.7.2) (2022-07-25)
 
 
