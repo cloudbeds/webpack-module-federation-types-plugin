@@ -18,8 +18,7 @@ npm i @cloudbeds/webpack-module-federation-types-plugin
 ## CLI Tool
 
 The standalone `make-federated-types` script compiles types to the _dist/@types_ folder, the same way as the plugin does.
-It is useful for testing and debugging purposes or when it is not desired to update types automatically during the build
-process.
+It is useful for testing and debugging purposes or when it is not desired to update types automatically during the build process.
 
 This script should not be used in CI as the `build` script, that executes the plugin, already writes the types.
 
