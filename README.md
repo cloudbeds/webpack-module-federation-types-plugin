@@ -1,6 +1,6 @@
 # module-federation-types-plugin
 
-This package exposes a Webpack plugin and a node CLI command called `make-federated-types`.
+This package exposes a Webpack plugin and a node CLI command `make-federated-types`.
 
 It compiles types into a _dist/@types/index.d.ts_ file and downloads
 compiled remote types from other federated microapps into _src/@types/remotes_ folder.
