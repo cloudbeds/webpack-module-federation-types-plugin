@@ -8,5 +8,4 @@ on:
 jobs:
   publish:
     uses: cloudbeds/workflows/.github/workflows/npm-test-build-release.yml@main
-    secrets:
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+    secrets: inherit
