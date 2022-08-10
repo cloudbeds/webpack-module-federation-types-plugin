@@ -70,6 +70,7 @@ Requirements:
   "exposes": {
     "./Button": "./src/view-layer/components/Button",
     "./Portal": "./src/view-layer/index"
+    "./Http": "./src/wmf-expose/Http"
   }
 }
 ```
