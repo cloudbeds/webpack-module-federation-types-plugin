@@ -1,3 +1,16 @@
+## [1.8.1](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.8.0...v1.8.1) (2022-08-10)
+
+
+### Bug Fixes
+
+* ci: set secrets to inherit ([8430bc9](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/8430bc9e4e9e380433478487356a3759df5c2008))
+* ci: set secrets to inherit ([dd98493](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/dd984935c8c7e800b817143822ecc4614bd70d86))
+* ci: set secrets to inherit ([a077148](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/a07714899a3bc932d25a68fe61851f529b5e5c1d))
+* docs ([14c2b5b](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/14c2b5bb7fcc0e4fdd1e15193c1033322c9c577f))
+* docs ([d2cc961](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/d2cc961aa280eb57af4c1a0486dfffc1093ca055))
+* docs ([de9a5b4](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/de9a5b482be4e054a9325c37c3dcdee21808dfb8))
+* update README ([0cec2ae](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/0cec2ae367e3196a4bc6253e78cee9816abc377c))
+
 # [1.8.0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.7.2...v1.8.0) (2022-08-05)
 
 
