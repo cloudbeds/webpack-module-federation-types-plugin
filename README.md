@@ -54,8 +54,8 @@ Or it can be added to `package.json`:
 Create a `federation.config.json` that will contain the remote name and exported members.
 This file is mandatory for the standlone script but not required for the plugin.
 
-Properties of this object can be used in Webpack's `ModuleFederationPlugin` configuration object
-and required by the standalone script. Example:
+Properties of this object can be used in Webpack's `ModuleFederationPlugin`
+configuration object and required by the standalone script. Example:
 
 ### `federation.config.json`
 
