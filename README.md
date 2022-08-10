@@ -7,7 +7,7 @@ compiled remote types from other federated microapps into _src/@types/remotes_ f
 
 Global type definitions from _src/@types/*.d.ts_ are included in compilation.
 
-Paths can be customized to meet your environment.
+All paths can be customized to meet your environment.
 
 ## Installation
 
