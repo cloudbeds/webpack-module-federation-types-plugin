@@ -9,4 +9,6 @@ on:
 jobs:
   push:
     uses: cloudbeds/workflows/.github/workflows/npm-test-build.yml@main
-    secrets: inherit
+    secrets:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
