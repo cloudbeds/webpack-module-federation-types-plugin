@@ -2,9 +2,8 @@ name: Push to branch
 
 on:
   push:
-    branches:
-      - '**'
-      - '!main'
+    branches-ignore:
+      - main
 
 jobs:
   push:
