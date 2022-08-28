@@ -1,3 +1,15 @@
+# [1.9.0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.8.2...v1.9.0) (2022-08-28)
+
+
+### Bug Fixes
+
+* ci: switch to actions ([288dadb](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/288dadbfbd847168622723a1ad0a8ffcc77fb62d))
+
+
+### Features
+
+* added --federation-config option ([17a91e1](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/17a91e1d6382e8b69d6cc934f83f44c17b29100f))
+
 ## [1.8.2](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.8.1...v1.8.2) (2022-08-10)
 
 
