@@ -34,6 +34,7 @@ export function compileTypes(exposedComponents: string[], outFile: string, dirGl
   Object.assign(compilerOptions, {
     declaration: true,
     emitDeclarationOnly: true,
+    noEmit: false,
     outFile,
   } as ts.CompilerOptions);
 
