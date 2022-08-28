@@ -123,7 +123,7 @@ To enable verbose logging add folowing in webpack config:
 |                 `disableTypeCompilation` |      `boolean`       |       `false`        | Disable compilation of types                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 |           `disableDownladingRemoteTypes` |      `boolean`       |       `false`        | Disable downloading of remote types                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | `downloadTypesWhenIdleIntervalInSeconds` |    `number`, `-1`    |         `60`         | Synchronize types continusouly - compile types after every compilation, download when idle with a specified delay value in seconds. <br><br> `-1` - disables continuous synchronization (compile and download will happen only on startup).                                                                                                                                                                                                                                         |
-|                     `remoteManifestUrls` | `RemoteManifestUrls` |         `{}`         | URLs to remote manifest files. A manifest contains a URL to a remote entry that is substituted in runtime. Multiple remote entries is supported via `registry` field. <br><br> More details available in [this section](#templated-remote-urls)                                                                                                                                                                                                                                     |
+|                     `remoteManifestUrls` | `RemoteManifestUrls` |         `{}`         | URLs to remote manifest files. A manifest contains a URL to a remote entry that is substituted in runtime.  <br><br> More details available in [this section](#templated-remote-urls)                                                                                                                                                                                                                                                                                               |
 |        `cloudbedsRemoteManifestsBaseUrl` |       `string`       | `'/remotes/dev-ga'`  | Base URL for remote manifest files (a.k.a remote entry configs) that is specific to Cloudbeds microapps <br><br> _ Examples:_ <br> `http://localhost:4480/remotes/dev` <br> `https://cb-front.cloudbeds-dev.com/remotes/[env]` <br> `use-domain-name`. <br><br> Following remote manifest files are downloaded: `mfd-common-remote-entry.json` and `mfd-remote-entries.json` files). <br><br> `remoteManifestUrls` is ignored when this setting has a value other than `undefined`. |
 
 
@@ -136,19 +136,19 @@ When you build your microapp, the plugin will download typings to _src/@types/re
 Templated URLs are URLs to the external remotes that are substituted in runtime using a syntax that is used in
 [module-federation/external-remotes-plugin](https://github.com/module-federation/external-remotes-plugin)
 
-_Example:_ for a `mfdCommon` remote entry:
+_Example:_ for a `mfeApp` remote entry:
 
 ```js
-{ mfdCommon: 'mfdCommon@[mfdCommon]/remoteEntry.js' }
+{ mfeApp: 'mfeApp@[mfeAppUrl]/remoteEntry.js' }
 ```
 
-The `[mfdCommon]` placeholder refers to `window.mfdCommon` in runtime
+The `[mfeAppUrl]` placeholder refers to `window.mfeAppUrl` in runtime.
 That part is replaced by URL that is fetched from a remote manifest file:
 
 ```js
 new ModuleFederationTypesPlugin({
   remoteManifestUrls: {
-    mfdCommon: 'https://localhost:4480/remotes/dev/mfd-common-remote-entry.json',
+    mfeApp: 'https://localhost:4480/remotes/dev/mfe-app-remote-entry.json',
     registry: 'https://localhost:4480/remotes/dev/remote-entries.json',
   }
 })
@@ -166,14 +166,37 @@ See [`RemoteManifest` and `RemotesRegistryManifest` in types.ts](src/types.ts) t
 
 Eventually the origin, e.g. `https://localhost:9082` is used to fetch the types from
 
+With the `registry` field multiple remote entry URLs can be substituted from a single JSON file.
+Depending on your architecture, this could be the only URL that you need to specify.
+Example of a `remote-entries.json` file for a Prod environment:
+
+```json
+[
+  {
+    "scope": "mfeApp1",
+    "url": "https://mydomain.com/mfd-app-1/remoteEntry.js"
+  },
+  {
+    "scope": "mfeApp2",
+    "url": "https://mydomain.com/mfd-app-2/remoteEntry.js"
+  },
+  {
+    "scope": "mfeApp3",
+    "url": "https://mydomain.com/mfd-app-3/remoteEntry.js"
+  }
+]
+```
+
+You can have registries with URLs that target bundles that was built for specific deployment environment.
+
 ### Importing from self as from remote
 
 It is also possible to add self as a remote entry to allow importing from self like from a remote.
-Example for an `mfdCommon` microapp:
+Example for an `mfeApp` microapp:
 
 ```js
 remotes: {
-  mfdCommon: 'mfdCommon@[mfdCommon]/remoteEntry.js'
+  mfeApp: 'mfeApp@[mfeAppUrl]/remoteEntry.js'
 }
 ```
 
