@@ -1,3 +1,21 @@
+<!-- TOC -->
+* [module-federation-types-plugin](#module-federation-types-plugin)
+  * [Installation](#installation)
+  * [CLI Tool](#cli-tool)
+    * [CLI options](#cli-options)
+  * [Plugin Configuration](#plugin-configuration)
+    * [Exposed modules](#exposed-modules)
+    * [`federation.config.json`](#federationconfigjson)
+    * [`webpack.config.js`](#webpackconfigjs)
+    * [Plugin Options](#plugin-options)
+  * [Consuming remote types](#consuming-remote-types)
+  * [Templated Remote URLs](#templated-remote-urls)
+    * [Importing from self as from remote](#importing-from-self-as-from-remote)
+    * [CI/CD](#cicd)
+  * [History](#history)
+  * [Feature comparison tables](#feature-comparison-tables)
+<!-- TOC -->
+
 # module-federation-types-plugin
 
 This package exposes a Webpack plugin and a node CLI command `make-federated-types`.
