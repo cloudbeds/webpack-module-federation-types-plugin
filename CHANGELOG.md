@@ -1,3 +1,10 @@
+## [1.9.1](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.9.0...v1.9.1) (2022-08-28)
+
+
+### Bug Fixes
+
+* override noEmit to emit types, needed when used alongside create-react-app ([3fc283a](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/3fc283a32ad131e7cb3c5cb82734579198739447))
+
 # [1.9.0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.8.2...v1.9.0) (2022-08-28)
 
 
