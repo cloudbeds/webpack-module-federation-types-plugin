@@ -9,14 +9,21 @@ import { assertRunningFromRoot, getFederationConfig } from './helpers/cli';
 
 assertRunningFromRoot();
 
-const argv = parseArgs(process.argv.slice(2), {
+type Argv = {
+  'global-types': string,
+  'federation-config': string,
+  'output-types-folder': string,
+}
+
+const argv = parseArgs<Argv>(process.argv.slice(2), {
   alias: {
     'global-types': 'g',
     'output-types-folder': 'o',
-  },
+    'federation-config': 'c',
+  } as Partial<Argv>,
 });
 
-const federationConfig = getFederationConfig();
+const federationConfig = getFederationConfig(argv['federation-config']);
 const compileFiles = Object.values(federationConfig.exposes);
 
 const outDir = argv['output-types-folder'] || path.join(DEFAULT_DIR_DIST, DEFAULT_DIR_EMITTED_TYPES);
