@@ -20,6 +20,8 @@ import {
   ModuleFederationTypesPluginOptions,
 } from './types';
 
+let isCompiledOnce = false;
+
 export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
   constructor(public options?: ModuleFederationTypesPluginOptions) {}
 
@@ -114,15 +116,16 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
     }
 
     if (exposes && !isCompilationDisabled) {
-      if (shouldSyncContinuously) {
-        compiler.hooks.afterEmit.tap(PLUGIN_NAME, () => {
+      compiler.hooks.afterEmit.tap(PLUGIN_NAME, () => {
+        if (shouldSyncContinuously) {
           logger.log('Compiling types on afterEmit event');
           compileTypesContinuouslyHook();
-        });
-      } else {
-        logger.log('Compile types on startup only');
-        compileTypesHook();
-      }
+        } else if (!isCompiledOnce) {
+          isCompiledOnce = true;
+          logger.log('Compile types on startup only');
+          compileTypesHook();
+        }
+      });
     }
   }
 }
