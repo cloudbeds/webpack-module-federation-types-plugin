@@ -121,7 +121,10 @@ export function rewritePathsWithExposedFederatedModules(
   declaredModulePaths.forEach((importPath) => {
     // Aliases are not included in the emitted declarations hence the need to use `endsWith`
     const [exposedModuleKey, ...exposedModuleNameAliases] = Object.keys(federationConfig.exposes)
-      .filter(key => federationConfig.exposes[key].endsWith(importPath))
+      .filter(key => (
+        federationConfig.exposes[key].endsWith(importPath)
+        || federationConfig.exposes[key].replace(/\.[^./]*$/, '').endsWith(importPath)
+      ))
       .map(key => key.replace(/^\.\//, ''));
 
     let federatedModulePath = exposedModuleKey
