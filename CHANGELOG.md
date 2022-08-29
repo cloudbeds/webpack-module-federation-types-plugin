@@ -1,3 +1,11 @@
+## [1.9.3](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.9.2...v1.9.3) (2022-08-29)
+
+
+### Bug Fixes
+
+* expand tsconfig lib name to a file name ([aedae51](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/aedae51f029de4210f35a569e0bd6504b9eb99fb))
+* support exposed module paths with file extension ([292517a](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/292517a8ffda35ee8b7abca060acb3c07f54528e))
+
 ## [1.9.2](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.9.1...v1.9.2) (2022-08-29)
 
 
