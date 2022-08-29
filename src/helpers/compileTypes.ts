@@ -31,12 +31,20 @@ export function compileTypes(exposedComponents: string[], outFile: string, dirGl
 
   const exposedFileNames = Object.values(exposedComponents);
   const { moduleResolution, ...compilerOptions } = getTSConfigCompilerOptions();
+
   Object.assign(compilerOptions, {
     declaration: true,
     emitDeclarationOnly: true,
     noEmit: false,
     outFile,
   } as ts.CompilerOptions);
+
+  // Expand lib name to a file name according to https://stackoverflow.com/a/69617124/1949503
+  if (compilerOptions.lib) {
+    compilerOptions.lib = compilerOptions.lib.map(
+      fileName => (fileName.includes('.d.ts') ? fileName : `lib.${fileName}.d.ts`).toLowerCase(),
+    );
+  }
 
   // Create a Program with an in-memory emit to avoid a case when wrong typings are downloaded
   let fileContent: string = '';
