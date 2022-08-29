@@ -1,3 +1,11 @@
+## [1.9.2](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.9.1...v1.9.2) (2022-08-29)
+
+
+### Bug Fixes
+
+* compile on startup only on afterEmit hook, fixes compatibility with CleanWebpackPlugin ([47fef2b](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/47fef2b197723f2d6475548111b5bb88bc29370b))
+* **docs:** added TOC ([f09c017](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/f09c01732a8a52dee6c13b6c41b166634fb59f04))
+
 ## [1.9.1](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.9.0...v1.9.1) (2022-08-28)
 
 
