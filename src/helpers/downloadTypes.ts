@@ -33,7 +33,7 @@ async function downloadRemoteEntryTypes(remoteName: string, dtsUrl: string, dirD
     logger.info('Updating', outFile);
     fs.writeFileSync(outFile, types);
   } else {
-    logger.log('Skipping', outFile);
+    logger.log('Typings have not changed, skipping writing', outFile);
   }
 }
 
