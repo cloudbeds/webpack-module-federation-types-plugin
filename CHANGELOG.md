@@ -1,3 +1,10 @@
+## [1.9.5](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.9.4...v1.9.5) (2022-09-02)
+
+
+### Bug Fixes
+
+* added info about the .d.ts URL location ([ec3ddbd](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/ec3ddbd174fae97f1715af24dcb515ed30e18923))
+
 ## [1.9.4](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.9.3...v1.9.4) (2022-08-29)
 
 
