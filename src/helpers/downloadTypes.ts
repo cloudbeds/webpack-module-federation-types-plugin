@@ -30,6 +30,7 @@ async function downloadRemoteEntryTypes(remoteName: string, dtsUrl: string, dirD
   }
 
   if (shouldWriteFile) {
+    logger.info('Downloaded types from', dtsUrl);
     logger.info('Updating', outFile);
     fs.writeFileSync(outFile, types);
   } else {
