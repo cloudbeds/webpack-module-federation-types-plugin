@@ -29,13 +29,19 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
     const PLUGIN_NAME = this.constructor.name;
     let logger = setLogger(compiler.getInfrastructureLogger(PLUGIN_NAME));
 
+    const remoteEntryUrls = this.options?.remoteEntryUrls;
     const remoteManifestUrls = getRemoteManifestUrls(this.options);
     const isCompilationDisabled = !!this.options?.disableTypeCompilation;
     const isDownloadDisabled = this.options?.disableDownladingRemoteTypes
       ?? process.env.DEPLOYMENT_ENV === CLOUDBEDS_DEPLOYMENT_ENV_WITH_DISABLED_REMOTE_TYPES_DOWNLOAD;
 
-    // Disable plugin when manifest URLs are not valid
-    if (!isEveryUrlValid(Object.values(remoteManifestUrls || {}))) {
+    // Disable plugin when some URLs are not valid
+    if (!isEveryUrlValid(Object.values({ ...remoteEntryUrls }))) {
+      logger.warn('One or more remote URLs are invalid:', remoteEntryUrls);
+      logger.log('Plugin disabled');
+      return;
+    }
+    if (!isEveryUrlValid(Object.values({ ...remoteManifestUrls }))) {
       logger.warn('One or more remote manifest URLs are invalid:', remoteManifestUrls);
       logger.log('Plugin disabled');
       return;
@@ -80,7 +86,13 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
 
     // Import types from remote modules
     const downloadTypesHook = async () => {
-      return downloadTypes(dirEmittedTypes, dirDownloadedTypes, remotes as Record<string, string>, remoteManifestUrls);
+      return downloadTypes(
+        dirEmittedTypes,
+        dirDownloadedTypes,
+        remotes as Record<string, string>,
+        remoteEntryUrls,
+        remoteManifestUrls,
+      );
     };
 
     // Determine whether compilation of types should be performed continuously

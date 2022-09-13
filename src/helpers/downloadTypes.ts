@@ -3,7 +3,7 @@ import fs from 'fs';
 import mkdirp from 'mkdirp';
 import path from 'path';
 
-import { RemoteManifest, RemoteManifestUrls, RemotesRegistryManifest } from '../types';
+import { RemoteManifest, RemoteManifestUrls, RemotesRegistryManifest, RemoteEntryUrls } from '../types';
 
 import { getLogger } from './logger';
 
@@ -74,13 +74,17 @@ export async function downloadTypes(
   dirEmittedTypes: string,
   dirDownloadedTypes: string,
   remotes: Record<string, string>,
+  remoteEntryUrls?: RemoteEntryUrls,
   remoteManifestUrls?: RemoteManifestUrls,
 ): Promise<void> {
   const logger = getLogger();
-  let remoteEntryURLs: Record<string, string>;
+  let remoteEntryUrlsResolved: RemoteEntryUrls = {};
 
   try {
-    remoteEntryURLs = await downloadRemoteEntryURLsFromManifests(remoteManifestUrls);
+    remoteEntryUrlsResolved = {
+      ...remoteEntryUrls,
+      ...await downloadRemoteEntryURLsFromManifests(remoteManifestUrls),
+    };
   } catch (err) {
     logger.warn('Failed to load remote manifest file: ', (err as Dict)?.url);
     logger.log(err)
@@ -91,7 +95,7 @@ export async function downloadTypes(
 
   Object.entries(remotes).forEach(([remoteName, remoteLocation]) => {
     try {
-      const remoteEntryUrl = remoteEntryURLs[remoteName] || remoteLocation.split('@')[1];
+      const remoteEntryUrl = remoteEntryUrlsResolved[remoteName] || remoteLocation.split('@')[1];
       const remoteEntryBaseUrl = remoteEntryUrl.split('/').slice(0, -1).join('/');
       const promiseDownload = downloadRemoteEntryTypes(
         remoteName,

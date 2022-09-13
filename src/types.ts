@@ -21,6 +21,7 @@ export type RemotesRegistryManifest = {
   url: string,
 }[];
 
+export type RemoteEntryUrls = Record<string, string>;
 export type RemoteManifestUrls = Record<'registry' | string, string>;
 
 export type ModuleFederationPluginOptions = ConstructorParameters<typeof container.ModuleFederationPlugin>[0];
@@ -33,6 +34,7 @@ export type ModuleFederationTypesPluginOptions = {
   disableDownladingRemoteTypes?: boolean,
   disableTypeCompilation?: boolean,
   downloadTypesWhenIdleIntervalInSeconds?: number,
+  remoteEntryUrls?: RemoteEntryUrls,
   remoteManifestUrls?: RemoteManifestUrls,
 
   cloudbedsRemoteManifestsBaseUrl?: string | 'use-domain-name',

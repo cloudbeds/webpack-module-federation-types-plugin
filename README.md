@@ -141,6 +141,7 @@ To enable verbose logging add folowing in webpack config:
 |                 `disableTypeCompilation` |      `boolean`       |       `false`        | Disable compilation of types                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 |           `disableDownladingRemoteTypes` |      `boolean`       |       `false`        | Disable downloading of remote types                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | `downloadTypesWhenIdleIntervalInSeconds` |    `number`, `-1`    |         `60`         | Synchronize types continusouly - compile types after every compilation, download when idle with a specified delay value in seconds. <br><br> `-1` - disables continuous synchronization (compile and download will happen only on startup).                                                                                                                                                                                                                                         |
+|                        `remoteEntryUrls` |  `RemoteEntryUrls`   |         `{}`         | Base URLs for types. These should target compiled bundles that also contain the types. E.g. with `{ mfeApp: 'https://assets.mydomain.com/mfe-app' }` the types will be downloaded from `'https://assets.mydomain.com/mfe-app/@types/index.d.ts'`. More details available in [this section](#templated-remote-urls)                                                                                                                                                                  |
 |                     `remoteManifestUrls` | `RemoteManifestUrls` |         `{}`         | URLs to remote manifest files. A manifest contains a URL to a remote entry that is substituted in runtime.  <br><br> More details available in [this section](#templated-remote-urls)                                                                                                                                                                                                                                                                                               |
 |        `cloudbedsRemoteManifestsBaseUrl` |       `string`       | `'/remotes/dev-ga'`  | Base URL for remote manifest files (a.k.a remote entry configs) that is specific to Cloudbeds microapps <br><br> _ Examples:_ <br> `http://localhost:4480/remotes/dev` <br> `https://cb-front.cloudbeds-dev.com/remotes/[env]` <br> `use-domain-name`. <br><br> Following remote manifest files are downloaded: `mfd-common-remote-entry.json` and `mfd-remote-entries.json` files). <br><br> `remoteManifestUrls` is ignored when this setting has a value other than `undefined`. |
 
@@ -166,51 +167,65 @@ _Example:_ for a `mfeApp` remote entry:
 ```
 
 The `[mfeAppUrl]` placeholder refers to `window.mfeAppUrl` in runtime.
-That part is replaced by URL that is fetched from a remote manifest file:
+There are several ways one can resolve this placeholder:
+
+  * `remoteEntryUrls` option
+  * `remoteManifestUrls` option
+  * `cloudbedsRemoteManifestsBaseUrl` option (Cloudbeds specific)
+
+The `remoteEntryUrls` option is a simple key-value map of remote names and their bundle's base URL.
+
+### Remote Manifest files
+
+Manifest files, when provided, are fetched every time the types are downloded.
+
+Example of a configuration:
 
 ```js
 new ModuleFederationTypesPlugin({
   remoteManifestUrls: {
-    mfeApp: 'https://localhost:4480/remotes/dev/mfe-app-remote-entry.json',
+    mfeApp1: 'https://localhost:4480/remotes/dev/mfe-app-1-remote-entry.json',
+    mfeApp2: 'https://localhost:4480/remotes/dev/mfe-app-2-remote-entry.json',
     registry: 'https://localhost:4480/remotes/dev/remote-entries.json',
   }
 })
 ```
 
-or
+It's expected that a JSON will contain an object with a `url` property:
 
-```js
-new ModuleFederationTypesPlugin({
-  cloudbedsRemoteManifestsBaseUrl: 'https://localhost:4480/remotes/dev',
-})
+```json
+{
+  "url": "https://assets.mydomain.com/mfe-app/remoteEntry.js"
+}
 ```
 
-See [`RemoteManifest` and `RemotesRegistryManifest` in types.ts](src/types.ts) to observe the signature.
-
-Eventually the origin, e.g. `https://localhost:9082` is used to fetch the types from
-
-With the `registry` field multiple remote entry URLs can be substituted from a single JSON file.
+With the `registry` field, multiple remote entry URLs can be substituted from a single JSON file.
 Depending on your architecture, this could be the only URL that you need to specify.
 Example of a `remote-entries.json` file for a Prod environment:
+
 
 ```json
 [
   {
     "scope": "mfeApp1",
-    "url": "https://mydomain.com/mfd-app-1/remoteEntry.js"
+    "url": "https://assets.mydomain.com/mfe-app-1/remoteEntry.js"
   },
   {
     "scope": "mfeApp2",
-    "url": "https://mydomain.com/mfd-app-2/remoteEntry.js"
+    "url": "https://assets.mydomain.com/mfe-app-2/remoteEntry.js"
   },
   {
     "scope": "mfeApp3",
-    "url": "https://mydomain.com/mfd-app-3/remoteEntry.js"
+    "url": "https://assets.mydomain.com/mfe-app-3/remoteEntry.js"
   }
 ]
 ```
 
 You can have registries with URLs that target bundles that was built for specific deployment environment.
+
+The origin of the microapp's URL is used as the base URL for downloaded types
+
+Example: `https://assets.mydomain.com/mfe-app-1/@types/index.d.ts`
 
 ### Importing from self as from remote
 
