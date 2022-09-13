@@ -55,7 +55,10 @@ describe('ModuleFederationTypesPlugin', () => {
         mfdTranslations: 'mfdTranslations@[mfdTranslationsUrl]/remoteEntry.js',
       }
     };
-    const typesPluginOptions = {
+    const typesPluginOptions: ModuleFederationTypesPluginOptions = {
+      remoteEntryUrls: {
+        mfeApp: 'https://artifacts.example.com/mfe-app',
+      },
       remoteManifestUrls: {
         [CloudbedsMicrofrontend.Common]: 'https://example.com/mfd-common-remote-entries.json',
         registry: 'https://example.com/remote-entries.json',
@@ -67,6 +70,7 @@ describe('ModuleFederationTypesPlugin', () => {
       DEFAULT_DIR_EMITTED_TYPES,
       DEFAULT_DIR_DOWNLOADED_TYPES,
       moduleFederationPluginOptions.remotes,
+      typesPluginOptions.remoteEntryUrls,
       typesPluginOptions.remoteManifestUrls,
     ]);
   });
