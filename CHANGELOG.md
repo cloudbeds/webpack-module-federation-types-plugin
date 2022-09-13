@@ -1,3 +1,16 @@
+# [1.10.0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.9.5...v1.10.0) (2022-09-13)
+
+
+### Bug Fixes
+
+* replace original remote name with aliased in downloaded types ([cdc3fd0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/cdc3fd07cefc3ea1262817f46e4a9e10af587de1))
+* test for remoteEntryUrls ([98e6d8e](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/98e6d8e35da65faf85d6182987c765888502d13c))
+
+
+### Features
+
+* added remoteEntryUrls option ([2a96245](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/2a9624534d8cbdc975526c86f15d48f18a5b4df3))
+
 ## [1.9.5](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.9.4...v1.9.5) (2022-09-02)
 
 
