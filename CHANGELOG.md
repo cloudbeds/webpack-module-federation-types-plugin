@@ -1,3 +1,10 @@
+# [1.11.0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.10.0...v1.11.0) (2022-09-22)
+
+
+### Features
+
+* changed the way types are downloaded on startup to ensure that the types are included in the compilation ([1565310](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/1565310c268aa0305d65bd6f78303a8b0fa72f2b))
+
 # [1.10.0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.9.5...v1.10.0) (2022-09-13)
 
 
