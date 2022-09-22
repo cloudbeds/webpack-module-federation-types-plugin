@@ -35,6 +35,12 @@ function installPlugin(
       afterEmit: {
         tap: mockAfterEmit as unknown,
       },
+      beforeRun: {
+        tapPromise: (_, callback) => callback({} as Compiler) as unknown,
+      },
+      watchRun: {
+        tapPromise: (_, callback) => callback({} as Compiler) as unknown,
+      },
     },
   } as Compiler);
 
