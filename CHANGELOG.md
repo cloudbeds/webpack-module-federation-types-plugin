@@ -1,3 +1,10 @@
+## [1.11.1](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.11.0...v1.11.1) (2022-09-22)
+
+
+### Bug Fixes
+
+* changed startup compilation order in watch mode ([49113a9](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/49113a97b284bb308633db5ca61b5dde0aa2b143))
+
 # [1.11.0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.10.0...v1.11.0) (2022-09-22)
 
 
