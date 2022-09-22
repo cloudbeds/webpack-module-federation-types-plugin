@@ -21,6 +21,7 @@ import {
 } from './types';
 
 let isCompiledOnce = false;
+let isDownloadedOnce = false;
 
 export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
   constructor(public options?: ModuleFederationTypesPluginOptions) {}
@@ -75,7 +76,7 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
     const outFile = path.join(dirDist, dirEmittedTypes, 'index.d.ts');
 
     // Create types for exposed modules
-    const compileTypesHook = () => {
+    const compileTypesAfterEmit = () => {
       const { isSuccess, typeDefinitions } = compileTypes(exposes as string[], outFile, dirGlobalTypes);
       if (isSuccess) {
         rewritePathsWithExposedFederatedModules(federationPluginOptions as FederationConfig, outFile, typeDefinitions);
@@ -85,7 +86,7 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
     };
 
     // Import types from remote modules
-    const downloadTypesHook = async () => {
+    const downloadRemoteTypes = async () => {
       return downloadTypes(
         dirEmittedTypes,
         dirDownloadedTypes,
@@ -103,7 +104,7 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
     const downloadTypesWhenIdleIntervalInSeconds = this.options?.downloadTypesWhenIdleIntervalInSeconds
       || DEFAULT_DOWNLOAD_TYPES_INTERVAL_IN_SECONDS;
 
-    const compileTypesContinuouslyHook = () => {
+    const compileTypesContinuouslyAfterEmit = () => {
       // Reset and create an Interval to redownload types every 60 seconds after compilation
       if (remotes && !this.options?.disableDownladingRemoteTypes) {
         clearInterval(recompileIntervalId);
@@ -113,29 +114,38 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
               new Date().toLocaleString(),
               'Downloading types every', downloadTypesWhenIdleIntervalInSeconds, 'seconds',
             );
-            downloadTypesHook();
+            downloadRemoteTypes();
           },
           1000 * downloadTypesWhenIdleIntervalInSeconds,
         );
       }
 
-      compileTypesHook();
+      compileTypesAfterEmit();
     };
 
     if (remotes && !this.options?.disableDownladingRemoteTypes) {
-      logger.log('Downloading types on startup');
-      await downloadTypesHook();
+      compiler.hooks.beforeRun.tapPromise(PLUGIN_NAME, () => {
+        logger.log('Downloading types on startup');
+        return downloadRemoteTypes();
+      });
+      compiler.hooks.watchRun.tapPromise(PLUGIN_NAME, () => {
+        if (!isDownloadedOnce) {
+          logger.log('Downloading types on startup');
+          return downloadRemoteTypes();
+        }
+        return Promise.resolve();
+      });
     }
 
     if (exposes && !isCompilationDisabled) {
       compiler.hooks.afterEmit.tap(PLUGIN_NAME, () => {
         if (shouldSyncContinuously) {
           logger.log('Compiling types on afterEmit event');
-          compileTypesContinuouslyHook();
+          compileTypesContinuouslyAfterEmit();
         } else if (!isCompiledOnce) {
           isCompiledOnce = true;
           logger.log('Compile types on startup only');
-          compileTypesHook();
+          compileTypesAfterEmit();
         }
       });
     }
