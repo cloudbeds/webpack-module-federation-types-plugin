@@ -38,8 +38,8 @@ function installPlugin(
       beforeRun: {
         tapPromise: (_, callback) => callback({} as Compiler) as unknown,
       },
-      watchRun: {
-        tapPromise: (_, callback) => callback({} as Compiler) as unknown,
+      watchClose: {
+        tap: (_, callback) => callback() as unknown,
       },
     },
   } as Compiler);
