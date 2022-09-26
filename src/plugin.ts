@@ -128,7 +128,7 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
         logger.log('Downloading types on startup');
         return downloadRemoteTypes();
       });
-      compiler.hooks.watchClose.tap(PLUGIN_NAME, () => {
+      compiler.hooks.watchRun.tap(PLUGIN_NAME, () => {
         if (!isDownloadedOnce) {
           logger.log('Downloading types on startup');
           return downloadRemoteTypes();
