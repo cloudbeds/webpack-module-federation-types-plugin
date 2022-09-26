@@ -1,3 +1,10 @@
+## [1.11.2](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.11.1...v1.11.2) (2022-09-26)
+
+
+### Bug Fixes
+
+* watch hook ([1ccd15a](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/1ccd15a043e9376451e73217fd0dfd3114f11889))
+
 ## [1.11.1](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.11.0...v1.11.1) (2022-09-22)
 
 
