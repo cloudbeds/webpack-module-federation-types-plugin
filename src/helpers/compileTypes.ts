@@ -129,7 +129,7 @@ export function rewritePathsWithExposedFederatedModules(
 
     let federatedModulePath = exposedModuleKey
       ? `${federationConfig.name}/${exposedModuleKey}`
-      : `@not-for-import/${federationConfig.name}/${importPath}`;
+      : `#not-for-import/${federationConfig.name}/${importPath}`;
 
     federatedModulePath = federatedModulePath.replace(/\/index$/, '')
 
