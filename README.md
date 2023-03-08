@@ -150,7 +150,7 @@ To enable verbose logging add folowing in webpack config:
 
 When you build your microapp, the plugin will download typings to _src/@types/remotes_ folder
 
-Modules that are not intended to be imported are prefixed with `@not-for-import/`.
+Modules that are not intended to be imported are prefixed with `#not-for-import/`.
 These are the modules that were imported in compiled exposed modules but not listed in `exposes` section.
 To remain swift and unobtrusive, compiled types are not processed with an AST visitor like esprima.
 That said PRs are welcome if someone sees a better solution.
