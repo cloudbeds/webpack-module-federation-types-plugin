@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  permissions: write-all
   publish:
+    permissions: write-all
     uses: cloudbeds/workflows/.github/workflows/npm-test-build-release-standard-token.yml@main
     secrets: inherit
