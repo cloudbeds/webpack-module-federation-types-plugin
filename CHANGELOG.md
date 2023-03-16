@@ -1,3 +1,10 @@
+## [1.11.4](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.11.3...v1.11.4) (2023-03-16)
+
+
+### Bug Fixes
+
+* **ci:** removed permission field ([c808f1e](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/c808f1ebe1e432cd73f524f506ee4413e67c2144))
+
 ## [1.11.3](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.11.2...v1.11.3) (2023-03-16)
 
 
