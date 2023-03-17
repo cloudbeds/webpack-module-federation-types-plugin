@@ -1,3 +1,10 @@
+## [1.11.5](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.11.4...v1.11.5) (2023-03-17)
+
+
+### Bug Fixes
+
+* **ci:** changed publish workflow ([927ba17](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/927ba1712cec38e9c1eae8f3b544d1a086059597))
+
 ## [1.11.4](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.11.3...v1.11.4) (2023-03-16)
 
 
