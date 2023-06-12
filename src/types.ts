@@ -2,7 +2,7 @@ import { container } from 'webpack';
 
 export type FederationConfig = {
   name: string,
-  exposes: Record<string, string>,
+  exposes: Dict<string>,
 }
 
 export type CompileTypesResult = {
@@ -21,7 +21,7 @@ export type RemotesRegistryManifest = {
   url: string,
 }[];
 
-export type RemoteEntryUrls = Record<string, string>;
+export type RemoteEntryUrls = Dict<string>;
 export type RemoteManifestUrls = Record<'registry' | string, string>;
 
 export type ModuleFederationPluginOptions = ConstructorParameters<typeof container.ModuleFederationPlugin>[0];
@@ -36,6 +36,7 @@ export type ModuleFederationTypesPluginOptions = {
   downloadTypesWhenIdleIntervalInSeconds?: number,
   remoteEntryUrls?: RemoteEntryUrls,
   remoteManifestUrls?: RemoteManifestUrls,
+  remoteManifestUrl?: string,
 
-  cloudbedsRemoteManifestsBaseUrl?: string | 'use-domain-name',
+  cloudbedsRemoteManifestsBaseUrl?: string | /** @deprecated */ 'use-domain-name' | 'dev-ga',
 }

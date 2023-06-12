@@ -133,17 +133,17 @@ To enable verbose logging add folowing in webpack config:
 
 ### Plugin Options
 
-|                                  Setting |        Value         |       Default        | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-|-----------------------------------------:|:--------------------:|:--------------------:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|                        `dirEmittedTypes` |       `string`       |       `@types`       | Path to the output folder for emitted types, relative to the distribution folder                                                                                                                                                                                                                                                                                                                                                                                                    |
-|                         `dirGlobalTypes` |       `string`       |     `src/@types`     | Path to project's global ambient type definitions, relative to the working dir                                                                                                                                                                                                                                                                                                                                                                                                      |
-|                     `dirDownloadedTypes` |       `string`       | `src/@types/remotes` | Path to the output folder for downloaded types                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-|                 `disableTypeCompilation` |      `boolean`       |       `false`        | Disable compilation of types                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-|           `disableDownladingRemoteTypes` |      `boolean`       |       `false`        | Disable downloading of remote types                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| `downloadTypesWhenIdleIntervalInSeconds` |    `number`, `-1`    |         `60`         | Synchronize types continusouly - compile types after every compilation, download when idle with a specified delay value in seconds. <br><br> `-1` - disables continuous synchronization (compile and download will happen only on startup).                                                                                                                                                                                                                                         |
-|                        `remoteEntryUrls` |  `RemoteEntryUrls`   |         `{}`         | Base URLs for types. These should target compiled bundles that also contain the types. E.g. with `{ mfeApp: 'https://assets.mydomain.com/mfe-app' }` the types will be downloaded from `'https://assets.mydomain.com/mfe-app/@types/index.d.ts'`. More details available in [this section](#templated-remote-urls)                                                                                                                                                                  |
-|                     `remoteManifestUrls` | `RemoteManifestUrls` |         `{}`         | URLs to remote manifest files. A manifest contains a URL to a remote entry that is substituted in runtime.  <br><br> More details available in [this section](#templated-remote-urls)                                                                                                                                                                                                                                                                                               |
-|        `cloudbedsRemoteManifestsBaseUrl` |       `string`       | `'/remotes/dev-ga'`  | Base URL for remote manifest files (a.k.a remote entry configs) that is specific to Cloudbeds microapps <br><br> _ Examples:_ <br> `http://localhost:4480/remotes/dev` <br> `https://cb-front.cloudbeds-dev.com/remotes/[env]` <br> `use-domain-name`. <br><br> Following remote manifest files are downloaded: `mfd-common-remote-entry.json` and `mfd-remote-entries.json` files). <br><br> `remoteManifestUrls` is ignored when this setting has a value other than `undefined`. |
+|                                  Setting |        Value         |       Default        | Description                                                                                                                                                                                                                                                                                                                              |
+|-----------------------------------------:|:--------------------:|:--------------------:|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|                        `dirEmittedTypes` |       `string`       |       `@types`       | Path to the output folder for emitted types, relative to the distribution folder                                                                                                                                                                                                                                                         |
+|                         `dirGlobalTypes` |       `string`       |     `src/@types`     | Path to project's global ambient type definitions, relative to the working dir                                                                                                                                                                                                                                                           |
+|                     `dirDownloadedTypes` |       `string`       | `src/@types/remotes` | Path to the output folder for downloaded types                                                                                                                                                                                                                                                                                           |
+|                 `disableTypeCompilation` |      `boolean`       |       `false`        | Disable compilation of types                                                                                                                                                                                                                                                                                                             |
+|           `disableDownladingRemoteTypes` |      `boolean`       |       `false`        | Disable downloading of remote types                                                                                                                                                                                                                                                                                                      |
+| `downloadTypesWhenIdleIntervalInSeconds` |    `number`, `-1`    |         `60`         | Synchronize types continusouly - compile types after every compilation, download when idle with a specified delay value in seconds. <br><br> `-1` - disables continuous synchronization (compile and download will happen only on startup).                                                                                              |
+|                        `remoteEntryUrls` |  `RemoteEntryUrls`   |         `{}`         | Base URLs for types. These should target compiled bundles that also contain the types. E.g. with `{ mfeApp: 'https://assets.mydomain.com/mfe-app' }` the types will be downloaded from `'https://assets.mydomain.com/mfe-app/@types/index.d.ts'`. More details available in [this section](#templated-remote-urls)                       |
+|                     `remoteManifestUrls` | `RemoteManifestUrls` |         `{}`         | URLs to remote manifest files. A manifest contains a URL to a remote entry that is substituted in runtime.  <br><br> More details available in [this section](#templated-remote-urls)                                                                                                                                                    |
+|        `cloudbedsRemoteManifestsBaseUrl` |       `string`       | `'/remotes/dev-ga'`  | Base URL for remote `remote-entries.json` manifest file that is specific to Cloudbeds microapps <br><br> _Examples:_ <br> `http://localhost:4480/remotes/dev` (or `/dev-docker`) <br> `https://cb-front.cloudbeds-dev.com/remotes/[env]`. <br><br> `remoteManifestUrls` is ignored when this setting has a value other than `undefined`. |
 
 
 ## Consuming remote types
@@ -170,7 +170,7 @@ The `[mfeAppUrl]` placeholder refers to `window.mfeAppUrl` in runtime.
 There are several ways one can resolve this placeholder:
 
   * `remoteEntryUrls` option
-  * `remoteManifestUrls` option
+  * `remoteManifestUrls` or `remoteManifestUrl` option
   * `cloudbedsRemoteManifestsBaseUrl` option (Cloudbeds specific)
 
 The `remoteEntryUrls` option is a simple key-value map of remote names and their bundle's base URL.
@@ -191,6 +191,14 @@ new ModuleFederationTypesPlugin({
 })
 ```
 
+Example with a single manifest file:
+
+```js
+new ModuleFederationTypesPlugin({
+  remoteManifestUrl: 'https://localhost:4480/remotes/dev/remote-entries.json',
+})
+```
+
 It's expected that a JSON will contain an object with a `url` property:
 
 ```json
@@ -199,7 +207,8 @@ It's expected that a JSON will contain an object with a `url` property:
 }
 ```
 
-With the `registry` field, multiple remote entry URLs can be substituted from a single JSON file.
+For the `registry` field in `remoteManifestUrls` or for the single `remoteManifestUrl` option,
+multiple remote entry URLs can be substituted in a single JSON file.
 Depending on your architecture, this could be the only URL that you need to specify.
 Example of a `remote-entries.json` file for a Prod environment:
 
@@ -220,6 +229,18 @@ Example of a `remote-entries.json` file for a Prod environment:
   }
 ]
 ```
+
+An alternative format for the manifest is an object:
+
+```json
+{
+  "mfe-app-1": "https://assets.mydomain.com/mfe-app-1/remoteEntry.js",
+  "mfe-app-2": "https://assets.mydomain.com/mfe-app-2/remoteEntry.js",
+  "mfe-app-3": "https://assets.mydomain.com/mfe-app-3/remoteEntry.js"
+}
+```
+
+Note that in this case the key is converted to kebabCase and used as a scope name.
 
 You can have registries with URLs that target bundles that was built for specific deployment environment.
 
