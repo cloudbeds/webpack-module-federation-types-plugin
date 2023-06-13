@@ -90,7 +90,7 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
       return downloadTypes(
         dirEmittedTypes,
         dirDownloadedTypes,
-        remotes as Record<string, string>,
+        remotes as Dict<string>,
         remoteEntryUrls,
         remoteManifestUrls,
       );

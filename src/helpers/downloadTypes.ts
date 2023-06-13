@@ -6,6 +6,7 @@ import path from 'path';
 import { RemoteManifest, RemoteManifestUrls, RemotesRegistryManifest, RemoteEntryUrls } from '../types';
 
 import { getLogger } from './logger';
+import { toCamelCase } from './toCamelCase';
 
 const downloadOptions: download.DownloadOptions = { rejectUnauthorized: false };
 
@@ -55,27 +56,35 @@ async function downloadRemoteEntryTypes(
 }
 
 /**
- * Download remote entry manifest files (a.k.a. remote entry configs)
- * The origin of these URLs is used as base URL to download type definitions
+ * Download remote entry manifest file(s)
+ * The origin of a remote entry URL is used as base URL for type definitions
  */
 export async function downloadRemoteEntryURLsFromManifests(remoteManifestUrls?: RemoteManifestUrls)
-  : Promise<Record<string, string>> {
+  : Promise<RemoteEntryUrls> {
   if (!remoteManifestUrls) { return {}; }
 
   const logger = getLogger();
-  const remoteEntryURLs: Record<string, string> = {};
+  const remoteEntryURLs: RemoteEntryUrls = {};
 
   logger.log('Remote manifest URLs', remoteManifestUrls);
 
   const remoteManifests = (await Promise.all(
     Object.values(remoteManifestUrls).map(url => downloadRemoteEntryManifest(url))
-  )) as (RemoteManifest | RemotesRegistryManifest)[];
+  )) as (RemoteManifest | RemotesRegistryManifest | RemoteEntryUrls)[];
 
+  // Combine remote entry URLs from all manifests
   Object.keys(remoteManifestUrls).forEach((remoteName, index) => {
     if (remoteName === 'registry') {
-      (remoteManifests[index] as RemotesRegistryManifest).forEach((remoteManifest) => {
-        remoteEntryURLs[remoteManifest.scope] = remoteManifest.url;
-      });
+      const remotesManifest = remoteManifests[index];
+      if (Array.isArray(remotesManifest)) {
+        (remoteManifests[index] as RemotesRegistryManifest).forEach((remoteManifest) => {
+          remoteEntryURLs[remoteManifest.scope] = remoteManifest.url;
+        });
+      } else {
+        Object.entries(remotesManifest as RemoteEntryUrls).forEach(([appName, url]) => {
+          remoteEntryURLs[toCamelCase(appName)] = url;
+        });
+      }
     } else {
       remoteEntryURLs[remoteName] = (remoteManifests[index] as RemoteManifest).url;
     }
@@ -89,7 +98,7 @@ export async function downloadRemoteEntryURLsFromManifests(remoteManifestUrls?: 
 export async function downloadTypes(
   dirEmittedTypes: string,
   dirDownloadedTypes: string,
-  remotes: Record<string, string>,
+  remotesFromFederationConfig: Dict<string>,
   remoteEntryUrls?: RemoteEntryUrls,
   remoteManifestUrls?: RemoteManifestUrls,
 ): Promise<void> {
@@ -109,7 +118,7 @@ export async function downloadTypes(
 
   const promises: Promise<void>[] = [];
 
-  Object.entries(remotes).forEach(([remoteName, remoteLocation]) => {
+  Object.entries(remotesFromFederationConfig).forEach(([remoteName, remoteLocation]) => {
     try {
       const remoteEntryUrl = remoteEntryUrlsResolved[remoteName] || remoteLocation.split('@')[1];
       const remoteEntryBaseUrl = remoteEntryUrl.split('/').slice(0, -1).join('/');
