@@ -1,3 +1,10 @@
+# [1.12.0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.11.5...v1.12.0) (2023-06-13)
+
+
+### Features
+
+* NGU-503 support remote entry manifest with object syntax ([b9700eb](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/b9700ebec642787d42c2ff69d2eb0a9f7be7d6d6))
+
 ## [1.11.5](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.11.4...v1.11.5) (2023-03-17)
 
 
