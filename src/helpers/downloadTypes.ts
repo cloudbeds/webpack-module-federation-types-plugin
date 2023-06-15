@@ -11,12 +11,17 @@ import { toCamelCase } from './toCamelCase';
 const downloadOptions: download.DownloadOptions = { rejectUnauthorized: false };
 
 async function downloadRemoteEntryManifest(url: string): Promise<unknown> {
+  const logger = getLogger();
+
   if (url.includes('{version}')) {
     const versionJsonUrl = `${url.match(/^https:\/\/[^/]+/)}/version.json`;
     const { version } = JSON.parse((await download(versionJsonUrl, downloadOptions)).toString());
-    url.replace('{version}', version);
+    url = url.replace('{version}', version);
   }
+
+  logger.log(`Downloading remote manifest from ${url}`);
   const json = (await download(url, downloadOptions)).toString();
+
   return JSON.parse(json);
 }
 
@@ -71,6 +76,9 @@ export async function downloadRemoteEntryURLsFromManifests(remoteManifestUrls?: 
   const logger = getLogger();
   const remoteEntryURLs: RemoteEntryUrls = {};
 
+  /** @deprecated Temporary support */
+  let urlMfdCommonManifest = '';
+
   logger.log('Remote manifest URLs', remoteManifestUrls);
 
   const remoteManifests = (await Promise.all(
@@ -82,6 +90,7 @@ export async function downloadRemoteEntryURLsFromManifests(remoteManifestUrls?: 
     if (remoteName === 'registry') {
       const remotesManifest = remoteManifests[index];
       if (Array.isArray(remotesManifest)) {
+        urlMfdCommonManifest = remoteManifestUrls[remoteName].replace('remote-entries', 'mfd-common-remote-entry');
         (remoteManifests[index] as RemotesRegistryManifest).forEach((remoteManifest) => {
           remoteEntryURLs[remoteManifest.scope] = remoteManifest.url;
         });
@@ -94,6 +103,10 @@ export async function downloadRemoteEntryURLsFromManifests(remoteManifestUrls?: 
       remoteEntryURLs[remoteName] = (remoteManifests[index] as RemoteManifest).url;
     }
   });
+
+  if (urlMfdCommonManifest) {
+    remoteEntryURLs.mfdCommon = ((await downloadRemoteEntryManifest(urlMfdCommonManifest)) as RemoteManifest).url;
+  }
 
   logger.log('Remote entry URLs', remoteEntryURLs);
 
