@@ -1,3 +1,10 @@
+## [1.12.2](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.12.1...v1.12.2) (2023-06-15)
+
+
+### Bug Fixes
+
+* support dynamic version in url ([cbd0cd7](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/cbd0cd7beb4a42b0924e2d262cfb293def187e8f))
+
 ## [1.12.1](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.12.0...v1.12.1) (2023-06-13)
 
 
