@@ -11,6 +11,11 @@ import { toCamelCase } from './toCamelCase';
 const downloadOptions: download.DownloadOptions = { rejectUnauthorized: false };
 
 async function downloadRemoteEntryManifest(url: string): Promise<unknown> {
+  if (url.includes('{version}')) {
+    const versionJsonUrl = `${url.match(/^https:\/\/[^/]+/)}/version.json`;
+    const { version } = JSON.parse((await download(versionJsonUrl, downloadOptions)).toString());
+    url.replace('{version}', version);
+  }
   const json = (await download(url, downloadOptions)).toString();
   return JSON.parse(json);
 }
@@ -121,7 +126,11 @@ export async function downloadTypes(
   Object.entries(remotesFromFederationConfig).forEach(([remoteName, remoteLocation]) => {
     try {
       const remoteEntryUrl = remoteEntryUrlsResolved[remoteName] || remoteLocation.split('@')[1];
-      const remoteEntryBaseUrl = remoteEntryUrl.split('/').slice(0, -1).join('/');
+
+      const remoteEntryBaseUrl = remoteEntryUrl.endsWith('.js')
+        ? remoteEntryUrl.split('/').slice(0, -1).join('/')
+        : remoteEntryUrl;
+
       const promiseDownload = downloadRemoteEntryTypes(
         remoteName,
         remoteLocation,

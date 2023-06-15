@@ -1,5 +1,5 @@
 import {
-  CLOUDBEDS_DEV_FRONTEND_ASSETS_DOMAIN,
+  CloudbedsCloudfrontDomain,
   CLOUDBEDS_MFD_COMMON_MANIFEST_FILE_NAME,
   CLOUDBEDS_REMOTES_MANIFEST_FILE_NAME,
   CloudbedsMicrofrontend,
@@ -9,9 +9,14 @@ import { ModuleFederationTypesPluginOptions, RemoteManifestUrls } from '../types
 export function getRemoteManifestUrls(options?: ModuleFederationTypesPluginOptions): RemoteManifestUrls | undefined {
   if (options?.cloudbedsRemoteManifestsBaseUrl !== undefined) {
     let baseUrl = options?.cloudbedsRemoteManifestsBaseUrl;
-    if (!baseUrl || baseUrl === 'use-domain-name' || baseUrl === 'dev-ga') {
-      baseUrl = `${CLOUDBEDS_DEV_FRONTEND_ASSETS_DOMAIN}/remotes/dev-ga`;
+    if (!baseUrl || ['use-domain-name', 'dev', 'dev-ga'].includes(baseUrl)) {
+      baseUrl = `${CloudbedsCloudfrontDomain.Dev}/remotes/dev-ga`;
+    } else if (['stage', 'stage-ga'].includes(baseUrl)) {
+      baseUrl = `${CloudbedsCloudfrontDomain.Stage}/remotes/stage-ga/{version}`;
+    } else if (['prod', 'prod-ga'].includes(baseUrl)) {
+      baseUrl = `${CloudbedsCloudfrontDomain.Prod}/remotes/prod-ga/{version}`;
     }
+
     return {
       /** @deprecated */
       [CloudbedsMicrofrontend.Common]: `${baseUrl}/${CLOUDBEDS_MFD_COMMON_MANIFEST_FILE_NAME}`,

@@ -38,5 +38,8 @@ export type ModuleFederationTypesPluginOptions = {
   remoteManifestUrls?: RemoteManifestUrls,
   remoteManifestUrl?: string,
 
-  cloudbedsRemoteManifestsBaseUrl?: string | /** @deprecated */ 'use-domain-name' | 'dev-ga',
+  cloudbedsRemoteManifestsBaseUrl?: string | /** @deprecated */ 'use-domain-name'
+    | 'dev' | 'dev-ga'
+    | 'stage' | 'stage-ga'
+    | 'prod' | 'prod-ga',
 }

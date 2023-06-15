@@ -8,7 +8,12 @@ export const DEFAULT_DIR_DOWNLOADED_TYPES = `src/@types/remotes`;
 
 export const DEFAULT_DOWNLOAD_TYPES_INTERVAL_IN_SECONDS = 60;
 
-export const CLOUDBEDS_DEV_FRONTEND_ASSETS_DOMAIN = 'https://cb-front.cloudbeds-dev.com';
+export enum CloudbedsCloudfrontDomain {
+  Dev = 'https://cb-front.cloudbeds-dev.com',
+  Stage = 'https://cb-front.stage-ga.cloudbeds-dev.com',
+  Prod = 'https://front.cloudbeds.com',
+}
+
 /** @deprecated */
 export const CLOUDBEDS_MFD_COMMON_MANIFEST_FILE_NAME = 'mfd-common-remote-entry.json';
 export const CLOUDBEDS_REMOTES_MANIFEST_FILE_NAME = 'remote-entries.json';
