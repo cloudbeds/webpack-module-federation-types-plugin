@@ -1,3 +1,10 @@
+## [1.12.5](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.12.4...v1.12.5) (2023-06-15)
+
+
+### Bug Fixes
+
+* support legacy manifest ([7064c42](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/7064c422298163aa610a0396b85cdfa61ba22ad2))
+
 ## [1.12.4](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.12.3...v1.12.4) (2023-06-15)
 
 
