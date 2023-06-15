@@ -7,7 +7,7 @@ import { ModuleFederationTypesPluginOptions, RemoteManifestUrls } from '../types
 export function getRemoteManifestUrls(options?: ModuleFederationTypesPluginOptions): RemoteManifestUrls | undefined {
   if (options?.cloudbedsRemoteManifestsBaseUrl !== undefined) {
     let baseUrl = options?.cloudbedsRemoteManifestsBaseUrl;
-    if (!baseUrl || ['use-domain-name', 'dev', 'dev-ga'].includes(baseUrl)) {
+    if (!baseUrl || ['use-domain-name', 'dev', 'dev-ga', 'dev-idp', 'devbox'].includes(baseUrl)) {
       baseUrl = `${CloudbedsCloudfrontDomain.Dev}/remotes/dev-ga`;
     } else if (['stage', 'stage-ga'].includes(baseUrl)) {
       baseUrl = `${CloudbedsCloudfrontDomain.Stage}/remotes/stage-ga/{version}`;

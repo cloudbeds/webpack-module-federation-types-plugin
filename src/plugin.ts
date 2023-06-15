@@ -106,7 +106,7 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
 
     const compileTypesContinuouslyAfterEmit = () => {
       // Reset and create an Interval to redownload types every 60 seconds after compilation
-      if (remotes && !this.options?.disableDownladingRemoteTypes) {
+      if (remotes && !isDownloadDisabled) {
         clearInterval(recompileIntervalId);
         recompileIntervalId = setInterval(
           () => {

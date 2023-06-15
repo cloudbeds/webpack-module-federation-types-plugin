@@ -3,7 +3,7 @@ import webpack, { Compilation, Compiler } from 'webpack';
 import { downloadTypes } from './helpers/downloadTypes';
 import { ModuleFederationTypesPlugin } from './plugin';
 import { ModuleFederationPluginOptions, ModuleFederationTypesPluginOptions } from './types';
-import { CloudbedsMicrofrontend, DEFAULT_DIR_DOWNLOADED_TYPES, DEFAULT_DIR_EMITTED_TYPES } from './constants';
+import { DEFAULT_DIR_DOWNLOADED_TYPES, DEFAULT_DIR_EMITTED_TYPES } from './constants';
 
 jest.mock('./helpers/downloadTypes');
 
@@ -57,7 +57,7 @@ describe('ModuleFederationTypesPlugin', () => {
     const moduleFederationPluginOptions = {
       name: 'mfdDashboard',
       remotes: {
-        [CloudbedsMicrofrontend.Common]: `${CloudbedsMicrofrontend.Common}@[mfdCommonUrl]/remoteEntry.js`,
+        mfdCommon: `mdfCommon@[mfdCommonUrl]/remoteEntry.js`,
         mfdTranslations: 'mfdTranslations@[mfdTranslationsUrl]/remoteEntry.js',
       }
     };
@@ -66,7 +66,7 @@ describe('ModuleFederationTypesPlugin', () => {
         mfeApp: 'https://artifacts.example.com/mfe-app',
       },
       remoteManifestUrls: {
-        [CloudbedsMicrofrontend.Common]: 'https://example.com/mfd-common-remote-entries.json',
+        mfdCommon: 'https://example.com/mfd-common-remote-entries.json',
         registry: 'https://example.com/remote-entries.json',
       }
     };

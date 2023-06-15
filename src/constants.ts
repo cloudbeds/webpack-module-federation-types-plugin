@@ -16,7 +16,3 @@ export enum CloudbedsCloudfrontDomain {
 
 export const CLOUDBEDS_REMOTES_MANIFEST_FILE_NAME = 'remote-entries.json';
 export const CLOUDBEDS_DEPLOYMENT_ENV_WITH_DISABLED_REMOTE_TYPES_DOWNLOAD = 'devbox';
-
-export enum CloudbedsMicrofrontend {
-  Common = 'mfdCommon',
-}
