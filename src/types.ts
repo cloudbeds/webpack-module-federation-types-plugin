@@ -22,7 +22,7 @@ export type RemotesRegistryManifest = {
 }[];
 
 export type RemoteEntryUrls = Dict<string>;
-export type RemoteManifestUrls = Record<'registry' | string, string>;
+export type RemoteManifestUrls = Record<'artifactsBaseUrl' | 'registry' | string, string>;
 
 export type ModuleFederationPluginOptions = ConstructorParameters<typeof container.ModuleFederationPlugin>[0];
 

@@ -7,6 +7,7 @@ import { RemoteManifest, RemoteManifestUrls, RemotesRegistryManifest, RemoteEntr
 
 import { getLogger } from './logger';
 import { toCamelCase } from './toCamelCase';
+import { isValidUrl } from './validation';
 
 const downloadOptions: download.DownloadOptions = { rejectUnauthorized: false };
 
@@ -81,22 +82,24 @@ export async function downloadRemoteEntryURLsFromManifests(remoteManifestUrls?: 
 
   logger.log('Remote manifest URLs', remoteManifestUrls);
 
+  const { artifactsBaseUrl, ...manifestUrls } = remoteManifestUrls;
+
   const remoteManifests = (await Promise.all(
-    Object.values(remoteManifestUrls).map(url => downloadRemoteEntryManifest(url))
+    Object.values(manifestUrls).map(url => downloadRemoteEntryManifest(url))
   )) as (RemoteManifest | RemotesRegistryManifest | RemoteEntryUrls)[];
 
   // Combine remote entry URLs from all manifests
-  Object.keys(remoteManifestUrls).forEach((remoteName, index) => {
+  Object.keys(manifestUrls).forEach((remoteName, index) => {
     if (remoteName === 'registry') {
       const remotesManifest = remoteManifests[index];
       if (Array.isArray(remotesManifest)) {
-        urlMfdCommonManifest = remoteManifestUrls[remoteName].replace('remote-entries', 'mfd-common-remote-entry');
+        urlMfdCommonManifest = manifestUrls[remoteName].replace('remote-entries', 'mfd-common-remote-entry');
         (remoteManifests[index] as RemotesRegistryManifest).forEach((remoteManifest) => {
           remoteEntryURLs[remoteManifest.scope] = remoteManifest.url;
         });
       } else {
-        Object.entries(remotesManifest as RemoteEntryUrls).forEach(([appName, url]) => {
-          remoteEntryURLs[toCamelCase(appName)] = url;
+        Object.entries(manifestUrls as RemoteEntryUrls).forEach(([appName, url]) => {
+          remoteEntryURLs[toCamelCase(appName)] = isValidUrl(url) ? url : `${artifactsBaseUrl}/${url}`;
         });
       }
     } else {
