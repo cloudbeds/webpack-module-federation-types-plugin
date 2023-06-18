@@ -1,3 +1,10 @@
+## [1.12.11](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.12.10...v1.12.11) (2023-06-18)
+
+
+### Bug Fixes
+
+* remote manifest url ([168847f](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/168847fefbc954e42127c2c6ac0224c3e604ca97))
+
 ## [1.12.10](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.12.9...v1.12.10) (2023-06-18)
 
 
