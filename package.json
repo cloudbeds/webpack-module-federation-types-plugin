@@ -22,7 +22,7 @@
   "dependencies": {
     "download": "^8.0.0",
     "minimist": "^1.2.8",
-    "mkdirp": "^3.0.1"
+    "mkdirp": "^2.1.6"
   },
   "devDependencies": {
     "@types/download": "^8.0.2",
