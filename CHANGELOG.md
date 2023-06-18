@@ -1,3 +1,12 @@
+## [1.12.8](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.12.7...v1.12.8) (2023-06-18)
+
+
+### Bug Fixes
+
+* base url condition ([09c97f8](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/09c97f8338541c23d915b97283362a2b7e233818))
+* bump deps ([c6d758d](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/c6d758ddeb094a3b6082fb96bd07b3d21a915b15))
+* missing output ([9675969](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/9675969c758447ecd5b1ba2e13a7e1a05e20e2be))
+
 ## [1.12.7](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.12.6...v1.12.7) (2023-06-18)
 
 
