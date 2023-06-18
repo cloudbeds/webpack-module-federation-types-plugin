@@ -56,7 +56,7 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
 
     // Get ModuleFederationPlugin config
     const federationOptions = compiler.options.plugins.find((plugin) => {
-      return plugin.constructor.name === 'ModuleFederationPlugin';
+      return plugin!.constructor.name === 'ModuleFederationPlugin';
     });
     const federationPluginOptions: ModuleFederationPluginOptions = (federationOptions as any)?._options;
     if (!federationPluginOptions?.name) {

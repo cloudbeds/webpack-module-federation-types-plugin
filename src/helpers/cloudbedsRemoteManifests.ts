@@ -37,5 +37,5 @@ export function getRemoteManifestUrls(options?: ModuleFederationTypesPluginOptio
     }
   }
 
-  return undefined;
+  return options?.remoteManifestUrls;
 }
