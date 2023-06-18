@@ -3,18 +3,24 @@ import {
   CLOUDBEDS_REMOTES_MANIFEST_FILE_NAME,
 } from '../constants';
 import { ModuleFederationTypesPluginOptions, RemoteManifestUrls } from '../types';
+import { isValidUrl } from './validation';
 
 export function getRemoteManifestUrls(options?: ModuleFederationTypesPluginOptions): RemoteManifestUrls | undefined {
   if (options?.cloudbedsRemoteManifestsBaseUrl !== undefined) {
-    let artifactsBaseUrl: string = CloudbedsCloudfrontDomain.Dev as string;
-    let manifestBaseUrl = `${CloudbedsCloudfrontDomain.Dev}/remotes/dev-ga`;
+    let artifactsBaseUrl = '';
+    let manifestBaseUrl = options?.cloudbedsRemoteManifestsBaseUrl;
 
-    if (['stage', 'stage-ga'].includes(manifestBaseUrl)) {
-      artifactsBaseUrl = `${CloudbedsCloudfrontDomain.Stage}/builds`;
-      manifestBaseUrl = `${CloudbedsCloudfrontDomain.Stage}/remotes/stage-ga/{version}`;
-    } else if (['prod', 'prod-ga'].includes(manifestBaseUrl)) {
-      artifactsBaseUrl = `${CloudbedsCloudfrontDomain.Prod}/builds`;
-      manifestBaseUrl = `${CloudbedsCloudfrontDomain.Prod}/remotes/prod-ga/{version}`;
+    if (!isValidUrl(manifestBaseUrl)) {
+      artifactsBaseUrl = CloudbedsCloudfrontDomain.Dev;
+      manifestBaseUrl = `${CloudbedsCloudfrontDomain.Dev}/remotes/dev-ga`;
+
+      if (['stage', 'stage-ga'].includes(manifestBaseUrl)) {
+        artifactsBaseUrl = `${CloudbedsCloudfrontDomain.Stage}/builds`;
+        manifestBaseUrl = `${CloudbedsCloudfrontDomain.Stage}/remotes/stage-ga/{version}`;
+      } else if (['prod', 'prod-ga'].includes(manifestBaseUrl)) {
+        artifactsBaseUrl = `${CloudbedsCloudfrontDomain.Prod}/builds`;
+        manifestBaseUrl = `${CloudbedsCloudfrontDomain.Prod}/remotes/prod-ga/{version}`;
+      }
     }
 
     return {
