@@ -98,8 +98,8 @@ export async function downloadRemoteEntryURLsFromManifests(remoteManifestUrls?: 
           remoteEntryURLs[remoteManifest.scope] = remoteManifest.url;
         });
       } else {
-        Object.entries(manifestUrls as RemoteEntryUrls).forEach(([appName, url]) => {
-          remoteEntryURLs[toCamelCase(appName)] = isValidUrl(url) ? url : `${artifactsBaseUrl}/${url}`;
+        Object.entries(remotesManifest as RemoteEntryUrls).forEach(([appName, url]) => {
+          remoteEntryURLs[toCamelCase(appName)] = isValidUrl(url) ? url : `${artifactsBaseUrl}/${appName}/${url}`;
         });
       }
     } else {
