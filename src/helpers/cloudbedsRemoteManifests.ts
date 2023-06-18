@@ -18,13 +18,13 @@ export function getRemoteManifestUrls(options?: ModuleFederationTypesPluginOptio
         artifactsBaseUrl = `${CloudbedsCloudfrontDomain.Prod}/builds`;
         manifestBaseUrl = `${CloudbedsCloudfrontDomain.Prod}/remotes/prod-ga/{version}`;
       } else {
-        artifactsBaseUrl = CloudbedsCloudfrontDomain.Dev;
+        artifactsBaseUrl = `${CloudbedsCloudfrontDomain.Dev}/branches`;
         manifestBaseUrl = `${CloudbedsCloudfrontDomain.Dev}/remotes/dev-ga`;
       }
     }
 
     return {
-      artifactsBaseUrl,
+      ...(artifactsBaseUrl ? { artifactsBaseUrl } : null),
       registry: `${manifestBaseUrl}/${CLOUDBEDS_REMOTES_MANIFEST_FILE_NAME}`,
       ...options?.remoteManifestUrls,
     }
