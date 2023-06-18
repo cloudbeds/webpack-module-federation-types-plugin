@@ -1,3 +1,10 @@
+## [1.12.7](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.12.6...v1.12.7) (2023-06-18)
+
+
+### Bug Fixes
+
+* support base url for stage and prod env ([7ca2f02](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/7ca2f0267c4a278a73ad706c3b8e9a58a7b9f23c))
+
 ## [1.12.6](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.12.5...v1.12.6) (2023-06-18)
 
 
