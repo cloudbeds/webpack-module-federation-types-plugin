@@ -1,3 +1,10 @@
+## [1.12.12](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.12.11...v1.12.12) (2023-06-18)
+
+
+### Bug Fixes
+
+* absence of artifacts base url ([12c49a2](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/12c49a2a1334db67aa41342ee2620c7cb96539aa))
+
 ## [1.12.11](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.12.10...v1.12.11) (2023-06-18)
 
 
