@@ -8,9 +8,9 @@ import { getLogger } from './logger';
 import { CompileTypesResult, FederationConfig } from '../types';
 import { getAllFilePaths } from './files';
 
-export function getTSConfigCompilerOptions(): ts.CompilerOptions {
+export function getTSConfigCompilerOptions(tsconfig: string): ts.CompilerOptions {
   const logger = getLogger();
-  const tsconfigPath = path.resolve('tsconfig.json');
+  const tsconfigPath = path.resolve(tsconfig);
   if (!tsconfigPath) {
     logger.error('ERROR: Could not find a valid tsconfig.json');
     process.exit(1);
@@ -26,11 +26,11 @@ export function reportCompileDiagnostic(diagnostic: ts.Diagnostic): void {
   logger.log('         at', `${diagnostic.file!.fileName}:${line + 1}`, '\n');
 }
 
-export function compileTypes(exposedComponents: string[], outFile: string, dirGlobalTypes: string): CompileTypesResult {
+export function compileTypes(tsconfigPath: string, exposedComponents: string[], outFile: string, dirGlobalTypes: string): CompileTypesResult {
   const logger = getLogger();
 
   const exposedFileNames = Object.values(exposedComponents);
-  const { moduleResolution, ...compilerOptions } = getTSConfigCompilerOptions();
+  const { moduleResolution, ...compilerOptions } = getTSConfigCompilerOptions(tsconfigPath);
 
   Object.assign(compilerOptions, {
     declaration: true,

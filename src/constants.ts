@@ -1,4 +1,5 @@
 export const FEDERATION_CONFIG_FILE = 'federation.config.json';
+export const TS_CONFIG_FILE = 'tsconfig.json';
 
 export const DEFAULT_DIR_DIST = 'dist';
 export const DEFAULT_DIR_EMITTED_TYPES = '@types';
