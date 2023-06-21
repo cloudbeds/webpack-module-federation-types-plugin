@@ -40,7 +40,7 @@ It is useful for testing and debugging purposes or when it is not desired to upd
 
 This script should not be used in CI as the `build` script, that executes the plugin, already writes the types.
 
-The main requirement for the tool is the existance of `federation.config.json` file.
+The main requirement for the tool is the existance of a `federation.config.json` file.
 
 It can be called like so:
 
@@ -60,19 +60,20 @@ Or it can be added to `package.json`:
 
 ### CLI options
 
-| Option                        | Default value | Description                                                                    |
-|-------------------------------|---------------|--------------------------------------------------------------------------------|
-| `--output-types-folder`, `-o` | `dist/@types` | Path to the output folder, absolute or relative to the working directory       |
-| `--global-types`, `-g`        | `src/@types`  | Path to project's global ambient type definitions, relative to the working dir |
+| Option                         | Default value | Description                                                                    |
+|--------------------------------|---------------|--------------------------------------------------------------------------------|
+| `--output-types-folder`, `-o`  | `dist/@types` | Path to the output folder, absolute or relative to the working directory       |
+| `--global-types`, `-g`         | `src/@types`  | Path to project's global ambient type definitions, relative to the working dir |
+| `--  'federation-config`, `-c` | `src/@types`  | Path to federation.config, relative to the working dir                         |
 
 ## Plugin Configuration
 
 ### Exposed modules
 
 Create a `federation.config.json` that will contain the remote name and exported members.
-This file is mandatory for the standlone script but not required for the plugin.
+This file is mandatory for the standalone script but not required for the plugin.
 
-Properties of this object can be used in Webpack's `ModuleFederationPlugin`
+Properties of this object can be used in Webpacks `ModuleFederationPlugin`
 configuration object and required by the standalone script. Example:
 
 ### `federation.config.json`
@@ -326,5 +327,3 @@ only, which is updated on every download.
 | ruanyl/webpack-remote-types-plugin                | -                                                    | `types/[name]-dts`   | download on `beforeRun` and `watchRun`                                                                                                                                                        |
 | @module-federation/typescript                     | folders in <br> `dist/@mf-typescript`                | `@mf-typescript`     | compile and download on `afterCompile` (leads to double compile), <br> redo every 1 minute when idle                                                                                          |
 | @cloudbeds/webpack-module-federation-types-plugin | file in <br> `dist/@types`                           | `src/@types/remotes` | download on startup with `beforeRun` for build mode and `watchRun` after first compilation in watch mode <br> Compile `afterEmit` <br> Download every 1 minute or custom interval when idle |
-
-
