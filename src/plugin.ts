@@ -7,7 +7,7 @@ import {
   DEFAULT_DIR_DOWNLOADED_TYPES,
   DEFAULT_DIR_EMITTED_TYPES,
   DEFAULT_DIR_GLOBAL_TYPES,
-  DEFAULT_DOWNLOAD_TYPES_INTERVAL_IN_SECONDS,
+  DEFAULT_DOWNLOAD_TYPES_INTERVAL_IN_SECONDS, TS_CONFIG_FILE,
 } from './constants';
 import { getRemoteManifestUrls } from './helpers/cloudbedsRemoteManifests';
 import { compileTypes, rewritePathsWithExposedFederatedModules } from './helpers/compileTypes';
@@ -73,11 +73,12 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
     const dirEmittedTypes = this.options?.dirEmittedTypes || DEFAULT_DIR_EMITTED_TYPES;
     const dirGlobalTypes = this.options?.dirGlobalTypes || DEFAULT_DIR_GLOBAL_TYPES;
     const dirDownloadedTypes = this.options?.dirDownloadedTypes || DEFAULT_DIR_DOWNLOADED_TYPES;
+    const tsconfig = TS_CONFIG_FILE;
     const outFile = path.join(dirDist, dirEmittedTypes, 'index.d.ts');
 
     // Create types for exposed modules
     const compileTypesAfterEmit = () => {
-      const { isSuccess, typeDefinitions } = compileTypes(exposes as string[], outFile, dirGlobalTypes);
+      const { isSuccess, typeDefinitions } = compileTypes(tsconfig, exposes as string[], outFile, dirGlobalTypes);
       if (isSuccess) {
         rewritePathsWithExposedFederatedModules(federationPluginOptions as FederationConfig, outFile, typeDefinitions);
       } else {
