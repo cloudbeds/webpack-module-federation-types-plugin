@@ -32,11 +32,17 @@ const compileFiles = Object.values(federationConfig.exposes);
 const outDir = argv['output-types-folder'] || path.join(DEFAULT_DIR_DIST, DEFAULT_DIR_EMITTED_TYPES);
 const outFile = path.join(outDir, 'index.d.ts');
 const dirGlobalTypes = argv['global-types'] || DEFAULT_DIR_GLOBAL_TYPES;
-const tsconfig = argv['tsconfig'] || TS_CONFIG_FILE;
+const tsconfigPath = argv['tsconfig'] || TS_CONFIG_FILE;
 
 console.log(`Emitting types for ${compileFiles.length} exposed module(s)`);
 
-const { isSuccess, typeDefinitions } = compileTypes(tsconfig, compileFiles as string[], outFile, dirGlobalTypes);
+const { isSuccess, typeDefinitions } = compileTypes(
+  tsconfigPath,
+  compileFiles as string[],
+  outFile,
+  dirGlobalTypes,
+);
+
 if (!isSuccess) {
   process.exit(1);
 }

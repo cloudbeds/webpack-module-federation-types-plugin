@@ -8,9 +8,10 @@ import { getLogger } from './logger';
 import { CompileTypesResult, FederationConfig } from '../types';
 import { getAllFilePaths } from './files';
 
-export function getTSConfigCompilerOptions(tsconfig: string): ts.CompilerOptions {
+export function getTSConfigCompilerOptions(tsconfigFileNameOrPath: string): ts.CompilerOptions {
   const logger = getLogger();
-  const tsconfigPath = path.resolve(tsconfig);
+
+  const tsconfigPath = path.resolve(tsconfigFileNameOrPath);
   if (!tsconfigPath) {
     logger.error('ERROR: Could not find a valid tsconfig.json');
     process.exit(1);

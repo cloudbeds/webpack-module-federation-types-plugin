@@ -78,7 +78,13 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
 
     // Create types for exposed modules
     const compileTypesAfterEmit = () => {
-      const { isSuccess, typeDefinitions } = compileTypes(tsconfig, exposes as string[], outFile, dirGlobalTypes);
+      const { isSuccess, typeDefinitions } = compileTypes(
+        tsconfig,
+        exposes as string[],
+        outFile,
+        dirGlobalTypes,
+      );
+
       if (isSuccess) {
         rewritePathsWithExposedFederatedModules(federationPluginOptions as FederationConfig, outFile, typeDefinitions);
       } else {
