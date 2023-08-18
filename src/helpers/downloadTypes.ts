@@ -77,9 +77,6 @@ export async function downloadRemoteEntryURLsFromManifests(remoteManifestUrls?: 
   const logger = getLogger();
   const remoteEntryURLs: RemoteEntryUrls = {};
 
-  /** @deprecated Temporary support */
-  let urlMfdCommonManifest = '';
-
   logger.log('Remote manifest URLs', remoteManifestUrls);
 
   const { artifactsBaseUrl, ...manifestUrls } = remoteManifestUrls;
@@ -93,7 +90,6 @@ export async function downloadRemoteEntryURLsFromManifests(remoteManifestUrls?: 
     if (remoteName === 'registry') {
       const remotesManifest = remoteManifests[index];
       if (Array.isArray(remotesManifest)) {
-        urlMfdCommonManifest = manifestUrls[remoteName].replace('remote-entries', 'mfd-common-remote-entry');
         (remoteManifests[index] as RemotesRegistryManifest).forEach((remoteManifest) => {
           remoteEntryURLs[remoteManifest.scope] = remoteManifest.url;
         });
@@ -106,10 +102,6 @@ export async function downloadRemoteEntryURLsFromManifests(remoteManifestUrls?: 
       remoteEntryURLs[remoteName] = (remoteManifests[index] as RemoteManifest).url;
     }
   });
-
-  if (urlMfdCommonManifest) {
-    remoteEntryURLs.mfdCommon = ((await downloadRemoteEntryManifest(urlMfdCommonManifest)) as RemoteManifest).url;
-  }
 
   logger.log('Remote entry URLs', remoteEntryURLs);
 

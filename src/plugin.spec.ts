@@ -55,10 +55,10 @@ describe('ModuleFederationTypesPlugin', () => {
 
   test('remoteManifestUrls setting initiates download of remote entry manifest files on startup', () => {
     const moduleFederationPluginOptions = {
-      name: 'mfdDashboard',
+      name: 'mfeDashboard',
       remotes: {
-        mfdCommon: `mdfCommon@[mfdCommonUrl]/remoteEntry.js`,
-        mfdTranslations: 'mfdTranslations@[mfdTranslationsUrl]/remoteEntry.js',
+        mfeOther: `mfeOther@[mfeOtherUrl]/remoteEntry.js`,
+        mfeTranslations: 'mfeTranslations@[mfeTranslationsUrl]/remoteEntry.js',
       }
     };
     const typesPluginOptions: ModuleFederationTypesPluginOptions = {
@@ -66,7 +66,7 @@ describe('ModuleFederationTypesPlugin', () => {
         mfeApp: 'https://artifacts.example.com/mfe-app',
       },
       remoteManifestUrls: {
-        mfdCommon: 'https://example.com/mfd-common-remote-entries.json',
+        mfeOther: 'https://example.com/some-mfe-remote-entry.json',
         registry: 'https://example.com/remote-entries.json',
       }
     };
