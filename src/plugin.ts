@@ -7,7 +7,8 @@ import {
   DEFAULT_DIR_DOWNLOADED_TYPES,
   DEFAULT_DIR_EMITTED_TYPES,
   DEFAULT_DIR_GLOBAL_TYPES,
-  DEFAULT_DOWNLOAD_TYPES_INTERVAL_IN_SECONDS, TS_CONFIG_FILE,
+  DEFAULT_DOWNLOAD_TYPES_INTERVAL_IN_SECONDS,
+  TS_CONFIG_FILE,
 } from './constants';
 import { getRemoteManifestUrls } from './helpers/cloudbedsRemoteManifests';
 import { compileTypes, rewritePathsWithExposedFederatedModules } from './helpers/compileTypes';
