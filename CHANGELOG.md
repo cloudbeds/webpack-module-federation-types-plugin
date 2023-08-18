@@ -1,3 +1,10 @@
+# [1.13.0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.12.13...v1.13.0) (2023-08-18)
+
+
+### Features
+
+* support passing --tsconfig as CLI param ([b1bdb7e](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/b1bdb7e10c4fe8e870663acac195d6acb06d17f1))
+
 ## [1.12.13](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.12.12...v1.12.13) (2023-08-18)
 
 
