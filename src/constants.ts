@@ -11,7 +11,7 @@ export const DEFAULT_DOWNLOAD_TYPES_INTERVAL_IN_SECONDS = 60;
 
 export enum CloudbedsCloudfrontDomain {
   Dev = 'https://cb-front.cloudbeds-dev.com',
-  Stage = 'https://cb-front.stage-ga.cloudbeds-dev.com',
+  Stage = 'https://cb-front.cloudbeds-stage.com',
   Prod = 'https://front.cloudbeds.com',
 }
 
