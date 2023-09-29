@@ -1,3 +1,10 @@
+## [1.13.12](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.13.11...v1.13.12) (2023-09-29)
+
+
+### Bug Fixes
+
+* trigger ([21c6587](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/21c65877e59b8a82ce64db4a88f14aacf0b95285))
+
 ## [1.13.11](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.13.10...v1.13.11) (2023-09-29)
 
 
