@@ -1,3 +1,10 @@
+## [1.13.4](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.13.3...v1.13.4) (2023-09-29)
+
+
+### Bug Fixes
+
+* added npmrc ([4cde7e2](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/4cde7e2dafff78725d82df2f1f072d6ca4d9abf7))
+
 ## [1.13.3](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.13.2...v1.13.3) (2023-09-29)
 
 
