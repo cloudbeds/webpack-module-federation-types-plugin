@@ -34,6 +34,7 @@ export type ModuleFederationTypesPluginOptions = {
   disableDownladingRemoteTypes?: boolean,
   disableTypeCompilation?: boolean,
   downloadTypesWhenIdleIntervalInSeconds?: number,
+  federationPluginName?: string,
   remoteEntryUrls?: RemoteEntryUrls,
   remoteManifestUrls?: RemoteManifestUrls,
   remoteManifestUrl?: string,
