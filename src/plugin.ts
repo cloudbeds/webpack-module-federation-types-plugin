@@ -24,6 +24,8 @@ import {
 let isCompiledOnce = false;
 let isDownloadedOnce = false;
 
+const DEFAULT_MODULE_FEDERATION_PLUGIN_NAME = 'ModuleFederationPlugin';
+
 export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
   constructor(public options?: ModuleFederationTypesPluginOptions) {}
 
@@ -55,9 +57,12 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
       return;
     }
 
+    // Allow for other module federation plugins such as this "NextFederationPlugin"
+    const mfPluginName = this.options?.mfPluginName ?? DEFAULT_MODULE_FEDERATION_PLUGIN_NAME;
+
     // Get ModuleFederationPlugin config
     const federationOptions = compiler.options.plugins.find((plugin) => {
-      return plugin!.constructor.name === 'ModuleFederationPlugin';
+      return plugin!.constructor.name === mfPluginName;
     });
     const federationPluginOptions: ModuleFederationPluginOptions = (federationOptions as any)?._options;
     if (!federationPluginOptions?.name) {
