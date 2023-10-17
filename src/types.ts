@@ -34,10 +34,10 @@ export type ModuleFederationTypesPluginOptions = {
   disableDownladingRemoteTypes?: boolean,
   disableTypeCompilation?: boolean,
   downloadTypesWhenIdleIntervalInSeconds?: number,
+  moduleFederationPluginName?: string
   remoteEntryUrls?: RemoteEntryUrls,
   remoteManifestUrls?: RemoteManifestUrls,
   remoteManifestUrl?: string,
-  mfPluginName?: string
 
   cloudbedsRemoteManifestsBaseUrl?: string | ''
     | 'dev' | 'dev-ga'

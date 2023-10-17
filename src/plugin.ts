@@ -58,15 +58,17 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
     }
 
     // Allow for other module federation plugins such as this "NextFederationPlugin"
-    const mfPluginName = this.options?.mfPluginName ?? DEFAULT_MODULE_FEDERATION_PLUGIN_NAME;
+    const moduleFederationPluginName = this.options?.moduleFederationPluginName ?? DEFAULT_MODULE_FEDERATION_PLUGIN_NAME;
 
     // Get ModuleFederationPlugin config
     const federationOptions = compiler.options.plugins.find((plugin) => {
-      return plugin!.constructor.name === mfPluginName;
+      return plugin!.constructor.name === moduleFederationPluginName;
     });
     const federationPluginOptions: ModuleFederationPluginOptions = (federationOptions as any)?._options;
     if (!federationPluginOptions?.name) {
-      logger.log('Plugin disabled as ModuleFederationPlugin is not configured properly. The `name` option is missing.');
+      logger.warn(
+        `Plugin disabled as ${moduleFederationPluginName} is not configured properly. The 'name' option is missing.`,
+      );
       return;
     }
 
