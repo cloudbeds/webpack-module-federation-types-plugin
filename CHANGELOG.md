@@ -1,3 +1,15 @@
+# [1.14.0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.13.12...v1.14.0) (2023-10-17)
+
+
+### Bug Fixes
+
+* trigger ([72707d0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/72707d02b86b806602848fbd0f161949d6c5a488))
+
+
+### Features
+
+* custom module federation plugin name ([51dd83f](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/51dd83f7a796da304bd881e0bf1f7bd659440b5d))
+
 ## [1.13.12](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.13.11...v1.13.12) (2023-09-29)
 
 
