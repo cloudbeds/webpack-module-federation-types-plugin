@@ -1,11 +1,14 @@
 import fs from 'fs';
-import mkdirp from 'mkdirp';
 import path from 'path';
+
+import mkdirp from 'mkdirp';
 import ts from 'typescript';
 
-import { getLogger } from './logger';
+import {
+  CompileTypesResult, FederationConfig,
+} from '../types';
 
-import { CompileTypesResult, FederationConfig } from '../types';
+import { getLogger } from './logger';
 import { getAllFilePaths } from './files';
 
 export function getTSConfigCompilerOptions(tsconfigFileNameOrPath: string): ts.CompilerOptions {
@@ -27,7 +30,12 @@ export function reportCompileDiagnostic(diagnostic: ts.Diagnostic): void {
   logger.log('         at', `${diagnostic.file!.fileName}:${line + 1}`, '\n');
 }
 
-export function compileTypes(tsconfigPath: string, exposedComponents: string[], outFile: string, dirGlobalTypes: string): CompileTypesResult {
+export function compileTypes(
+  tsconfigPath: string,
+  exposedComponents: string[],
+  outFile: string,
+  dirGlobalTypes: string,
+): CompileTypesResult {
   const logger = getLogger();
 
   const exposedFileNames = Object.values(exposedComponents);
@@ -48,13 +56,18 @@ export function compileTypes(tsconfigPath: string, exposedComponents: string[], 
   }
 
   // Create a Program with an in-memory emit to avoid a case when wrong typings are downloaded
-  let fileContent: string = '';
+  let fileContent = '';
   const host = ts.createCompilerHost(compilerOptions);
-  host.writeFile = (_fileName: string, contents: string) => fileContent = contents;
+  host.writeFile = (_fileName: string, contents: string) => {
+    fileContent = contents;
+    return contents;
+  };
 
   // Including global type definitions from `src/@types` directory
   if (fs.existsSync(dirGlobalTypes)) {
-    exposedFileNames.push(...getAllFilePaths(`./${dirGlobalTypes}`).filter(path => path.endsWith('.d.ts')));
+    exposedFileNames.push(
+      ...getAllFilePaths(`./${dirGlobalTypes}`).filter(filePath => filePath.endsWith('.d.ts')),
+    );
   }
   logger.log('Including a set of root files in compilation', exposedFileNames);
 
@@ -73,7 +86,10 @@ export function includeTypesFromNodeModules(federationConfig: FederationConfig, 
   let typingsWithNpmPackages = typings;
 
   const exposedNpmPackages = Object.entries(federationConfig.exposes)
-    .filter(([, path]) => !path.startsWith('.') || path.startsWith('./node_modules/'))
+    .filter(([, packagePath]) => (
+      !packagePath.startsWith('.')
+      || packagePath.startsWith('./node_modules/')
+    ))
     .map(([exposedModuleKey, exposeTargetPath]) => [
       exposedModuleKey.replace(/^\.\//, ''),
       exposeTargetPath.replace('./node_modules/', ''),
@@ -112,14 +128,18 @@ export function rewritePathsWithExposedFederatedModules(
 
   // Collect all instances of `declare module "..."`
   let execResults: null | string[] = [];
-  while ((execResults = regexDeclareModule.exec(typings)) !== null) {
+  while (true) {
+    execResults = regexDeclareModule.exec(typings);
+    if (execResults === null) {
+      break;
+    }
     declaredModulePaths.push(execResults[1]);
   }
 
   let typingsUpdated: string = typings;
 
   // Replace and prefix paths by exposed remote names
-  declaredModulePaths.forEach((importPath) => {
+  declaredModulePaths.forEach(importPath => {
     // Aliases are not included in the emitted declarations hence the need to use `endsWith`
     const [exposedModuleKey, ...exposedModuleNameAliases] = Object.keys(federationConfig.exposes)
       .filter(key => (
@@ -132,7 +152,7 @@ export function rewritePathsWithExposedFederatedModules(
       ? `${federationConfig.name}/${exposedModuleKey}`
       : `#not-for-import/${federationConfig.name}/${importPath}`;
 
-    federatedModulePath = federatedModulePath.replace(/\/index$/, '')
+    federatedModulePath = federatedModulePath.replace(/\/index$/, '');
 
     // language=TypeScript
     const createAliasModule = (modulePath: string) => `

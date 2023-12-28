@@ -1,11 +1,17 @@
-import webpack, { Compilation, Compiler } from 'webpack';
+import webpack, {
+  Compilation, Compiler,
+} from 'webpack';
 
-import { downloadTypes } from './helpers/downloadTypes';
-import { ModuleFederationTypesPlugin } from './plugin';
-import { ModuleFederationPluginOptions, ModuleFederationTypesPluginOptions } from './types';
-import { DEFAULT_DIR_DOWNLOADED_TYPES, DEFAULT_DIR_EMITTED_TYPES } from './constants';
+import { downloadTypes } from '../helpers/downloadTypes';
+import { ModuleFederationTypesPlugin } from '../plugin';
+import {
+  ModuleFederationPluginOptions, ModuleFederationTypesPluginOptions,
+} from '../types';
+import {
+  DEFAULT_DIR_DOWNLOADED_TYPES, DEFAULT_DIR_EMITTED_TYPES,
+} from '../constants';
 
-jest.mock('./helpers/downloadTypes');
+jest.mock('../helpers/downloadTypes');
 
 const mockDownloadTypes = downloadTypes as jest.MockedFunction<typeof downloadTypes>;
 const mockAfterEmit = jest.fn();
@@ -19,8 +25,8 @@ const mockLogger = {
 } as Compilation['logger'];
 
 function installPlugin(
-  moduleFederationPluginOptions: ModuleFederationPluginOptions = {},
-  typesPluginOptions?: ModuleFederationTypesPluginOptions
+  moduleFederationPluginOptions?: ModuleFederationPluginOptions,
+  typesPluginOptions?: ModuleFederationTypesPluginOptions,
 ): ModuleFederationTypesPlugin {
   const pluginInstance = new ModuleFederationTypesPlugin(typesPluginOptions);
 
@@ -28,7 +34,7 @@ function installPlugin(
     getInfrastructureLogger: jest.fn().mockReturnValue(mockLogger) as Compiler['infrastructureLogger'],
     options: {
       plugins: [
-        new ModuleFederationPlugin(moduleFederationPluginOptions),
+        new ModuleFederationPlugin(moduleFederationPluginOptions || {}),
       ],
     },
     hooks: {
@@ -50,16 +56,16 @@ function installPlugin(
 describe('ModuleFederationTypesPlugin', () => {
   test('does nothing when options are not provided to the ModuleFederationPlugin', () => {
     installPlugin();
-    expect(mockAfterEmit).not.toBeCalled();
+    expect(mockAfterEmit).not.toHaveBeenCalled();
   });
 
   test('remoteManifestUrls setting initiates download of remote entry manifest files on startup', () => {
     const moduleFederationPluginOptions = {
       name: 'mfeDashboard',
       remotes: {
-        mfeOther: `mfeOther@[mfeOtherUrl]/remoteEntry.js`,
+        mfeOther: 'mfeOther@[mfeOtherUrl]/remoteEntry.js',
         mfeTranslations: 'mfeTranslations@[mfeTranslationsUrl]/remoteEntry.js',
-      }
+      },
     };
     const typesPluginOptions: ModuleFederationTypesPluginOptions = {
       remoteEntryUrls: {
@@ -68,7 +74,7 @@ describe('ModuleFederationTypesPlugin', () => {
       remoteManifestUrls: {
         mfeOther: 'https://example.com/some-mfe-remote-entry.json',
         registry: 'https://example.com/remote-entries.json',
-      }
+      },
     };
     installPlugin(moduleFederationPluginOptions, typesPluginOptions);
 

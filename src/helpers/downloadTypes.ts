@@ -1,9 +1,12 @@
-import download from 'download';
 import fs from 'fs';
-import mkdirp from 'mkdirp';
 import path from 'path';
 
-import { RemoteManifest, RemoteManifestUrls, RemotesRegistryManifest, RemoteEntryUrls } from '../types';
+import download from 'download';
+import mkdirp from 'mkdirp';
+
+import {
+  RemoteManifest, RemoteManifestUrls, RemotesRegistryManifest, RemoteEntryUrls,
+} from '../types';
 
 import { getLogger } from './logger';
 import { toCamelCase } from './toCamelCase';
@@ -47,7 +50,7 @@ async function downloadRemoteEntryTypes(
   if (remoteName !== remoteOriginalName) {
     types = types.replace(
       new RegExp(`declare module "${remoteOriginalName}(.*)"`, 'g'),
-      (_, $1) => `declare module "${remoteName}${$1}"`
+      (_, $1) => `declare module "${remoteName}${$1}"`,
     );
   }
 
@@ -82,7 +85,7 @@ export async function downloadRemoteEntryURLsFromManifests(remoteManifestUrls?: 
   const { artifactsBaseUrl, ...manifestUrls } = remoteManifestUrls;
 
   const remoteManifests = (await Promise.all(
-    Object.values(manifestUrls).map(url => downloadRemoteEntryManifest(url))
+    Object.values(manifestUrls).map(url => downloadRemoteEntryManifest(url)),
   )) as (RemoteManifest | RemotesRegistryManifest | RemoteEntryUrls)[];
 
   // Combine remote entry URLs from all manifests
@@ -90,7 +93,7 @@ export async function downloadRemoteEntryURLsFromManifests(remoteManifestUrls?: 
     if (remoteName === 'registry') {
       const remotesManifest = remoteManifests[index];
       if (Array.isArray(remotesManifest)) {
-        (remoteManifests[index] as RemotesRegistryManifest).forEach((remoteManifest) => {
+        (remoteManifests[index] as RemotesRegistryManifest).forEach(remoteManifest => {
           remoteEntryURLs[remoteManifest.scope] = remoteManifest.url;
         });
       } else {
@@ -125,7 +128,7 @@ export async function downloadTypes(
     };
   } catch (err) {
     logger.warn('Failed to load remote manifest file: ', (err as Dict)?.url);
-    logger.log(err)
+    logger.log(err);
     return;
   }
 
@@ -144,7 +147,7 @@ export async function downloadTypes(
         remoteLocation,
         `${remoteEntryBaseUrl}/${dirEmittedTypes}/index.d.ts`,
         dirDownloadedTypes,
-      )
+      );
 
       promises.push(promiseDownload);
     } catch (err) {

@@ -2,7 +2,10 @@ import {
   CloudbedsCloudfrontDomain,
   CLOUDBEDS_REMOTES_MANIFEST_FILE_NAME,
 } from '../constants';
-import { ModuleFederationTypesPluginOptions, RemoteManifestUrls } from '../types';
+import {
+  ModuleFederationTypesPluginOptions, RemoteManifestUrls,
+} from '../types';
+
 import { isValidUrl } from './validation';
 
 export function getRemoteManifestUrls(options?: ModuleFederationTypesPluginOptions): RemoteManifestUrls | undefined {
@@ -27,14 +30,14 @@ export function getRemoteManifestUrls(options?: ModuleFederationTypesPluginOptio
       ...(artifactsBaseUrl ? { artifactsBaseUrl } : null),
       registry: `${manifestBaseUrl}/${CLOUDBEDS_REMOTES_MANIFEST_FILE_NAME}`,
       ...options?.remoteManifestUrls,
-    }
+    };
   }
 
   if (options?.remoteManifestUrl) {
     return {
       ...options?.remoteManifestUrls,
       registry: options?.remoteManifestUrl,
-    }
+    };
   }
 
   return options?.remoteManifestUrls;

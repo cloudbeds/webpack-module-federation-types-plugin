@@ -9,7 +9,7 @@ export function getAllFilePaths(dirPath: string, arrayOfFiles: string[] = []): s
     } else {
       arrayOfFiles.push(`${dirPath}/${file}`);
     }
-  })
+  });
 
   return arrayOfFiles;
 }
