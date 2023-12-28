@@ -127,12 +127,11 @@ export function rewritePathsWithExposedFederatedModules(
   const declaredModulePaths: string[] = [];
 
   // Collect all instances of `declare module "..."`
-  let execResults: null | string[] = [];
-  while (true) {
-    execResults = regexDeclareModule.exec(typings);
-    if (execResults === null) {
-      break;
-    }
+  for (
+    let execResults: null | string[] = regexDeclareModule.exec(typings);
+    execResults !== null;
+    execResults = regexDeclareModule.exec(typings)
+  ) {
     declaredModulePaths.push(execResults[1]);
   }
 

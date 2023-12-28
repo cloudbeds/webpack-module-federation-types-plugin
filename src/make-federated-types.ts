@@ -1,11 +1,18 @@
 #!/usr/bin/env node
 
-import parseArgs from 'minimist';
 import path from 'path';
 
-import { DEFAULT_DIR_DIST, DEFAULT_DIR_EMITTED_TYPES, DEFAULT_DIR_GLOBAL_TYPES, TS_CONFIG_FILE } from './constants';
-import { compileTypes, rewritePathsWithExposedFederatedModules } from './helpers/compileTypes';
-import { assertRunningFromRoot, getFederationConfig } from './helpers/cli';
+import parseArgs from 'minimist';
+
+import {
+  DEFAULT_DIR_DIST, DEFAULT_DIR_EMITTED_TYPES, DEFAULT_DIR_GLOBAL_TYPES, TS_CONFIG_FILE,
+} from './constants';
+import {
+  compileTypes, rewritePathsWithExposedFederatedModules,
+} from './helpers/compileTypes';
+import {
+  assertRunningFromRoot, getFederationConfig,
+} from './helpers/cli';
 
 assertRunningFromRoot();
 
@@ -14,7 +21,6 @@ type Argv = {
   'federation-config': string,
   'output-types-folder': string,
   'tsconfig': string,
-
 }
 
 const argv = parseArgs<Argv>(process.argv.slice(2), {
@@ -22,7 +28,7 @@ const argv = parseArgs<Argv>(process.argv.slice(2), {
     'global-types': 'g',
     'output-types-folder': 'o',
     'federation-config': 'c',
-    'tsconfig': 't',
+    tsconfig: 't',
   } as Partial<Argv>,
 });
 
@@ -32,13 +38,13 @@ const compileFiles = Object.values(federationConfig.exposes);
 const outDir = argv['output-types-folder'] || path.join(DEFAULT_DIR_DIST, DEFAULT_DIR_EMITTED_TYPES);
 const outFile = path.join(outDir, 'index.d.ts');
 const dirGlobalTypes = argv['global-types'] || DEFAULT_DIR_GLOBAL_TYPES;
-const tsconfigPath = argv['tsconfig'] || TS_CONFIG_FILE;
+const tsconfigPath = argv.tsconfig || TS_CONFIG_FILE;
 
 console.log(`Emitting types for ${compileFiles.length} exposed module(s)`);
 
 const { isSuccess, typeDefinitions } = compileTypes(
   tsconfigPath,
-  compileFiles as string[],
+  compileFiles,
   outFile,
   dirGlobalTypes,
 );

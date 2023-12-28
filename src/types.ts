@@ -28,13 +28,13 @@ export type ModuleFederationPluginOptions = ConstructorParameters<typeof contain
 
 export type ModuleFederationTypesPluginOptions = {
   dirEmittedTypes?: string,
-  dirGlobalTypes?: string;
-  dirDownloadedTypes?: string;
+  dirGlobalTypes?: string,
+  dirDownloadedTypes?: string,
 
   disableDownladingRemoteTypes?: boolean,
   disableTypeCompilation?: boolean,
   downloadTypesWhenIdleIntervalInSeconds?: number,
-  moduleFederationPluginName?: string
+  moduleFederationPluginName?: string,
   remoteEntryUrls?: RemoteEntryUrls,
   remoteManifestUrls?: RemoteManifestUrls,
   remoteManifestUrl?: string,

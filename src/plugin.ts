@@ -1,5 +1,8 @@
 import path from 'path';
-import { Compiler, WebpackPluginInstance } from 'webpack';
+
+import {
+  Compiler, WebpackPluginInstance,
+} from 'webpack';
 
 import {
   CLOUDBEDS_DEPLOYMENT_ENV_WITH_DISABLED_REMOTE_TYPES_DOWNLOAD,
@@ -11,9 +14,13 @@ import {
   TS_CONFIG_FILE,
 } from './constants';
 import { getRemoteManifestUrls } from './helpers/cloudbedsRemoteManifests';
-import { compileTypes, rewritePathsWithExposedFederatedModules } from './helpers/compileTypes';
+import {
+  compileTypes, rewritePathsWithExposedFederatedModules,
+} from './helpers/compileTypes';
 import { downloadTypes } from './helpers/downloadTypes';
-import { getLoggerHint, setLogger } from './helpers/logger';
+import {
+  getLoggerHint, setLogger,
+} from './helpers/logger';
 import { isEveryUrlValid } from './helpers/validation';
 import {
   FederationConfig,
@@ -22,16 +29,16 @@ import {
 } from './types';
 
 let isCompiledOnce = false;
-let isDownloadedOnce = false;
+const isDownloadedOnce = false;
 
 const DEFAULT_MODULE_FEDERATION_PLUGIN_NAME = 'ModuleFederationPlugin';
 
 export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
   constructor(public options?: ModuleFederationTypesPluginOptions) {}
 
-  async apply(compiler: Compiler): Promise<void> {
+  apply(compiler: Compiler): void {
     const PLUGIN_NAME = this.constructor.name;
-    let logger = setLogger(compiler.getInfrastructureLogger(PLUGIN_NAME));
+    const logger = setLogger(compiler.getInfrastructureLogger(PLUGIN_NAME));
 
     const remoteEntryUrls = this.options?.remoteEntryUrls;
     const remoteManifestUrls = getRemoteManifestUrls(this.options);
@@ -58,13 +65,17 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
     }
 
     // Allow for other module federation plugins such as this "NextFederationPlugin"
-    const moduleFederationPluginName = this.options?.moduleFederationPluginName ?? DEFAULT_MODULE_FEDERATION_PLUGIN_NAME;
+    const moduleFederationPluginName = this.options?.moduleFederationPluginName
+      ?? DEFAULT_MODULE_FEDERATION_PLUGIN_NAME;
 
     // Get ModuleFederationPlugin config
-    const federationOptions = compiler.options.plugins.find((plugin) => {
-      return plugin!.constructor.name === moduleFederationPluginName;
-    });
+    const federationOptions = compiler.options.plugins.find(
+      plugin => plugin!.constructor.name === moduleFederationPluginName,
+    );
+
+    // eslint-disable-next-line no-underscore-dangle
     const federationPluginOptions: ModuleFederationPluginOptions = (federationOptions as any)?._options;
+
     if (!federationPluginOptions?.name) {
       logger.warn(
         `Plugin disabled as ${moduleFederationPluginName} is not configured properly. The 'name' option is missing.`,
@@ -101,21 +112,19 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
     };
 
     // Import types from remote modules
-    const downloadRemoteTypes = async () => {
-      return downloadTypes(
-        dirEmittedTypes,
-        dirDownloadedTypes,
+    const downloadRemoteTypes = async () => downloadTypes(
+      dirEmittedTypes,
+      dirDownloadedTypes,
         remotes as Dict<string>,
         remoteEntryUrls,
         remoteManifestUrls,
-      );
-    };
+    );
 
     // Determine whether compilation of types should be performed continuously
     // followed by downloading of types when idle for a certain period of time
     let recompileIntervalId: ReturnType<typeof setInterval>;
     const shouldSyncContinuously = (compiler.options.mode === 'development')
-      && (this.options?.downloadTypesWhenIdleIntervalInSeconds !== -1)
+      && (this.options?.downloadTypesWhenIdleIntervalInSeconds !== -1);
     const downloadTypesWhenIdleIntervalInSeconds = this.options?.downloadTypesWhenIdleIntervalInSeconds
       || DEFAULT_DOWNLOAD_TYPES_INTERVAL_IN_SECONDS;
 
@@ -127,7 +136,9 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
           () => {
             logger.log(
               new Date().toLocaleString(),
-              'Downloading types every', downloadTypesWhenIdleIntervalInSeconds, 'seconds',
+              'Downloading types every',
+              downloadTypesWhenIdleIntervalInSeconds,
+              'seconds',
             );
             downloadRemoteTypes();
           },
@@ -143,6 +154,7 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
         logger.log('Downloading types on startup');
         return downloadRemoteTypes();
       });
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       compiler.hooks.watchRun.tap(PLUGIN_NAME, () => {
         if (!isDownloadedOnce) {
           logger.log('Downloading types on startup');

@@ -13,11 +13,12 @@
     "dist"
   ],
   "bin": {
-    "make-federated-types": "dist/make-federated-types.js"
+    "make-federated-types": "dist/make-federated-types.js",
+    "download-federated-types": "dist/download-federated-types.js"
   },
   "scripts": {
     "build": "tsc",
-    "lint": "eslint src/**/*.ts",
+    "lint": "eslint 'src/**/*.ts'",
     "test": "jest"
   },
   "dependencies": {
