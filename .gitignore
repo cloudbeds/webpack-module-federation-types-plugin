@@ -11,3 +11,7 @@ node_modules
 # Mac
 *.DS_Store
 **/*.DS_Store
+
+# Tests
+coverage
+report.json

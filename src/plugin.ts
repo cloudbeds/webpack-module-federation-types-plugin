@@ -13,20 +13,20 @@ import {
   DEFAULT_DOWNLOAD_TYPES_INTERVAL_IN_SECONDS,
   TS_CONFIG_FILE,
 } from './constants';
-import { getRemoteManifestUrls } from './helpers/cloudbedsRemoteManifests';
 import {
   compileTypes, rewritePathsWithExposedFederatedModules,
-} from './helpers/compileTypes';
-import { downloadTypes } from './helpers/downloadTypes';
+} from './compileTypes';
 import {
-  getLoggerHint, setLogger,
-} from './helpers/logger';
-import { isEveryUrlValid } from './helpers/validation';
+  downloadTypes, getRemoteManifestUrls,
+} from './downloadTypes';
+import {
+  getLoggerHint, isEveryUrlValid, setLogger,
+} from './helpers';
 import {
   FederationConfig,
   ModuleFederationPluginOptions,
   ModuleFederationTypesPluginOptions,
-} from './types';
+} from './models';
 
 let isCompiledOnce = false;
 const isDownloadedOnce = false;
@@ -115,9 +115,9 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
     const downloadRemoteTypes = async () => downloadTypes(
       dirEmittedTypes,
       dirDownloadedTypes,
-        remotes as Dict<string>,
-        remoteEntryUrls,
-        remoteManifestUrls,
+      remotes as Dict<string>,
+      remoteEntryUrls,
+      remoteManifestUrls,
     );
 
     // Determine whether compilation of types should be performed continuously

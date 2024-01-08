@@ -2,16 +2,16 @@ import webpack, {
   Compilation, Compiler,
 } from 'webpack';
 
-import { downloadTypes } from '../helpers/downloadTypes';
+import { downloadTypes } from '../downloadTypes/downloadTypes';
 import { ModuleFederationTypesPlugin } from '../plugin';
 import {
   ModuleFederationPluginOptions, ModuleFederationTypesPluginOptions,
-} from '../types';
+} from '../models';
 import {
   DEFAULT_DIR_DOWNLOADED_TYPES, DEFAULT_DIR_EMITTED_TYPES,
 } from '../constants';
 
-jest.mock('../helpers/downloadTypes');
+jest.mock('../downloadTypes/downloadTypes');
 
 const mockDownloadTypes = downloadTypes as jest.MockedFunction<typeof downloadTypes>;
 const mockAfterEmit = jest.fn();

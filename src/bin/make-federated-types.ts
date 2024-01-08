@@ -6,21 +6,25 @@ import parseArgs from 'minimist';
 
 import {
   DEFAULT_DIR_DIST, DEFAULT_DIR_EMITTED_TYPES, DEFAULT_DIR_GLOBAL_TYPES, TS_CONFIG_FILE,
-} from './constants';
+} from '../constants';
 import {
   compileTypes, rewritePathsWithExposedFederatedModules,
-} from './helpers/compileTypes';
+} from '../compileTypes';
+import { setLogger } from '../helpers';
+import { FederationConfig } from '../models';
+
 import {
-  assertRunningFromRoot, getFederationConfig,
-} from './helpers/cli';
+  assertRunningFromRoot, getFederationConfig, getOptionsFromWebpackConfig,
+} from './helpers';
 
 assertRunningFromRoot();
 
 type Argv = {
   'global-types': string,
-  'federation-config': string,
+  'federation-config'?: string,
   'output-types-folder': string,
   'tsconfig': string,
+  'webpack-config'?: string,
 }
 
 const argv = parseArgs<Argv>(process.argv.slice(2), {
@@ -32,7 +36,10 @@ const argv = parseArgs<Argv>(process.argv.slice(2), {
   } as Partial<Argv>,
 });
 
-const federationConfig = getFederationConfig(argv['federation-config']);
+const webpackConfigPath = argv['webpack-config'] || 'webpack/prod.ts';
+const federationConfig = webpackConfigPath
+  ? getOptionsFromWebpackConfig(webpackConfigPath).mfPluginOptions as unknown as FederationConfig
+  : getFederationConfig(argv['federation-config']);
 const compileFiles = Object.values(federationConfig.exposes);
 
 const outDir = argv['output-types-folder'] || path.join(DEFAULT_DIR_DIST, DEFAULT_DIR_EMITTED_TYPES);
@@ -41,6 +48,8 @@ const dirGlobalTypes = argv['global-types'] || DEFAULT_DIR_GLOBAL_TYPES;
 const tsconfigPath = argv.tsconfig || TS_CONFIG_FILE;
 
 console.log(`Emitting types for ${compileFiles.length} exposed module(s)`);
+
+setLogger(console);
 
 const { isSuccess, typeDefinitions } = compileTypes(
   tsconfigPath,

@@ -2,11 +2,10 @@ import {
   CloudbedsCloudfrontDomain,
   CLOUDBEDS_REMOTES_MANIFEST_FILE_NAME,
 } from '../constants';
+import { isValidUrl } from '../helpers';
 import {
   ModuleFederationTypesPluginOptions, RemoteManifestUrls,
-} from '../types';
-
-import { isValidUrl } from './validation';
+} from '../models';
 
 export function getRemoteManifestUrls(options?: ModuleFederationTypesPluginOptions): RemoteManifestUrls | undefined {
   if (options?.cloudbedsRemoteManifestsBaseUrl !== undefined) {
