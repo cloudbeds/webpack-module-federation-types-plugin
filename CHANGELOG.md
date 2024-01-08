@@ -1,3 +1,10 @@
+# [1.15.0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.14.0...v1.15.0) (2024-01-08)
+
+
+### Features
+
+* added download-federated-types script ([15a3500](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/15a35004baab547931d6bb8a7903bfd3721dc73b))
+
 # [1.14.0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.13.12...v1.14.0) (2023-10-17)
 
 
