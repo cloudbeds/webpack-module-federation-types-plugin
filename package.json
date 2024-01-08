@@ -13,13 +13,15 @@
     "dist"
   ],
   "bin": {
-    "make-federated-types": "dist/make-federated-types.js",
-    "download-federated-types": "dist/download-federated-types.js"
+    "make-federated-types": "dist/bin/make-federated-types.js",
+    "download-federated-types": "dist/bin/download-federated-types.js"
   },
   "scripts": {
     "build": "tsc",
     "lint": "eslint 'src/**/*.ts'",
-    "test": "jest"
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "test:coverage:ci": "jest --verbose --ci --coverage --json --testLocationInResults --outputFile=report.json --maxWorkers=50%"
   },
   "dependencies": {
     "download": "^8.0.0",

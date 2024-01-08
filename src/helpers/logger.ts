@@ -8,8 +8,8 @@ export function getLogger(): Compilation['logger'] {
   return loggerInstance || console;
 }
 
-export function setLogger(logger: Compilation['logger']): Compilation['logger'] {
-  loggerInstance = logger;
+export function setLogger<TLogger = Compilation['logger']>(logger: TLogger): TLogger {
+  loggerInstance = logger as Compilation['logger'];
   return logger;
 }
 

@@ -60,12 +60,21 @@ Or it can be added to `package.json`:
 
 ### CLI options
 
-| Option                        | Default value | Description                                                                    |
-|-------------------------------|---------------|--------------------------------------------------------------------------------|
-| `--output-types-folder`, `-o` | `dist/@types` | Path to the output folder, absolute or relative to the working directory       |
-| `--global-types`, `-g`        | `src/@types`  | Path to project's global ambient type definitions, relative to the working dir |
-| `--federation-config`, `-c`   | `src/@types`  | Path to federation.config, relative to the working dir                         |
-| `--tsconfig`, `-t`            | `src/@types`  | Path to tsconfig.json, relative to the working dir                             |
+#### download-federated-types
+| Option                        | Default value     | Description               |
+|-------------------------------|-------------------|---------------------------|
+| `--webpack-config`            | `webpack/prod.ts` | Path to webpack-config.js |
+
+If the config is written in TypeScript, the script should be called with `npx ts-node`.
+
+#### make-federated-types
+| Option                        | Default value     | Description                                                                    |
+|-------------------------------|-------------------|--------------------------------------------------------------------------------|
+| `--output-types-folder`, `-o` | `dist/@types`     | Path to the output folder, absolute or relative to the working directory       |
+| `--global-types`, `-g`        | `src/@types`      | Path to project's global ambient type definitions, relative to the working dir |
+| `--federation-config`, `-c`   | `src/@types`      | Path to federation.config, relative to the working dir                         |
+| `--tsconfig`, `-t`            | `src/@types`      | Path to tsconfig.json, relative to the working dir                             |
+| `--webpack-config`            | `webpack/prod.ts` | Path to webpack-config.js                                                      |
 
 ## Plugin Configuration
 
