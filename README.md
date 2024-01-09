@@ -61,9 +61,9 @@ Or it can be added to `package.json`:
 ### CLI options
 
 #### download-federated-types
-| Option                        | Default value       | Description               |
-|-------------------------------|---------------------|---------------------------|
-| `--webpack-config`            | `webpack.config.js` | Path to webpack.config.js |
+| Option                        | Default value       | Description                 |
+|-------------------------------|---------------------|-----------------------------|
+| `--webpack-config`            | `webpack.config.js` | Path to webpack config file |
 
 If the config is written in TypeScript, the script should be called with `ts-node`. _Example:_
 
