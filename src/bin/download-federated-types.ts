@@ -23,7 +23,7 @@ type Argv = {
 };
 
 const argv = parseArgs<Argv>(process.argv.slice(2));
-const webpackConfigPath = argv['webpack-config'] || 'webpack/prod.ts';
+const webpackConfigPath = argv['webpack-config'] || 'webpack.config.js';
 
 const { mfPluginOptions, mfTypesPluginOptions } = getOptionsFromWebpackConfig(webpackConfigPath);
 
