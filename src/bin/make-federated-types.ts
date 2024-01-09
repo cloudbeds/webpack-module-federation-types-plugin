@@ -36,7 +36,7 @@ const argv = parseArgs<Argv>(process.argv.slice(2), {
   } as Partial<Argv>,
 });
 
-const webpackConfigPath = argv['webpack-config'] || 'webpack/prod.ts';
+const webpackConfigPath = argv['webpack-config'] || 'webpack.config.js';
 const federationConfig = webpackConfigPath
   ? getOptionsFromWebpackConfig(webpackConfigPath).mfPluginOptions as unknown as FederationConfig
   : getFederationConfig(argv['federation-config']);

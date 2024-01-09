@@ -79,7 +79,7 @@ describe('download-federated-types', () => {
       require('../download-federated-types');
     });
 
-    expect(mockGetOptionsFromWebpackConfig).toHaveBeenCalledWith('webpack/prod.ts');
+    expect(mockGetOptionsFromWebpackConfig).toHaveBeenCalledWith('webpack.config.js');
     expect(mockConsoleError).toHaveBeenCalledWith('One or more remote URLs are invalid:', remoteEntryUrls);
     expect(process.exit).toHaveBeenCalledWith(1);
   });
