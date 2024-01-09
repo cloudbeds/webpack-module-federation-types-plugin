@@ -1,3 +1,11 @@
+## [1.15.1](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.15.0...v1.15.1) (2024-01-09)
+
+
+### Bug Fixes
+
+* **download-types:** default webpack config ([44366ba](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/44366ba489e60ff44cac316aba8fc5a6b6e9772e))
+* **download-types:** default webpack config, require from cwd ([c5ab635](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/c5ab635fc90ec9ec1dcaa7bd7c8c4c31a9d12efc))
+
 # [1.15.0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.14.0...v1.15.0) (2024-01-08)
 
 
