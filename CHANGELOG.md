@@ -1,3 +1,10 @@
+## [1.15.2](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.15.1...v1.15.2) (2024-01-18)
+
+
+### Bug Fixes
+
+* support webpack config as function ([2dfe60c](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/2dfe60c71c94a9977028f5a8af660450abd6588f))
+
 ## [1.15.1](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.15.0...v1.15.1) (2024-01-09)
 
 
