@@ -7,5 +7,5 @@ on:
 
 jobs:
   push:
-    uses: cloudbeds/workflows/.github/workflows/npm-test-build.yml@main
+    uses: cloudbeds/workflows/.github/workflows/npm-build-test.yml@main
     secrets: inherit
