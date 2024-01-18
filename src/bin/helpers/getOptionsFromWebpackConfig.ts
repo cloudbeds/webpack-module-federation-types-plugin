@@ -9,6 +9,9 @@ export function getOptionsFromWebpackConfig(webpackConfigPath: string) {
   try {
     webpackConfig = require(path.join(process.cwd(), webpackConfigPath));
     webpackConfig = ((webpackConfig as unknown as Dict).default as Compiler['options']) || webpackConfig;
+    if (typeof webpackConfig === 'function') {
+      webpackConfig = (webpackConfig as unknown as () => Compiler['options'])();
+    }
   } catch (error) {
     console.error(`Failed to import webpack config from ${webpackConfigPath}:`, error);
     process.exit(1);
