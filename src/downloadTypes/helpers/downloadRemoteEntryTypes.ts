@@ -28,8 +28,8 @@ export async function downloadRemoteEntryTypes(
   // with a name (an alias) that is used in `remotes` object. Usually these are same.
   if (remoteName !== remoteOriginalName) {
     types = types.replace(
-      new RegExp(`declare module "${remoteOriginalName}(.*)"`, 'g'),
-      (_, $1) => `declare module "${remoteName}${$1}"`,
+      new RegExp(`"${remoteOriginalName}(.*)"`, 'g'),
+      (_, $1) => `"${remoteName}${$1}"`,
     );
   }
 
