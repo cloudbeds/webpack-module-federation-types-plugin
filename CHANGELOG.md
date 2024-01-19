@@ -1,3 +1,10 @@
+## [1.15.3](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.15.2...v1.15.3) (2024-01-19)
+
+
+### Bug Fixes
+
+* alias replace in internal imported declares ([10db038](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/10db0380923c81cf9ad94614601f47b0147bb2f4))
+
 ## [1.15.2](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.15.1...v1.15.2) (2024-01-18)
 
 
