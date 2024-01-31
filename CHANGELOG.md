@@ -1,3 +1,10 @@
+## [1.15.4](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.15.3...v1.15.4) (2024-01-31)
+
+
+### Bug Fixes
+
+* **bin:** fallback for webpack config path ([355429a](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/355429ad2cdf381af500dadddfa65b34051a89ff))
+
 ## [1.15.3](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.15.2...v1.15.3) (2024-01-19)
 
 
