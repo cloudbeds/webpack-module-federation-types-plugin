@@ -13,7 +13,7 @@ import {
 } from '../helpers';
 
 import {
-  assertRunningFromRoot, getOptionsFromWebpackConfig,
+  assertRunningFromRoot, getOptionsFromWebpackConfig, getWebpackConfigPathFromArgs,
 } from './helpers';
 
 assertRunningFromRoot();
@@ -23,7 +23,7 @@ type Argv = {
 };
 
 const argv = parseArgs<Argv>(process.argv.slice(2));
-const webpackConfigPath = argv['webpack-config'] || 'webpack.config.js';
+const webpackConfigPath = getWebpackConfigPathFromArgs(argv['webpack-config']);
 
 const { mfPluginOptions, mfTypesPluginOptions } = getOptionsFromWebpackConfig(webpackConfigPath);
 

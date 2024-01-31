@@ -14,7 +14,7 @@ import { setLogger } from '../helpers';
 import { FederationConfig } from '../models';
 
 import {
-  assertRunningFromRoot, getFederationConfig, getOptionsFromWebpackConfig,
+  assertRunningFromRoot, getFederationConfig, getOptionsFromWebpackConfig, getWebpackConfigPathFromArgs,
 } from './helpers';
 
 assertRunningFromRoot();
@@ -36,12 +36,15 @@ const argv = parseArgs<Argv>(process.argv.slice(2), {
   } as Partial<Argv>,
 });
 
-const webpackConfigPath = argv['webpack-config'] || 'webpack.config.js';
-const federationConfig = webpackConfigPath
-  ? getOptionsFromWebpackConfig(webpackConfigPath).mfPluginOptions as unknown as FederationConfig
-  : getFederationConfig(argv['federation-config']);
-const compileFiles = Object.values(federationConfig.exposes);
+let federationConfig: FederationConfig;
+if (argv['federation-config']) {
+  federationConfig = getFederationConfig(argv['federation-config']);
+} else {
+  const webpackConfigPath = getWebpackConfigPathFromArgs(argv['webpack-config']);
+  federationConfig = getOptionsFromWebpackConfig(webpackConfigPath).mfPluginOptions as FederationConfig;
+}
 
+const compileFiles = Object.values(federationConfig.exposes);
 const outDir = argv['output-types-folder'] || path.join(DEFAULT_DIR_DIST, DEFAULT_DIR_EMITTED_TYPES);
 const outFile = path.join(outDir, 'index.d.ts');
 const dirGlobalTypes = argv['global-types'] || DEFAULT_DIR_GLOBAL_TYPES;
