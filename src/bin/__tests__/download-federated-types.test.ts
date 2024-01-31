@@ -1,3 +1,5 @@
+import fs from 'fs';
+
 import {
   DEFAULT_DIR_DOWNLOADED_TYPES, DEFAULT_DIR_EMITTED_TYPES,
 } from '../../constants';
@@ -17,6 +19,7 @@ jest.mock('../../downloadTypes', () => ({
   getRemoteManifestUrls: jest.fn(),
 }));
 jest.mock('../helpers', () => ({
+  ...jest.requireActual('../helpers'),
   assertRunningFromRoot: jest.fn(() => true),
   getOptionsFromWebpackConfig: jest.fn(),
 }));
@@ -43,6 +46,7 @@ const validOptions: ReturnType<typeof getOptionsFromWebpackConfig> = {
 
 describe('download-federated-types', () => {
   const originalArgv = process.argv;
+  const originalExistsSync = fs.existsSync;
   const originalProcessExit = process.exit;
   const mockConsoleLog = jest.spyOn(console, 'log').mockImplementation();
   const mockConsoleError = jest.spyOn(console, 'error').mockImplementation();
@@ -64,10 +68,12 @@ describe('download-federated-types', () => {
 
   afterAll(() => {
     process.exit = originalProcessExit;
+    fs.existsSync = originalExistsSync;
   });
 
   test('exits when remote URL is invalid', () => {
     const remoteEntryUrls = { url1: 'invalid-url' };
+    fs.existsSync = jest.fn().mockReturnValue(true);
     mockGetOptionsFromWebpackConfig.mockReturnValue({
       mfPluginOptions: {},
       mfTypesPluginOptions: {
@@ -79,7 +85,7 @@ describe('download-federated-types', () => {
       require('../download-federated-types');
     });
 
-    expect(mockGetOptionsFromWebpackConfig).toHaveBeenCalledWith('webpack.config.js');
+    expect(mockGetOptionsFromWebpackConfig).toHaveBeenCalledWith('webpack.config.ts');
     expect(mockConsoleError).toHaveBeenCalledWith('One or more remote URLs are invalid:', remoteEntryUrls);
     expect(process.exit).toHaveBeenCalledWith(1);
   });
