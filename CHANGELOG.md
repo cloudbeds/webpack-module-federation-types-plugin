@@ -1,3 +1,10 @@
+# [1.16.0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.15.4...v1.16.0) (2024-02-04)
+
+
+### Features
+
+* support Rspack ModuleFederationPluginV1 ([b02b9c5](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/b02b9c5b9f4c2854bbe6acd5dd927f21bbe1c017))
+
 ## [1.15.4](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.15.3...v1.15.4) (2024-01-31)
 
 
