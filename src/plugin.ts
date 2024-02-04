@@ -31,8 +31,6 @@ import {
 let isCompiledOnce = false;
 const isDownloadedOnce = false;
 
-const DEFAULT_MODULE_FEDERATION_PLUGIN_NAME = 'ModuleFederationPlugin';
-
 export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
   constructor(public options?: ModuleFederationTypesPluginOptions) {}
 
@@ -64,13 +62,15 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
       return;
     }
 
-    // Allow for other module federation plugins such as this "NextFederationPlugin"
-    const moduleFederationPluginName = this.options?.moduleFederationPluginName
-      ?? DEFAULT_MODULE_FEDERATION_PLUGIN_NAME;
+    const moduleFederationPluginNames = [
+      this.options?.moduleFederationPluginName, // Custom module federation plugin, such as NextFederationPlugin
+      'ModuleFederationPlugin',
+      'ModuleFederationPluginV1', // WMF v1.0 in Rspack
+    ];
 
     // Get ModuleFederationPlugin config
     const federationOptions = compiler.options.plugins.find(
-      plugin => plugin!.constructor.name === moduleFederationPluginName,
+      plugin => plugin!.constructor.name && moduleFederationPluginNames.includes(plugin!.constructor.name),
     );
 
     // eslint-disable-next-line no-underscore-dangle
@@ -78,7 +78,7 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
 
     if (!federationPluginOptions?.name) {
       logger.warn(
-        `Plugin disabled as ${moduleFederationPluginName} is not configured properly. The 'name' option is missing.`,
+        'Plugin disabled as ModuleFederationPlugin is not configured properly. The "name" option is missing.',
       );
       return;
     }
