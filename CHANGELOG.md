@@ -1,3 +1,10 @@
+# [1.17.0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.16.0...v1.17.0) (2024-02-19)
+
+
+### Features
+
+* removed cloudbeds-specific config ([0ccc0cd](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/0ccc0cd56f999900dca71282965e3c4d3d3a5a4a))
+
 # [1.16.0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.15.4...v1.16.0) (2024-02-04)
 
 
