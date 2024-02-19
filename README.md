@@ -158,7 +158,6 @@ To enable verbose logging add folowing in webpack config:
 | `downloadTypesWhenIdleIntervalInSeconds` |    `number`, `-1`    |           `60`           | Synchronize types continusouly - compile types after every compilation, download when idle with a specified delay value in seconds. <br><br> `-1` - disables continuous synchronization (compile and download will happen only on startup).                                                                                              |
 |                        `remoteEntryUrls` |  `RemoteEntryUrls`   |           `{}`           | Base URLs for types. These should target compiled bundles that also contain the types. E.g. with `{ mfeApp: 'https://assets.mydomain.com/mfe-app' }` the types will be downloaded from `'https://assets.mydomain.com/mfe-app/@types/index.d.ts'`. More details available in [this section](#templated-remote-urls)                       |
 |                     `remoteManifestUrls` | `RemoteManifestUrls` |           `{}`           | URLs to remote manifest files. A manifest contains a URL to a remote entry that is substituted in runtime.  <br><br> More details available in [this section](#templated-remote-urls)                                                                                                                                                    |
-|        `cloudbedsRemoteManifestsBaseUrl` |       `string`       |   `'/remotes/dev-ga'`    | Base URL for remote `remote-entries.json` manifest file that is specific to Cloudbeds microapps <br><br> _Examples:_ <br> `http://localhost:4480/remotes/dev` (or `/dev-docker`) <br> `https://cb-front.cloudbeds-dev.com/remotes/[env]`. <br><br> `remoteManifestUrls` is ignored when this setting has a value other than `undefined`. |
 |             `moduleFederationPluginName` |       `string`       | `ModuleFederationPlugin` | The name of the Module Federation plugin. Change this to `NextFederationPlugin` if you are using this plugin with [@module-federation/nextjs-mf](https://www.npmjs.com/package/@module-federation/nextjs-mf)                                                                                                                             |
 
 
@@ -187,7 +186,6 @@ There are several ways one can resolve this placeholder:
 
   * `remoteEntryUrls` option
   * `remoteManifestUrls` or `remoteManifestUrl` option
-  * `cloudbedsRemoteManifestsBaseUrl` option (Cloudbeds specific)
 
 The `remoteEntryUrls` option is a simple key-value map of remote names and their bundle's base URL.
 

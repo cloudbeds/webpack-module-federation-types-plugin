@@ -5,7 +5,6 @@ import {
 } from 'webpack';
 
 import {
-  CLOUDBEDS_DEPLOYMENT_ENV_WITH_DISABLED_REMOTE_TYPES_DOWNLOAD,
   DEFAULT_DIR_DIST,
   DEFAULT_DIR_DOWNLOADED_TYPES,
   DEFAULT_DIR_EMITTED_TYPES,
@@ -42,7 +41,7 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
     const remoteManifestUrls = getRemoteManifestUrls(this.options);
     const isCompilationDisabled = !!this.options?.disableTypeCompilation;
     const isDownloadDisabled = this.options?.disableDownladingRemoteTypes
-      ?? process.env.DEPLOYMENT_ENV === CLOUDBEDS_DEPLOYMENT_ENV_WITH_DISABLED_REMOTE_TYPES_DOWNLOAD;
+      ?? process.env.DEPLOYMENT_ENV === 'devbox';
 
     // Disable plugin when some URLs are not valid
     if (!isEveryUrlValid(Object.values({ ...remoteEntryUrls }))) {

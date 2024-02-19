@@ -13,9 +13,4 @@ export type ModuleFederationTypesPluginOptions = {
   remoteEntryUrls?: RemoteEntryUrls,
   remoteManifestUrls?: RemoteManifestUrls,
   remoteManifestUrl?: string,
-
-  cloudbedsRemoteManifestsBaseUrl?: string | ''
-    | 'dev' | 'dev-ga'
-    | 'stage' | 'stage-ga'
-    | 'prod' | 'prod-ga',
 }
