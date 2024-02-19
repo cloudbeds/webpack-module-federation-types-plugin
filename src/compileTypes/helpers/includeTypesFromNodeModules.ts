@@ -15,12 +15,11 @@ export function includeTypesFromNodeModules(federationConfig: FederationConfig, 
       exposeTargetPath.replace('./node_modules/', ''),
     ]);
 
-  // language=TypeScript
-  const createNpmModule = (exposedModuleKey: string, packageName: string) => `
-    declare module "${federationConfig.name}/${exposedModuleKey}" {
-      export * from "${packageName}"
-    }
-  `;
+  const createNpmModule = (exposedModuleKey: string, packageName: string) => [
+    `declare module "${federationConfig.name}/${exposedModuleKey}" {`,
+    `  export * from "${packageName}"`,
+    '}',
+  ].join('\n');
 
   if (exposedNpmPackages.length) {
     logger.log('Including typings for npm packages:', exposedNpmPackages);
