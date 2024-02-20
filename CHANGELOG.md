@@ -1,3 +1,10 @@
+# [1.18.0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.17.0...v1.18.0) (2024-02-20)
+
+
+### Features
+
+* substitute aliased modules ([2479783](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/2479783e360f67e67340b1061154bc0718ccfe22))
+
 # [1.17.0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.16.0...v1.17.0) (2024-02-19)
 
 
