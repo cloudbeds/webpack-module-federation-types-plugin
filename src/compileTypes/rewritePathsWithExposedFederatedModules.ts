@@ -4,8 +4,11 @@ import fs from 'fs';
 import mkdirp from 'mkdirp';
 
 import { FederationConfig } from '../models';
+import { PREFIX_NOT_FOR_IMPORT } from '../constants';
 
-import { includeTypesFromNodeModules } from './helpers';
+import {
+  includeTypesFromNodeModules, substituteAliasedModules,
+} from './helpers';
 
 export function rewritePathsWithExposedFederatedModules(
   federationConfig: FederationConfig,
@@ -38,7 +41,7 @@ export function rewritePathsWithExposedFederatedModules(
 
     let federatedModulePath = exposedModuleKey
       ? `${federationConfig.name}/${exposedModuleKey}`
-      : `#not-for-import/${federationConfig.name}/${importPath}`;
+      : `${PREFIX_NOT_FOR_IMPORT}/${federationConfig.name}/${importPath}`;
 
     federatedModulePath = federatedModulePath.replace(/\/index$/, '');
 
@@ -55,6 +58,7 @@ export function rewritePathsWithExposedFederatedModules(
     ].join('\n');
   });
 
+  typingsUpdated = substituteAliasedModules(federationConfig.name, typingsUpdated);
   typingsUpdated = includeTypesFromNodeModules(federationConfig, typingsUpdated);
 
   mkdirp.sync(path.dirname(outFile));

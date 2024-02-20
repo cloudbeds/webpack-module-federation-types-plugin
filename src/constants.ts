@@ -8,3 +8,5 @@ export const DEFAULT_DIR_GLOBAL_TYPES = 'src/@types';
 export const DEFAULT_DIR_DOWNLOADED_TYPES = 'src/@types/remotes';
 
 export const DEFAULT_DOWNLOAD_TYPES_INTERVAL_IN_SECONDS = 60;
+
+export const PREFIX_NOT_FOR_IMPORT = '#not-for-import';
