@@ -13,5 +13,12 @@ export function getTSConfigCompilerOptions(tsconfigFileNameOrPath: string): ts.C
     process.exit(1);
   }
 
-  return require(tsconfigPath).compilerOptions;
+  const tsconfigJsonFile = ts.readJsonConfigFile(tsconfigPath, ts.sys.readFile);
+  const parsedConfig = ts.parseJsonSourceFileConfigFileContent(
+    tsconfigJsonFile,
+    ts.sys,
+    path.dirname(tsconfigPath),
+  );
+
+  return parsedConfig.options;
 }
