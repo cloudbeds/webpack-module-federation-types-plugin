@@ -13,4 +13,5 @@ export type ModuleFederationTypesPluginOptions = {
   remoteEntryUrls?: RemoteEntryUrls,
   remoteManifestUrls?: RemoteManifestUrls,
   remoteManifestUrl?: string,
+  shouldCompileTypesContinuously?: boolean;
 }

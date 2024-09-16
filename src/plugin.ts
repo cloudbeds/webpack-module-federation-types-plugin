@@ -1,5 +1,5 @@
 import path from 'path';
-
+import { Worker } from 'worker_threads';
 import {
   Compiler, WebpackPluginInstance,
 } from 'webpack';
@@ -13,16 +13,12 @@ import {
   TS_CONFIG_FILE,
 } from './constants';
 import {
-  compileTypes, rewritePathsWithExposedFederatedModules,
-} from './compileTypes';
-import {
   downloadTypes, getRemoteManifestUrls,
 } from './downloadTypes';
 import {
-  getLoggerHint, isEveryUrlValid, setLogger,
+ isEveryUrlValid, setLogger, getLogger
 } from './helpers';
 import {
-  FederationConfig,
   ModuleFederationPluginOptions,
   ModuleFederationTypesPluginOptions,
 } from './models';
@@ -31,7 +27,59 @@ let isCompiledOnce = false;
 const isDownloadedOnce = false;
 
 export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
+  private worker: Worker | null = null;
+
   constructor(public options?: ModuleFederationTypesPluginOptions) {}
+
+  private ensureWorker(logger: ReturnType<typeof getLogger>): void {
+    if (!this.worker) {
+      this.worker = new Worker(
+        path.resolve(__dirname, 'compileTypesWorker.js')
+      );
+      this.worker.on('message', (message) => {
+        if (typeof message === 'string') {
+          logger.info(`[Worker]: ${message}`);
+        } else if (message.status === 'error') {
+          logger.error(
+            `[Worker]: ${message.message} - Error: ${message.error}`
+          );
+        } else if (message.status === 'success') {
+          logger.info(`[Worker]: ${message.message}`);
+        }
+      });
+
+      this.worker.on('error', (error) => {
+        logger.error(`[Worker Error]: ${error.message}`);
+      });
+      this.worker.on('exit', (code) => {
+        if (code === 0) {
+          logger.info(`[Worker]: Worker stopped successfully`);
+        } else if (code === 1) {
+          logger.log(`[Worker]: Worker was terminated gracefully`);
+        } else {
+          logger.error(`[Worker]: Worker stopped with exit code ${code}.`);
+        }
+      });
+    }
+  }
+
+  private sendToWorker(
+    task: string,
+    args: any,
+    logger: ReturnType<typeof getLogger>
+  ): void {
+    this.terminateWorkerIfRunning(logger);
+    this.ensureWorker(logger);
+    this.worker?.postMessage({ task, args });
+  }
+
+  private terminateWorkerIfRunning(logger: ReturnType<typeof getLogger>): void {
+    if (this.worker) {
+      logger.log('[Worker]: Terminating the ongoing worker');
+      this.worker.terminate();
+      this.worker = null; // Reset worker
+    }
+  }
 
   apply(compiler: Compiler): void {
     const PLUGIN_NAME = this.constructor.name;
@@ -95,20 +143,20 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
     const outFile = path.join(dirDist, dirEmittedTypes, 'index.d.ts');
 
     // Create types for exposed modules
-    const compileTypesAfterEmit = () => {
-      const { isSuccess, typeDefinitions } = compileTypes(
-        tsconfig,
-        exposes as string[],
-        outFile,
-        dirGlobalTypes,
+    const compileTypesAfterEmit = () =>
+      this.sendToWorker(
+        'compile',
+        {
+          tsconfig,
+          exposes,
+          outFile,
+          dirGlobalTypes,
+          federationPluginOptions,
+          shouldCompileTypesContinuously:
+            this.options?.shouldCompileTypesContinuously,
+        },
+        logger
       );
-
-      if (isSuccess) {
-        rewritePathsWithExposedFederatedModules(federationPluginOptions as FederationConfig, outFile, typeDefinitions);
-      } else {
-        logger.warn('Failed to compile types for exposed modules.', getLoggerHint(compiler));
-      }
-    };
 
     // Import types from remote modules
     const downloadRemoteTypes = async () => downloadTypes(
