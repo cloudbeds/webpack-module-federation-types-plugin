@@ -95,16 +95,20 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
 
     // Create types for exposed modules
     const compileTypesAfterEmit = async () => {
-      compileTypesAsync(
-        {
-          tsconfigPath: TS_CONFIG_FILE,
-          exposedModules: exposes as string[],
-          outFile,
-          dirGlobalTypes,
-          federationConfig: federationPluginOptions as FederationConfig,
-        },
-        getLoggerHint(compiler),
-      );
+      try {
+        await compileTypesAsync(
+          {
+            tsconfigPath: TS_CONFIG_FILE,
+            exposedModules: exposes as string[],
+            outFile,
+            dirGlobalTypes,
+            federationConfig: federationPluginOptions as FederationConfig,
+          },
+          getLoggerHint(compiler),
+        );
+      } catch (error) {
+        logger.error('Error compiling types', error);
+      }
     };
 
     // Import types from remote modules

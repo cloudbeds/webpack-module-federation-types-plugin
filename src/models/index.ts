@@ -1,3 +1,4 @@
+export * from './CommonLogger';
 export * from './FederationConfig';
 export * from './ModuleFederationPluginOptions';
 export * from './ModuleFederationTypesPluginOptions';

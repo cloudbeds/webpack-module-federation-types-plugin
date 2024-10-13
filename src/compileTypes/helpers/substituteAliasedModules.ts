@@ -1,9 +1,12 @@
 import { PREFIX_NOT_FOR_IMPORT } from '../../constants';
 import { getLogger } from '../../helpers';
+import type { CommonLogger } from '../../models';
 
-export function substituteAliasedModules(federatedModuleName: string, typings: string): string {
-  const logger = getLogger();
-
+export function substituteAliasedModules(
+  federatedModuleName: string,
+  typings: string,
+  logger: CommonLogger = getLogger(),
+): string {
   // Collect all instances of `import("...")`
   const regexImportPaths = /import\("([^"]*)"\)/g;
   const uniqueImportPaths = new Set<string>();
@@ -16,7 +19,16 @@ export function substituteAliasedModules(federatedModuleName: string, typings: s
 
   let modifiedTypings = typings;
 
-  uniqueImportPaths.forEach(importPath => {
+  const filteredImportPaths = Array.from(uniqueImportPaths).filter(
+    path => !path.startsWith(PREFIX_NOT_FOR_IMPORT),
+  );
+
+  if (filteredImportPaths.length) {
+    logger.log(`Unique import paths in ${federatedModuleName}:`);
+    logger.log(JSON.stringify(filteredImportPaths, null, 2));
+  }
+
+  filteredImportPaths.forEach(importPath => {
     const notForImportPath = `${PREFIX_NOT_FOR_IMPORT}/${federatedModuleName}/${importPath}`;
 
     if (modifiedTypings.includes(`declare module "${notForImportPath}"`)) {

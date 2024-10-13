@@ -36,10 +36,17 @@ describe('includeTypesFromNodeModules', () => {
     ].join('\n');
 
     expect(result).toBe([initialTypings, moduleADeclaration, moduleBDeclaration].join('\n'));
-    expect(mockLogger.log).toHaveBeenCalledWith('Including typings for npm packages:', [
-      ['ModuleA', 'libraryA'],
-      ['ModuleB', 'libraryB'],
-    ]);
+    expect(mockLogger.log).toHaveBeenCalledWith('Including typings for npm packages:');
+    expect(mockLogger.log).toHaveBeenCalledWith(
+      JSON.stringify(
+        [
+          ['ModuleA', 'libraryA'],
+          ['ModuleB', 'libraryB'],
+        ],
+        null,
+        2,
+      ),
+    );
   });
 
   test('does not modify typings when there are no NPM package paths', () => {

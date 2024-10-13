@@ -14,7 +14,7 @@ describe('substituteAliasedModules', () => {
   const federatedModuleName = 'myCommon';
   const logger = getLogger();
 
-  test('substitutes import path when #not-for-import version exists', () => {
+  test("substitutes import function's path argument when #not-for-import declaration exists", () => {
     const modulePath = 'libs/currency';
     const typings = `
       Some import("${modulePath}") more content
@@ -30,12 +30,13 @@ describe('substituteAliasedModules', () => {
     expect(logger.log).toHaveBeenCalledWith(`Substituting import path: ${modulePath}`);
   });
 
-  test('does not modify typings when a #not-for-import version does not exist', () => {
+  test('does not modify typings when a #not-for-import declaration does not exist', () => {
     const originalTypings = 'Some content import("another/module") more content';
 
     const result = substituteAliasedModules(federatedModuleName, originalTypings);
 
     expect(result).toBe(originalTypings);
-    expect(logger.log).not.toHaveBeenCalled();
+    expect(logger.log).toHaveBeenCalledWith('Unique import paths in myCommon:');
+    expect(logger.log).toHaveBeenCalledWith(JSON.stringify(['another/module'], null, 2));
   });
 });

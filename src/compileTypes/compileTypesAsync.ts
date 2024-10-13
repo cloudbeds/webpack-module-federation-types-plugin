@@ -1,13 +1,18 @@
 import path from 'node:path';
-import { Worker, parentPort } from 'node:worker_threads';
+import { Worker } from 'node:worker_threads';
 
 import { getLogger } from '../helpers';
-import type { CompileTypesParams } from './compileTypes';
-import type { CompileTypesWorkerMessage } from './compileTypesWorker';
+import type {
+  CompileTypesWorkerMessage,
+  CompileTypesWorkerResultMessage,
+} from './compileTypesWorker';
 
 let worker: Worker | null = null;
 
-export function compileTypesAsync(params: CompileTypesParams, loggerHint = ''): Promise<void> {
+export function compileTypesAsync(
+  params: CompileTypesWorkerMessage,
+  loggerHint = '',
+): Promise<void> {
   const logger = getLogger();
 
   return new Promise((resolve, reject) => {
@@ -16,11 +21,14 @@ export function compileTypesAsync(params: CompileTypesParams, loggerHint = ''): 
       worker.terminate();
     }
 
-    const workerPath = path.join(__dirname, 'compileWorker.js');
+    const workerPath = path.join(__dirname, 'compileTypesWorker.js');
     worker = new Worker(workerPath);
 
-    worker.on('message', (result: CompileTypesWorkerMessage) => {
+    worker.on('message', (result: CompileTypesWorkerResultMessage) => {
       switch (result.status) {
+        case 'log':
+          logger[result.level]('[Worker]:', result.message);
+          return;
         case 'success':
           resolve();
           break;
@@ -46,12 +54,15 @@ export function compileTypesAsync(params: CompileTypesParams, loggerHint = ''): 
     });
 
     worker.on('exit', code => {
-      if (code !== 0 && code !== null) {
+      if (code === null || code === 0 || code === 1) {
+        logger.log(`[Worker]: Process exited with code ${code}`);
+        resolve();
+      } else {
         reject(new Error(`[Worker]: Process exited with code ${code}`));
       }
       worker = null;
     });
 
-    parentPort?.postMessage({ ...params, logger });
+    worker.postMessage(params);
   });
 }

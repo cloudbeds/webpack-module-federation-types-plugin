@@ -4,26 +4,21 @@ import path from 'node:path';
 import mkdirp from 'mkdirp';
 
 import { PREFIX_NOT_FOR_IMPORT } from '../constants';
-import type { FederationConfig } from '../models';
+import type { CommonLogger, FederationConfig } from '../models';
 
+import { getLogger } from '../helpers';
 import { includeTypesFromNodeModules, substituteAliasedModules } from './helpers';
 
 export function rewritePathsWithExposedFederatedModules(
   federationConfig: FederationConfig,
   outFile: string,
   typings: string,
+  logger: CommonLogger = getLogger(),
 ): void {
   const regexDeclareModule = /declare module "(.*)"/g;
-  const declaredModulePaths: string[] = [];
+  const declaredModulePaths = Array.from(typings.matchAll(regexDeclareModule), match => match[1]);
 
-  // Collect all instances of `declare module "..."`
-  for (
-    let execResults: null | string[] = regexDeclareModule.exec(typings);
-    execResults !== null;
-    execResults = regexDeclareModule.exec(typings)
-  ) {
-    declaredModulePaths.push(execResults[1]);
-  }
+  logger.debug(`Declared module paths: ${JSON.stringify(declaredModulePaths, null, 2)}`);
 
   let typingsUpdated: string = typings;
 
@@ -57,8 +52,8 @@ export function rewritePathsWithExposedFederatedModules(
     ].join('\n');
   });
 
-  typingsUpdated = substituteAliasedModules(federationConfig.name, typingsUpdated);
-  typingsUpdated = includeTypesFromNodeModules(federationConfig, typingsUpdated);
+  typingsUpdated = substituteAliasedModules(federationConfig.name, typingsUpdated, logger);
+  typingsUpdated = includeTypesFromNodeModules(federationConfig, typingsUpdated, logger);
 
   mkdirp.sync(path.dirname(outFile));
   fs.writeFileSync(outFile, typingsUpdated.replace(/\r\n/g, '\n'));

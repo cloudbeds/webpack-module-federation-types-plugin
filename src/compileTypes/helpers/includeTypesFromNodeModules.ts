@@ -1,11 +1,11 @@
 import { getLogger } from '../../helpers';
-import type { FederationConfig } from '../../models';
+import type { CommonLogger, FederationConfig } from '../../models';
 
 export function includeTypesFromNodeModules(
   federationConfig: FederationConfig,
   typings: string,
+  logger: CommonLogger = getLogger(),
 ): string {
-  const logger = getLogger();
   let typingsWithNpmPackages = typings;
 
   const exposedNpmPackages = Object.entries(federationConfig.exposes)
@@ -26,7 +26,8 @@ export function includeTypesFromNodeModules(
     ].join('\n');
 
   if (exposedNpmPackages.length) {
-    logger.log('Including typings for npm packages:', exposedNpmPackages);
+    logger.log('Including typings for npm packages:');
+    logger.log(JSON.stringify(exposedNpmPackages, null, 2));
   }
 
   try {
@@ -34,8 +35,8 @@ export function includeTypesFromNodeModules(
       typingsWithNpmPackages += `\n${createNpmModule(exposedModuleKey, packageName)}`;
     });
   } catch (err) {
-    logger.warn('Typings was not included for npm package:', (err as Dict)?.url);
-    logger.log(err);
+    logger.warn(`Typings was not included for npm package: ${(err as Dict)?.url}`);
+    logger.log(JSON.stringify(err, null, 2));
   }
 
   return typingsWithNpmPackages;

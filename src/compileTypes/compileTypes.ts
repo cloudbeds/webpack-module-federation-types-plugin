@@ -4,7 +4,7 @@ import ts from 'typescript';
 
 import { getAllFilePaths, getLogger } from '../helpers';
 
-import type { FederationConfig } from '../models';
+import type { CommonLogger } from '../models/CommonLogger';
 import { getTSConfigCompilerOptions, reportCompileDiagnostic } from './helpers';
 
 export type CompileTypesParams = {
@@ -12,7 +12,6 @@ export type CompileTypesParams = {
   exposedModules: string[];
   outFile: string;
   dirGlobalTypes: string;
-  federationConfig: FederationConfig;
 };
 
 export type CompileTypesResult = {
@@ -20,16 +19,12 @@ export type CompileTypesResult = {
   typeDefinitions: string;
 };
 
-export function compileTypes({
-  tsconfigPath,
-  exposedModules,
-  outFile,
-  dirGlobalTypes,
-}: CompileTypesParams): CompileTypesResult {
-  const logger = getLogger();
-
+export function compileTypes(
+  { tsconfigPath, exposedModules, outFile, dirGlobalTypes }: CompileTypesParams,
+  logger: CommonLogger = getLogger(),
+): CompileTypesResult {
   const exposedFileNames = Object.values(exposedModules);
-  const { moduleResolution, ...compilerOptions } = getTSConfigCompilerOptions(tsconfigPath);
+  const { moduleResolution, ...compilerOptions } = getTSConfigCompilerOptions(tsconfigPath, logger);
 
   Object.assign(compilerOptions, {
     declaration: true,
@@ -59,11 +54,12 @@ export function compileTypes({
       ...getAllFilePaths(`./${dirGlobalTypes}`).filter(filePath => filePath.endsWith('.d.ts')),
     );
   }
-  logger.log('Including a set of root files in compilation', exposedFileNames);
+  logger.log('[compileTypes]: Including a set of root files in compilation');
+  logger.log(JSON.stringify(exposedFileNames, null, 2));
 
   const program = ts.createProgram(exposedFileNames, compilerOptions, host);
   const { diagnostics, emitSkipped } = program.emit();
-  diagnostics.forEach(reportCompileDiagnostic);
+  diagnostics.forEach(item => reportCompileDiagnostic(item, logger));
 
   if (emitSkipped) {
     logger.log('[compileTypes]: TypeScript program emit skipped');
