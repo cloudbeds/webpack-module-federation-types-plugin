@@ -7,11 +7,10 @@ import parseArgs from 'minimist';
 import {
   DEFAULT_DIR_DIST, DEFAULT_DIR_EMITTED_TYPES, DEFAULT_DIR_GLOBAL_TYPES, TS_CONFIG_FILE,
 } from '../constants';
-import {
-  compileTypes, rewritePathsWithExposedFederatedModules,
-} from '../compileTypes';
+import { rewritePathsWithExposedFederatedModules } from '../compileTypes';
 import { setLogger } from '../helpers';
 import { FederationConfig } from '../models';
+import { compileTypesAsync } from '../compileTypes/compileTypesAsync';
 
 import {
   assertRunningFromRoot, getFederationConfig, getOptionsFromWebpackConfig, getWebpackConfigPathFromArgs,
@@ -44,27 +43,35 @@ if (argv['federation-config']) {
   federationConfig = getOptionsFromWebpackConfig(webpackConfigPath).mfPluginOptions as FederationConfig;
 }
 
-const compileFiles = Object.values(federationConfig.exposes);
+const exposedModules = Object.values(federationConfig.exposes);
 const outDir = argv['output-types-folder'] || path.join(DEFAULT_DIR_DIST, DEFAULT_DIR_EMITTED_TYPES);
 const outFile = path.join(outDir, 'index.d.ts');
 const dirGlobalTypes = argv['global-types'] || DEFAULT_DIR_GLOBAL_TYPES;
 const tsconfigPath = argv.tsconfig || TS_CONFIG_FILE;
 
-console.log(`Emitting types for ${compileFiles.length} exposed module(s)`);
+console.log(`Emitting types for ${exposedModules.length} exposed module(s)`);
 
 setLogger(console);
 
-const { isSuccess, typeDefinitions } = compileTypes(
+compileTypesAsync({
   tsconfigPath,
-  compileFiles,
+  exposedModules,
   outFile,
   dirGlobalTypes,
-);
+})
+  .then(({ isSuccess, typeDefinitions }) => {
+    if (!isSuccess) {
+      console.error('Failed to compile types');
+      process.exit(1);
+    }
 
-if (!isSuccess) {
-  process.exit(1);
-}
+    console.log('Replacing paths with names of exposed federate modules in typings file:', outFile);
 
-console.log('Replacing paths with names of exposed federate modules in typings file:', outFile);
+    rewritePathsWithExposedFederatedModules(federationConfig, outFile, typeDefinitions);
 
-rewritePathsWithExposedFederatedModules(federationConfig, outFile, typeDefinitions);
+    console.log(`Asynchronous types compilation completed successfully in ${process.uptime()} seconds`);
+  })
+  .catch(error => {
+    console.error('Error during type compilation:', error);
+    process.exit(1);
+  });

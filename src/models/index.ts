@@ -1,4 +1,3 @@
-export * from './CompileTypesResult';
 export * from './FederationConfig';
 export * from './ModuleFederationPluginOptions';
 export * from './ModuleFederationTypesPluginOptions';

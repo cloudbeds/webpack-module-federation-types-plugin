@@ -2,7 +2,6 @@ import fs from 'fs';
 
 import ts from 'typescript';
 
-import { CompileTypesResult } from '../models';
 import {
   getAllFilePaths, getLogger,
 } from '../helpers';
@@ -11,15 +10,24 @@ import {
   getTSConfigCompilerOptions, reportCompileDiagnostic,
 } from './helpers';
 
-export function compileTypes(
+export type CompileTypesParams = {
   tsconfigPath: string,
-  exposedComponents: string[],
+  exposedModules: string[],
   outFile: string,
   dirGlobalTypes: string,
+};
+
+export type CompileTypesResult = {
+  isSuccess: boolean,
+  typeDefinitions: string,
+};
+
+export function compileTypes(
+  { tsconfigPath, exposedModules, outFile, dirGlobalTypes }: CompileTypesParams,
 ): CompileTypesResult {
   const logger = getLogger();
 
-  const exposedFileNames = Object.values(exposedComponents);
+  const exposedFileNames = Object.values(exposedModules);
   const { moduleResolution, ...compilerOptions } = getTSConfigCompilerOptions(tsconfigPath);
 
   Object.assign(compilerOptions, {

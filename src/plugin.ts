@@ -3,6 +3,9 @@ import path from 'path';
 import {
   Compiler, WebpackPluginInstance,
 } from 'webpack';
+import {
+  Configuration as DevServerConfiguration, Static,
+} from 'webpack-dev-server';
 
 import {
   DEFAULT_DIR_DIST,
@@ -13,7 +16,7 @@ import {
   TS_CONFIG_FILE,
 } from './constants';
 import {
-  compileTypes, rewritePathsWithExposedFederatedModules,
+  rewritePathsWithExposedFederatedModules, compileTypesAsync,
 } from './compileTypes';
 import {
   downloadTypes, getRemoteManifestUrls,
@@ -85,28 +88,41 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
     // Define path for the emitted typings file
     const { exposes, remotes } = federationPluginOptions;
 
-    const dirDist = compiler.options.devServer?.static?.directory
+    const dirDist = ((compiler.options.devServer as DevServerConfiguration)?.static as Static)?.directory
       || compiler.options.output?.path
       || DEFAULT_DIR_DIST;
     const dirEmittedTypes = this.options?.dirEmittedTypes || DEFAULT_DIR_EMITTED_TYPES;
     const dirGlobalTypes = this.options?.dirGlobalTypes || DEFAULT_DIR_GLOBAL_TYPES;
     const dirDownloadedTypes = this.options?.dirDownloadedTypes || DEFAULT_DIR_DOWNLOADED_TYPES;
-    const tsconfig = TS_CONFIG_FILE;
     const outFile = path.join(dirDist, dirEmittedTypes, 'index.d.ts');
 
     // Create types for exposed modules
-    const compileTypesAfterEmit = () => {
-      const { isSuccess, typeDefinitions } = compileTypes(
-        tsconfig,
-        exposes as string[],
-        outFile,
-        dirGlobalTypes,
-      );
+    const compileTypesAfterEmit = async () => {
+      try {
+        const startTime = performance.now();
 
-      if (isSuccess) {
-        rewritePathsWithExposedFederatedModules(federationPluginOptions as FederationConfig, outFile, typeDefinitions);
-      } else {
-        logger.warn('Failed to compile types for exposed modules.', getLoggerHint(compiler));
+        const { isSuccess, typeDefinitions } = await compileTypesAsync({
+          tsconfigPath: TS_CONFIG_FILE,
+          exposedModules: exposes as string[],
+          outFile,
+          dirGlobalTypes,
+        });
+
+        if (isSuccess) {
+          const endTime = performance.now();
+          const timeTakenInSeconds = (endTime - startTime) / 1000;
+          logger.log(`Types compilation completed in ${timeTakenInSeconds.toFixed(2)} seconds`);
+
+          rewritePathsWithExposedFederatedModules(
+            federationPluginOptions as FederationConfig,
+            outFile,
+            typeDefinitions,
+          );
+        } else {
+          logger.warn('Failed to compile types for exposed modules.', getLoggerHint(compiler));
+        }
+      } catch (error) {
+        logger.error('Error compiling types asynchronously:', error);
       }
     };
 
