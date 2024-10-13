@@ -1,38 +1,57 @@
-import { type ChildProcess, fork } from 'node:child_process';
 import path from 'node:path';
+import { Worker, parentPort } from 'node:worker_threads';
 
-import type { CompileTypesParams, CompileTypesResult } from './compileTypes';
+import { getLogger } from '../helpers';
+import type { CompileTypesParams } from './compileTypes';
+import type { CompileTypesWorkerMessage } from './compileTypesWorker';
 
-let currentWorker: ChildProcess | null = null;
+let worker: Worker | null = null;
 
-export function compileTypesAsync(params: CompileTypesParams): Promise<CompileTypesResult> {
+export function compileTypesAsync(params: CompileTypesParams, loggerHint = ''): Promise<void> {
+  const logger = getLogger();
+
   return new Promise((resolve, reject) => {
-    if (currentWorker) {
-      currentWorker.kill();
+    if (worker) {
+      logger.log('Terminating existing worker process');
+      worker.terminate();
     }
 
     const workerPath = path.join(__dirname, 'compileWorker.js');
-    currentWorker = fork(workerPath);
+    worker = new Worker(workerPath);
 
-    currentWorker.on('message', (result: CompileTypesResult) => {
-      resolve(result);
-      currentWorker?.kill();
-      currentWorker = null;
-    });
-
-    currentWorker.on('error', error => {
-      reject(error);
-      currentWorker?.kill();
-      currentWorker = null;
-    });
-
-    currentWorker.on('exit', code => {
-      if (code !== 0 && code !== null) {
-        reject(new Error(`Worker process exited with code ${code}`));
+    worker.on('message', (result: CompileTypesWorkerMessage) => {
+      switch (result.status) {
+        case 'success':
+          resolve();
+          break;
+        case 'failure':
+          logger.warn('[Worker]: Failed to compile types for exposed modules.', loggerHint);
+          reject(new Error('Failed to compile types for exposed modules.'));
+          break;
+        case 'error':
+          logger.warn('[Worker]: Error compiling types for exposed modules.', loggerHint);
+          reject(result.error);
+          break;
       }
-      currentWorker = null;
+      worker?.terminate();
+      worker = null;
     });
 
-    currentWorker.send(params);
+    worker.on('error', error => {
+      logger.warn('[Worker]: Unexpected error.', loggerHint);
+      logger.log(error);
+      reject(error);
+      worker?.terminate();
+      worker = null;
+    });
+
+    worker.on('exit', code => {
+      if (code !== 0 && code !== null) {
+        reject(new Error(`[Worker]: Process exited with code ${code}`));
+      }
+      worker = null;
+    });
+
+    parentPort?.postMessage({ ...params, logger });
   });
 }

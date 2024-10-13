@@ -4,7 +4,6 @@ import path from 'node:path';
 
 import parseArgs from 'minimist';
 
-import { rewritePathsWithExposedFederatedModules } from '../compileTypes';
 import { compileTypesAsync } from '../compileTypes/compileTypesAsync';
 import {
   DEFAULT_DIR_DIST,
@@ -59,26 +58,9 @@ console.log(`Emitting types for ${exposedModules.length} exposed module(s)`);
 setLogger(console);
 
 compileTypesAsync({
-  tsconfigPath,
   exposedModules,
-  outFile,
+  federationConfig,
   dirGlobalTypes,
-})
-  .then(({ isSuccess, typeDefinitions }) => {
-    if (!isSuccess) {
-      console.error('Failed to compile types');
-      process.exit(1);
-    }
-
-    console.log('Replacing paths with names of exposed federate modules in typings file:', outFile);
-
-    rewritePathsWithExposedFederatedModules(federationConfig, outFile, typeDefinitions);
-
-    console.log(
-      `Asynchronous types compilation completed successfully in ${process.uptime()} seconds`,
-    );
-  })
-  .catch(error => {
-    console.error('Error during type compilation:', error);
-    process.exit(1);
-  });
+  outFile,
+  tsconfigPath,
+});

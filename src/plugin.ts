@@ -2,7 +2,7 @@ import path from 'node:path';
 
 import type { Compiler, WebpackPluginInstance } from 'webpack';
 
-import { compileTypesAsync, rewritePathsWithExposedFederatedModules } from './compileTypes';
+import { compileTypesAsync } from './compileTypes';
 import {
   DEFAULT_DIR_DIST,
   DEFAULT_DIR_DOWNLOADED_TYPES,
@@ -95,32 +95,16 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
 
     // Create types for exposed modules
     const compileTypesAfterEmit = async () => {
-      try {
-        const startTime = performance.now();
-
-        const { isSuccess, typeDefinitions } = await compileTypesAsync({
+      compileTypesAsync(
+        {
           tsconfigPath: TS_CONFIG_FILE,
           exposedModules: exposes as string[],
           outFile,
           dirGlobalTypes,
-        });
-
-        if (isSuccess) {
-          const endTime = performance.now();
-          const timeTakenInSeconds = (endTime - startTime) / 1000;
-          logger.log(`Types compilation completed in ${timeTakenInSeconds.toFixed(2)} seconds`);
-
-          rewritePathsWithExposedFederatedModules(
-            federationPluginOptions as FederationConfig,
-            outFile,
-            typeDefinitions,
-          );
-        } else {
-          logger.warn('Failed to compile types for exposed modules.', getLoggerHint(compiler));
-        }
-      } catch (error) {
-        logger.error('Error compiling types asynchronously:', error);
-      }
+          federationConfig: federationPluginOptions as FederationConfig,
+        },
+        getLoggerHint(compiler),
+      );
     };
 
     // Import types from remote modules
@@ -178,11 +162,11 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
     if (exposes && !isCompilationDisabled) {
       compiler.hooks.afterEmit.tap(PLUGIN_NAME, () => {
         if (shouldSyncContinuously) {
-          logger.log('Compiling types on afterEmit event');
+          logger.log('Asynchronously compiling types on afterEmit event');
           compileTypesContinuouslyAfterEmit();
         } else if (!isCompiledOnce) {
-          isCompiledOnce = true;
           logger.log('Compile types on startup only');
+          isCompiledOnce = true;
           compileTypesAfterEmit();
         }
       });

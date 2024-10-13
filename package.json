@@ -18,7 +18,8 @@
     "build": "tsc",
     "watch": "tsc -w",
     "lint": "biome check --write --unsafe",
-    "lint:tsc": "tsc --noEmit",
+    "lint:ts": "tsc --noEmit",
+    "prepare": "simple-git-hooks",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest"
