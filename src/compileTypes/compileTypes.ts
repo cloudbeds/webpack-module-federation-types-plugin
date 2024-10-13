@@ -1,30 +1,29 @@
-import fs from 'fs';
+import fs from 'node:fs';
 
 import ts from 'typescript';
 
-import {
-  getAllFilePaths, getLogger,
-} from '../helpers';
+import { getAllFilePaths, getLogger } from '../helpers';
 
-import {
-  getTSConfigCompilerOptions, reportCompileDiagnostic,
-} from './helpers';
+import { getTSConfigCompilerOptions, reportCompileDiagnostic } from './helpers';
 
 export type CompileTypesParams = {
-  tsconfigPath: string,
-  exposedModules: string[],
-  outFile: string,
-  dirGlobalTypes: string,
+  tsconfigPath: string;
+  exposedModules: string[];
+  outFile: string;
+  dirGlobalTypes: string;
 };
 
 export type CompileTypesResult = {
-  isSuccess: boolean,
-  typeDefinitions: string,
+  isSuccess: boolean;
+  typeDefinitions: string;
 };
 
-export function compileTypes(
-  { tsconfigPath, exposedModules, outFile, dirGlobalTypes }: CompileTypesParams,
-): CompileTypesResult {
+export function compileTypes({
+  tsconfigPath,
+  exposedModules,
+  outFile,
+  dirGlobalTypes,
+}: CompileTypesParams): CompileTypesResult {
   const logger = getLogger();
 
   const exposedFileNames = Object.values(exposedModules);
@@ -39,8 +38,8 @@ export function compileTypes(
 
   // Expand lib name to a file name according to https://stackoverflow.com/a/69617124/1949503
   if (compilerOptions.lib) {
-    compilerOptions.lib = compilerOptions.lib.map(
-      fileName => (fileName.includes('.d.ts') ? fileName : `lib.${fileName}.d.ts`).toLowerCase(),
+    compilerOptions.lib = compilerOptions.lib.map(fileName =>
+      (fileName.includes('.d.ts') ? fileName : `lib.${fileName}.d.ts`).toLowerCase(),
     );
   }
 

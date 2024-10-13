@@ -1,5 +1,5 @@
 export type RemotesRegistryManifest = {
-  [key: string]: unknown,
-  scope: string,
-  url: string,
+  [key: string]: unknown;
+  scope: string;
+  url: string;
 }[];

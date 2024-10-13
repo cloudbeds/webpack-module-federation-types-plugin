@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from 'node:fs';
 
 export function assertRunningFromRoot(): void {
   if (!fs.readdirSync('./').includes('node_modules')) {

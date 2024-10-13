@@ -1,27 +1,22 @@
-import webpack, {
-  Compilation, Compiler,
-} from 'webpack';
+import { describe, expect, test, vi } from 'vitest';
+import webpack, { type Compilation, type Compiler } from 'webpack';
 
+import { DEFAULT_DIR_DOWNLOADED_TYPES, DEFAULT_DIR_EMITTED_TYPES } from '../constants';
 import { downloadTypes } from '../downloadTypes/downloadTypes';
+import type { ModuleFederationPluginOptions, ModuleFederationTypesPluginOptions } from '../models';
 import { ModuleFederationTypesPlugin } from '../plugin';
-import {
-  ModuleFederationPluginOptions, ModuleFederationTypesPluginOptions,
-} from '../models';
-import {
-  DEFAULT_DIR_DOWNLOADED_TYPES, DEFAULT_DIR_EMITTED_TYPES,
-} from '../constants';
 
-jest.mock('../downloadTypes/downloadTypes');
+vi.mock('../downloadTypes/downloadTypes');
 
-const mockDownloadTypes = downloadTypes as jest.MockedFunction<typeof downloadTypes>;
-const mockAfterEmit = jest.fn();
+const mockDownloadTypes = vi.mocked(downloadTypes);
+const mockAfterEmit = vi.fn();
 const { ModuleFederationPlugin } = webpack.container;
 
 const mockLogger = {
-  log: jest.fn() as Compilation['logger']['log'],
-  info: jest.fn() as Compilation['logger']['info'],
-  warn: jest.fn() as Compilation['logger']['warn'],
-  error: jest.fn() as Compilation['logger']['error'],
+  log: vi.fn() as Compilation['logger']['log'],
+  info: vi.fn() as Compilation['logger']['info'],
+  warn: vi.fn() as Compilation['logger']['warn'],
+  error: vi.fn() as Compilation['logger']['error'],
 } as Compilation['logger'];
 
 function installPlugin(
@@ -31,11 +26,11 @@ function installPlugin(
   const pluginInstance = new ModuleFederationTypesPlugin(typesPluginOptions);
 
   pluginInstance.apply({
-    getInfrastructureLogger: jest.fn().mockReturnValue(mockLogger) as Compiler['infrastructureLogger'],
+    getInfrastructureLogger: vi
+      .fn()
+      .mockReturnValue(mockLogger) as Compiler['infrastructureLogger'],
     options: {
-      plugins: [
-        new ModuleFederationPlugin(moduleFederationPluginOptions || {}),
-      ],
+      plugins: [new ModuleFederationPlugin(moduleFederationPluginOptions || {})],
     },
     hooks: {
       afterEmit: {
@@ -78,12 +73,12 @@ describe('ModuleFederationTypesPlugin', () => {
     };
     installPlugin(moduleFederationPluginOptions, typesPluginOptions);
 
-    expect(mockDownloadTypes.mock.calls[0]).toEqual([
+    expect(mockDownloadTypes).toHaveBeenCalledWith(
       DEFAULT_DIR_EMITTED_TYPES,
       DEFAULT_DIR_DOWNLOADED_TYPES,
       moduleFederationPluginOptions.remotes,
       typesPluginOptions.remoteEntryUrls,
       typesPluginOptions.remoteManifestUrls,
-    ]);
+    );
   });
 });

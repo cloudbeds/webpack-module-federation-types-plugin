@@ -1,12 +1,8 @@
-import path from 'path';
+import path from 'node:path';
 
-import {
-  Compiler, WebpackPluginInstance,
-} from 'webpack';
-import {
-  Configuration as DevServerConfiguration, Static,
-} from 'webpack-dev-server';
+import type { Compiler, WebpackPluginInstance } from 'webpack';
 
+import { compileTypesAsync, rewritePathsWithExposedFederatedModules } from './compileTypes';
 import {
   DEFAULT_DIR_DIST,
   DEFAULT_DIR_DOWNLOADED_TYPES,
@@ -15,16 +11,9 @@ import {
   DEFAULT_DOWNLOAD_TYPES_INTERVAL_IN_SECONDS,
   TS_CONFIG_FILE,
 } from './constants';
-import {
-  rewritePathsWithExposedFederatedModules, compileTypesAsync,
-} from './compileTypes';
-import {
-  downloadTypes, getRemoteManifestUrls,
-} from './downloadTypes';
-import {
-  getLoggerHint, isEveryUrlValid, setLogger,
-} from './helpers';
-import {
+import { downloadTypes, getRemoteManifestUrls } from './downloadTypes';
+import { getLoggerHint, isEveryUrlValid, setLogger } from './helpers';
+import type {
   FederationConfig,
   ModuleFederationPluginOptions,
   ModuleFederationTypesPluginOptions,
@@ -32,6 +21,12 @@ import {
 
 let isCompiledOnce = false;
 const isDownloadedOnce = false;
+
+type DevServerConfiguration = {
+  static: {
+    directory?: string;
+  };
+};
 
 export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
   constructor(public options?: ModuleFederationTypesPluginOptions) {}
@@ -43,8 +38,8 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
     const remoteEntryUrls = this.options?.remoteEntryUrls;
     const remoteManifestUrls = getRemoteManifestUrls(this.options);
     const isCompilationDisabled = !!this.options?.disableTypeCompilation;
-    const isDownloadDisabled = this.options?.disableDownladingRemoteTypes
-      ?? process.env.DEPLOYMENT_ENV === 'devbox';
+    const isDownloadDisabled =
+      this.options?.disableDownladingRemoteTypes ?? process.env.DEPLOYMENT_ENV === 'devbox';
 
     // Disable plugin when some URLs are not valid
     if (!isEveryUrlValid(Object.values({ ...remoteEntryUrls }))) {
@@ -72,11 +67,12 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
 
     // Get ModuleFederationPlugin config
     const federationOptions = compiler.options.plugins.find(
-      plugin => plugin!.constructor.name && moduleFederationPluginNames.includes(plugin!.constructor.name),
+      plugin =>
+        plugin!.constructor.name && moduleFederationPluginNames.includes(plugin!.constructor.name),
     );
 
-    // eslint-disable-next-line no-underscore-dangle
-    const federationPluginOptions: ModuleFederationPluginOptions = (federationOptions as any)?._options;
+    const federationPluginOptions: ModuleFederationPluginOptions = (federationOptions as Dict)
+      ?._options as ModuleFederationPluginOptions;
 
     if (!federationPluginOptions?.name) {
       logger.warn(
@@ -88,9 +84,10 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
     // Define path for the emitted typings file
     const { exposes, remotes } = federationPluginOptions;
 
-    const dirDist = ((compiler.options.devServer as DevServerConfiguration)?.static as Static)?.directory
-      || compiler.options.output?.path
-      || DEFAULT_DIR_DIST;
+    const dirDist =
+      (compiler.options.devServer as DevServerConfiguration)?.static?.directory ||
+      compiler.options.output?.path ||
+      DEFAULT_DIR_DIST;
     const dirEmittedTypes = this.options?.dirEmittedTypes || DEFAULT_DIR_EMITTED_TYPES;
     const dirGlobalTypes = this.options?.dirGlobalTypes || DEFAULT_DIR_GLOBAL_TYPES;
     const dirDownloadedTypes = this.options?.dirDownloadedTypes || DEFAULT_DIR_DOWNLOADED_TYPES;
@@ -127,38 +124,38 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
     };
 
     // Import types from remote modules
-    const downloadRemoteTypes = async () => downloadTypes(
-      dirEmittedTypes,
-      dirDownloadedTypes,
-      remotes as Dict<string>,
-      remoteEntryUrls,
-      remoteManifestUrls,
-    );
+    const downloadRemoteTypes = async () =>
+      downloadTypes(
+        dirEmittedTypes,
+        dirDownloadedTypes,
+        remotes as Dict<string>,
+        remoteEntryUrls,
+        remoteManifestUrls,
+      );
 
     // Determine whether compilation of types should be performed continuously
     // followed by downloading of types when idle for a certain period of time
     let recompileIntervalId: ReturnType<typeof setInterval>;
-    const shouldSyncContinuously = (compiler.options.mode === 'development')
-      && (this.options?.downloadTypesWhenIdleIntervalInSeconds !== -1);
-    const downloadTypesWhenIdleIntervalInSeconds = this.options?.downloadTypesWhenIdleIntervalInSeconds
-      || DEFAULT_DOWNLOAD_TYPES_INTERVAL_IN_SECONDS;
+    const shouldSyncContinuously =
+      compiler.options.mode === 'development' &&
+      this.options?.downloadTypesWhenIdleIntervalInSeconds !== -1;
+    const downloadTypesWhenIdleIntervalInSeconds =
+      this.options?.downloadTypesWhenIdleIntervalInSeconds ||
+      DEFAULT_DOWNLOAD_TYPES_INTERVAL_IN_SECONDS;
 
     const compileTypesContinuouslyAfterEmit = () => {
       // Reset and create an Interval to redownload types every 60 seconds after compilation
       if (remotes && !isDownloadDisabled) {
         clearInterval(recompileIntervalId);
-        recompileIntervalId = setInterval(
-          () => {
-            logger.log(
-              new Date().toLocaleString(),
-              'Downloading types every',
-              downloadTypesWhenIdleIntervalInSeconds,
-              'seconds',
-            );
-            downloadRemoteTypes();
-          },
-          1000 * downloadTypesWhenIdleIntervalInSeconds,
-        );
+        recompileIntervalId = setInterval(() => {
+          logger.log(
+            new Date().toLocaleString(),
+            'Downloading types every',
+            downloadTypesWhenIdleIntervalInSeconds,
+            'seconds',
+          );
+          downloadRemoteTypes();
+        }, 1000 * downloadTypesWhenIdleIntervalInSeconds);
       }
 
       compileTypesAfterEmit();
@@ -169,7 +166,6 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
         logger.log('Downloading types on startup');
         return downloadRemoteTypes();
       });
-      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       compiler.hooks.watchRun.tap(PLUGIN_NAME, () => {
         if (!isDownloadedOnce) {
           logger.log('Downloading types on startup');

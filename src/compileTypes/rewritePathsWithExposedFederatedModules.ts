@@ -1,14 +1,12 @@
-import path from 'path';
-import fs from 'fs';
+import fs from 'node:fs';
+import path from 'node:path';
 
 import mkdirp from 'mkdirp';
 
-import { FederationConfig } from '../models';
 import { PREFIX_NOT_FOR_IMPORT } from '../constants';
+import type { FederationConfig } from '../models';
 
-import {
-  includeTypesFromNodeModules, substituteAliasedModules,
-} from './helpers';
+import { includeTypesFromNodeModules, substituteAliasedModules } from './helpers';
 
 export function rewritePathsWithExposedFederatedModules(
   federationConfig: FederationConfig,
@@ -33,10 +31,11 @@ export function rewritePathsWithExposedFederatedModules(
   declaredModulePaths.forEach(importPath => {
     // Aliases are not included in the emitted declarations hence the need to use `endsWith`
     const [exposedModuleKey, ...exposedModuleNameAliases] = Object.keys(federationConfig.exposes)
-      .filter(key => (
-        federationConfig.exposes[key].endsWith(importPath)
-        || federationConfig.exposes[key].replace(/\.[^./]*$/, '').endsWith(importPath)
-      ))
+      .filter(
+        key =>
+          federationConfig.exposes[key].endsWith(importPath) ||
+          federationConfig.exposes[key].replace(/\.[^./]*$/, '').endsWith(importPath),
+      )
       .map(key => key.replace(/^\.\//, ''));
 
     let federatedModulePath = exposedModuleKey

@@ -1,11 +1,11 @@
-import { substituteAliasedModules } from '../substituteAliasedModules';
-import {
-  getLogger, setLogger,
-} from '../../../helpers';
+import { describe, expect, test, vi } from 'vitest';
+
 import { PREFIX_NOT_FOR_IMPORT } from '../../../constants';
+import { getLogger, setLogger } from '../../../helpers';
+import { substituteAliasedModules } from '../substituteAliasedModules';
 
 const mockLogger = {
-  log: jest.fn(),
+  log: vi.fn(),
 };
 
 setLogger(mockLogger);
@@ -21,9 +21,9 @@ describe('substituteAliasedModules', () => {
       declare module "${PREFIX_NOT_FOR_IMPORT}/${federatedModuleName}/${modulePath}"
     `;
 
-    const subsituted = substituteAliasedModules(federatedModuleName, typings);
+    const substituted = substituteAliasedModules(federatedModuleName, typings);
 
-    expect(subsituted).toBe(`
+    expect(substituted).toBe(`
       Some import("${PREFIX_NOT_FOR_IMPORT}/${federatedModuleName}/${modulePath}") more content
       declare module "${PREFIX_NOT_FOR_IMPORT}/${federatedModuleName}/${modulePath}"
     `);

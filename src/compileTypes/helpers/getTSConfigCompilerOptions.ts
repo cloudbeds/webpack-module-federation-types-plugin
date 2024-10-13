@@ -1,6 +1,6 @@
-import path from 'path';
+import path from 'node:path';
 
-import ts from 'typescript';
+import type ts from 'typescript';
 
 import { getLogger } from '../../helpers';
 

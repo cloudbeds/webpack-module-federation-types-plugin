@@ -1,11 +1,12 @@
-import { FederationConfig } from '../../../models';
+import { describe, expect, test, vi } from 'vitest';
+
 import { setLogger } from '../../../helpers';
+import type { FederationConfig } from '../../../models';
 import { includeTypesFromNodeModules } from '../includeTypesFromNodeModules';
 
-// Assuming logger mock setup is similar to previous example
 const mockLogger = {
-  log: jest.fn(),
-  warn: jest.fn(),
+  log: vi.fn(),
+  warn: vi.fn(),
 };
 
 setLogger(mockLogger);
@@ -53,6 +54,6 @@ describe('includeTypesFromNodeModules', () => {
     const result = includeTypesFromNodeModules(federationConfig, initialTypings);
 
     expect(result).toBe(initialTypings);
-    expect(mockLogger.log).not.toHaveBeenCalledWith();
+    expect(mockLogger.log).not.toHaveBeenCalled();
   });
 });

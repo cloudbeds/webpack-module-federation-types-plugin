@@ -1,11 +1,7 @@
-import {
-  RemoteEntryUrls, RemoteManifestUrls,
-} from '../models';
 import { getLogger } from '../helpers';
+import type { RemoteEntryUrls, RemoteManifestUrls } from '../models';
 
-import {
-  downloadRemoteEntryTypes, downloadRemoteEntryURLsFromManifests,
-} from './helpers';
+import { downloadRemoteEntryTypes, downloadRemoteEntryURLsFromManifests } from './helpers';
 
 export async function downloadTypes(
   dirEmittedTypes: string,
@@ -20,7 +16,7 @@ export async function downloadTypes(
   try {
     remoteEntryUrlsResolved = {
       ...remoteEntryUrls,
-      ...await downloadRemoteEntryURLsFromManifests(remoteManifestUrls),
+      ...(await downloadRemoteEntryURLsFromManifests(remoteManifestUrls)),
     };
   } catch (err) {
     logger.warn('Failed to load remote manifest file:', (err as Dict)?.url);

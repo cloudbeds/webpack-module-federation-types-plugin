@@ -1,11 +1,7 @@
-import {
-  fork, ChildProcess,
-} from 'child_process';
-import path from 'path';
+import { type ChildProcess, fork } from 'node:child_process';
+import path from 'node:path';
 
-import {
-  CompileTypesParams, CompileTypesResult,
-} from './compileTypes';
+import type { CompileTypesParams, CompileTypesResult } from './compileTypes';
 
 let currentWorker: ChildProcess | null = null;
 

@@ -1,14 +1,15 @@
-import path from 'path';
+import path from 'node:path';
 
-import { Compiler } from 'webpack';
+import type { Compiler } from 'webpack';
 
-import { ModuleFederationTypesPluginOptions } from '../../models';
+import type { ModuleFederationTypesPluginOptions } from '../../models';
 
 export function getOptionsFromWebpackConfig(webpackConfigPath: string) {
   let webpackConfig: Compiler['options'];
   try {
     webpackConfig = require(path.join(process.cwd(), webpackConfigPath));
-    webpackConfig = ((webpackConfig as unknown as Dict).default as Compiler['options']) || webpackConfig;
+    webpackConfig =
+      ((webpackConfig as unknown as Dict).default as Compiler['options']) || webpackConfig;
     if (typeof webpackConfig === 'function') {
       webpackConfig = (webpackConfig as unknown as () => Compiler['options'])();
     }
@@ -26,7 +27,6 @@ export function getOptionsFromWebpackConfig(webpackConfigPath: string) {
     const plugin = config.plugins.find(
       nextPlugin => nextPlugin!.constructor.name === 'ModuleFederationPlugin',
     );
-    // eslint-disable-next-line no-underscore-dangle
     return (plugin as Dict)?._options as Dict & { remotes?: Dict<string> };
   }
 

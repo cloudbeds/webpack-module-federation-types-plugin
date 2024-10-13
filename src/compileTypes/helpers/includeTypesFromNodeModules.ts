@@ -1,25 +1,29 @@
-import { FederationConfig } from '../../models';
 import { getLogger } from '../../helpers';
+import type { FederationConfig } from '../../models';
 
-export function includeTypesFromNodeModules(federationConfig: FederationConfig, typings: string): string {
+export function includeTypesFromNodeModules(
+  federationConfig: FederationConfig,
+  typings: string,
+): string {
   const logger = getLogger();
   let typingsWithNpmPackages = typings;
 
   const exposedNpmPackages = Object.entries(federationConfig.exposes)
-    .filter(([, packagePath]) => (
-      !packagePath.startsWith('.')
-      || packagePath.startsWith('./node_modules/')
-    ))
+    .filter(
+      ([, packagePath]) =>
+        !packagePath.startsWith('.') || packagePath.startsWith('./node_modules/'),
+    )
     .map(([exposedModuleKey, exposeTargetPath]) => [
       exposedModuleKey.replace(/^\.\//, ''),
       exposeTargetPath.replace('./node_modules/', ''),
     ]);
 
-  const createNpmModule = (exposedModuleKey: string, packageName: string) => [
-    `declare module "${federationConfig.name}/${exposedModuleKey}" {`,
-    `  export * from "${packageName}"`,
-    '}',
-  ].join('\n');
+  const createNpmModule = (exposedModuleKey: string, packageName: string) =>
+    [
+      `declare module "${federationConfig.name}/${exposedModuleKey}" {`,
+      `  export * from "${packageName}"`,
+      '}',
+    ].join('\n');
 
   if (exposedNpmPackages.length) {
     logger.log('Including typings for npm packages:', exposedNpmPackages);
