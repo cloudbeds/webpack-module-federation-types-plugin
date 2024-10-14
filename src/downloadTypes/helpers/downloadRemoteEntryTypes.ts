@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 import download from 'download';
-import mkdirp from 'mkdirp';
+import { mkdirp } from 'mkdirp';
 
 import { getLogger } from '../../helpers';
 
