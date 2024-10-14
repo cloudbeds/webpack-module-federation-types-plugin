@@ -1,3 +1,10 @@
+## [2.0.1](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v2.0.0...v2.0.1) (2024-10-14)
+
+
+### Bug Fixes
+
+* update import statement for mkdirp ([8007ad0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/8007ad0328075bdda52dceb8591ff8b2b60f60f1))
+
 # [2.0.0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.18.0...v2.0.0) (2024-10-14)
 
 
