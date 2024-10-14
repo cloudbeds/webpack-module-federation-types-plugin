@@ -1,15 +1,9 @@
 import { parentPort } from 'node:worker_threads';
 
-import type { Compilation } from 'webpack';
-import type { FederationConfig } from '../models';
+import type { FederationConfig, LogLevel } from '../models';
 import { type CompileTypesParams, compileTypes } from './compileTypes';
 import { rewritePathsWithExposedFederatedModules } from './rewritePathsWithExposedFederatedModules';
-import { sendLog, workerLogger } from './workerLogger';
-
-export type LogLevel = keyof Pick<
-  Compilation['logger'],
-  'log' | 'info' | 'warn' | 'error' | 'debug'
->;
+import { workerLogger } from './workerLogger';
 
 type CompileTypesWorkerResultMessageError = {
   status: 'error';
@@ -20,36 +14,48 @@ export type CompileTypesWorkerMessage = CompileTypesParams & {
   federationConfig: FederationConfig;
 };
 
+export type ExitMessage = {
+  type: 'exit';
+};
+
 export type CompileTypesWorkerResultMessage =
   | { status: 'success' }
   | { status: 'failure' }
   | CompileTypesWorkerResultMessageError
   | { status: 'log'; level: LogLevel; message: string };
 
-parentPort?.on('message', ({ federationConfig, ...params }: CompileTypesWorkerMessage) => {
+parentPort?.on('message', (message: CompileTypesWorkerMessage | ExitMessage) => {
+  if ((message as ExitMessage).type === 'exit') {
+    workerLogger.log('Exiting by request');
+    process.exit(0);
+  }
+
+  const { federationConfig, ...params } = message as CompileTypesWorkerMessage;
+
   try {
-    let startTime = performance.now();
+    const startTime = performance.now();
     const { isSuccess, typeDefinitions } = compileTypes(params, workerLogger);
 
     if (isSuccess) {
-      let endTime = performance.now();
-      let timeTakenInSeconds = (endTime - startTime) / 1000;
-      sendLog('log', `Types compilation completed in ${timeTakenInSeconds.toFixed(2)} seconds`);
+      const timeTakenInSeconds = ((performance.now() - startTime) / 1000).toFixed(2);
+      workerLogger.log(`Types compilation completed in ${timeTakenInSeconds} seconds`);
 
-      sendLog(
-        'log',
+      workerLogger.log(
         `Replacing paths with names of exposed federate modules in typings file: ${params.outFile}`,
       );
-      startTime = performance.now();
+      const rewriteStartTime = performance.now();
       rewritePathsWithExposedFederatedModules(
         federationConfig,
         params.outFile,
         typeDefinitions,
         workerLogger,
       );
-      endTime = performance.now();
-      timeTakenInSeconds = (endTime - startTime) / 1000;
-      sendLog('log', `Typings file rewritten in ${timeTakenInSeconds.toFixed(2)} seconds`);
+      const rewriteTimeTakenInSeconds = ((performance.now() - rewriteStartTime) / 1000).toFixed(2);
+      workerLogger.log(`Typings file rewritten in ${rewriteTimeTakenInSeconds} seconds`);
+
+      workerLogger.info(
+        `Types compilation and modification completed in ${timeTakenInSeconds} + ${rewriteTimeTakenInSeconds} seconds`,
+      );
 
       parentPort?.postMessage({ status: 'success' } satisfies CompileTypesWorkerResultMessage);
     } else {

@@ -24,8 +24,16 @@ export function substituteAliasedModules(
   );
 
   if (filteredImportPaths.length) {
-    logger.log(`Unique import paths in ${federatedModuleName}:`);
-    logger.log(JSON.stringify(filteredImportPaths, null, 2));
+    if (filteredImportPaths.length === 1) {
+      logger.log(`Found 1 import path in ${federatedModuleName}: ${filteredImportPaths[0]}`);
+    } else {
+      logger.groupCollapsed(
+        `Collected unique import paths in ${federatedModuleName}`,
+        `(${filteredImportPaths.length} paths)`,
+      );
+      logger.log(filteredImportPaths);
+      logger.groupEnd();
+    }
   }
 
   filteredImportPaths.forEach(importPath => {

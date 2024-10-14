@@ -7,6 +7,8 @@ import { includeTypesFromNodeModules } from '../includeTypesFromNodeModules';
 const mockLogger = {
   log: vi.fn(),
   warn: vi.fn(),
+  groupCollapsed: vi.fn(),
+  groupEnd: vi.fn(),
 };
 
 setLogger(mockLogger);
@@ -36,17 +38,14 @@ describe('includeTypesFromNodeModules', () => {
     ].join('\n');
 
     expect(result).toBe([initialTypings, moduleADeclaration, moduleBDeclaration].join('\n'));
-    expect(mockLogger.log).toHaveBeenCalledWith('Including typings for npm packages:');
-    expect(mockLogger.log).toHaveBeenCalledWith(
-      JSON.stringify(
-        [
-          ['ModuleA', 'libraryA'],
-          ['ModuleB', 'libraryB'],
-        ],
-        null,
-        2,
-      ),
+    expect(mockLogger.groupCollapsed).toHaveBeenCalledWith(
+      'Including typings for npm packages',
+      '(2 packages)',
     );
+    expect(mockLogger.log).toHaveBeenCalledWith([
+      ['ModuleA', 'libraryA'],
+      ['ModuleB', 'libraryB'],
+    ]);
   });
 
   test('does not modify typings when there are no NPM package paths', () => {

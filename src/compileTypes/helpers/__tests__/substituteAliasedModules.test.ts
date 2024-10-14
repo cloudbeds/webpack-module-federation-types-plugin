@@ -6,6 +6,8 @@ import { substituteAliasedModules } from '../substituteAliasedModules';
 
 const mockLogger = {
   log: vi.fn(),
+  groupCollapsed: vi.fn(),
+  groupEnd: vi.fn(),
 };
 
 setLogger(mockLogger);
@@ -36,7 +38,6 @@ describe('substituteAliasedModules', () => {
     const result = substituteAliasedModules(federatedModuleName, originalTypings);
 
     expect(result).toBe(originalTypings);
-    expect(logger.log).toHaveBeenCalledWith('Unique import paths in myCommon:');
-    expect(logger.log).toHaveBeenCalledWith(JSON.stringify(['another/module'], null, 2));
+    expect(logger.log).toHaveBeenCalledWith('Found 1 import path in myCommon: another/module');
   });
 });

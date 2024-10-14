@@ -8,17 +8,19 @@ import type {
 } from './compileTypesWorker';
 
 let worker: Worker | null = null;
+let workerIndex = 0;
 
 export function compileTypesAsync(
   params: CompileTypesWorkerMessage,
   loggerHint = '',
 ): Promise<void> {
   const logger = getLogger();
+  workerIndex++;
 
   return new Promise((resolve, reject) => {
     if (worker) {
-      logger.log('Terminating existing worker process');
-      worker.terminate();
+      logger.log(`Terminating existing worker process #${workerIndex}`);
+      worker.postMessage({ type: 'exit' });
     }
 
     const workerPath = path.join(__dirname, 'compileTypesWorker.js');
@@ -27,17 +29,23 @@ export function compileTypesAsync(
     worker.on('message', (result: CompileTypesWorkerResultMessage) => {
       switch (result.status) {
         case 'log':
-          logger[result.level]('[Worker]:', result.message);
+          logger[result.level](`[Worker #${workerIndex}]:`, result.message);
           return;
         case 'success':
           resolve();
           break;
         case 'failure':
-          logger.warn('[Worker]: Failed to compile types for exposed modules.', loggerHint);
+          logger.warn(
+            `[Worker #${workerIndex}]: Failed to compile types for exposed modules.`,
+            loggerHint,
+          );
           reject(new Error('Failed to compile types for exposed modules.'));
           break;
         case 'error':
-          logger.warn('[Worker]: Error compiling types for exposed modules.', loggerHint);
+          logger.warn(
+            `[Worker #${workerIndex}]: Error compiling types for exposed modules.`,
+            loggerHint,
+          );
           reject(result.error);
           break;
       }
@@ -46,7 +54,7 @@ export function compileTypesAsync(
     });
 
     worker.on('error', error => {
-      logger.warn('[Worker]: Unexpected error.', loggerHint);
+      logger.warn(`[Worker #${workerIndex}]: Unexpected error.`, loggerHint);
       logger.log(error);
       reject(error);
       worker?.terminate();
@@ -54,11 +62,10 @@ export function compileTypesAsync(
     });
 
     worker.on('exit', code => {
-      if (code === null || code === 0 || code === 1) {
-        logger.log(`[Worker]: Process exited with code ${code}`);
+      if (code === null || code === 0) {
         resolve();
       } else {
-        reject(new Error(`[Worker]: Process exited with code ${code}`));
+        reject(new Error(`[Worker #${workerIndex}]: Process exited with code ${code}`));
       }
       worker = null;
     });

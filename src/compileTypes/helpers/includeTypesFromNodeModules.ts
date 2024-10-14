@@ -26,8 +26,16 @@ export function includeTypesFromNodeModules(
     ].join('\n');
 
   if (exposedNpmPackages.length) {
-    logger.log('Including typings for npm packages:');
-    logger.log(JSON.stringify(exposedNpmPackages, null, 2));
+    if (exposedNpmPackages.length === 1) {
+      logger.log('Including typings for npm package', exposedNpmPackages[0]);
+    } else {
+      logger.groupCollapsed(
+        'Including typings for npm packages',
+        `(${exposedNpmPackages.length} packages)`,
+      );
+      logger.log(exposedNpmPackages);
+      logger.groupEnd();
+    }
   }
 
   try {
@@ -35,8 +43,11 @@ export function includeTypesFromNodeModules(
       typingsWithNpmPackages += `\n${createNpmModule(exposedModuleKey, packageName)}`;
     });
   } catch (err) {
-    logger.warn(`Typings was not included for npm package: ${(err as Dict)?.url}`);
-    logger.log(JSON.stringify(err, null, 2));
+    const url = (err as Dict)?.url;
+    if (url) {
+      logger.warn(`Typings were not included for npm package: ${url}`);
+    }
+    logger.log(err);
   }
 
   return typingsWithNpmPackages;
