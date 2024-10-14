@@ -1,3 +1,18 @@
+# [2.0.0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.18.0...v2.0.0) (2024-10-14)
+
+
+* feat!: NGU-2227 async compilation ([9e8f204](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/9e8f204beb00edfbe2639fd5cf73b62515106861))
+
+
+### Bug Fixes
+
+* import ts ([ed54ab1](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/ed54ab19522243055fbcaae2dab56fc8d3158ae6))
+
+
+### BREAKING CHANGES
+
+* - Added worker to handle compilation
+
 # [1.18.0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v1.17.0...v1.18.0) (2024-02-20)
 
 
