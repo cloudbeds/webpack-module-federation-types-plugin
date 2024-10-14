@@ -6,7 +6,8 @@
   },
   "formatter": {
     "indentStyle": "space",
-    "lineWidth": 100
+    "lineWidth": 100,
+    "ignore": ["**/*.json"]
   },
   "javascript": {
     "formatter": {
