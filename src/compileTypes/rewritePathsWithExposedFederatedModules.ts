@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-import { mkdirp }from 'mkdirp';
+import { mkdirp } from 'mkdirp';
 
 import { PREFIX_NOT_FOR_IMPORT } from '../constants';
 import type { CommonLogger, FederationConfig } from '../models';

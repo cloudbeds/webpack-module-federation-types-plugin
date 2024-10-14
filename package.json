@@ -9,9 +9,7 @@
     "url": "https://github.com/cloudbeds/webpack-module-federation-types-plugin.git"
   },
   "main": "dist/plugin.js",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "bin": {
     "make-federated-types": "dist/bin/make-federated-types.js",
     "download-federated-types": "dist/bin/download-federated-types.js"
