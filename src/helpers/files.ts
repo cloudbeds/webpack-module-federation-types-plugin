@@ -1,15 +1,17 @@
-import fs from 'fs';
+import fs from 'node:fs';
 
 export function getAllFilePaths(dirPath: string, arrayOfFiles: string[] = []): string[] {
   const files = fs.readdirSync(dirPath);
 
+  const updatedArrayOfFiles = [...arrayOfFiles];
+
   files.forEach(file => {
     if (fs.statSync(`${dirPath}/${file}`).isDirectory()) {
-      arrayOfFiles = getAllFilePaths(`${dirPath}/${file}`, arrayOfFiles);
+      getAllFilePaths(`${dirPath}/${file}`, updatedArrayOfFiles);
     } else {
-      arrayOfFiles.push(`${dirPath}/${file}`);
+      updatedArrayOfFiles.push(`${dirPath}/${file}`);
     }
   });
 
-  return arrayOfFiles;
+  return updatedArrayOfFiles;
 }

@@ -1,8 +1,9 @@
-import {
-  getLogger, isValidUrl, toCamelCase,
-} from '../../helpers';
-import {
-  RemoteEntryUrls, RemoteManifest, RemoteManifestUrls, RemotesRegistryManifest,
+import { getLogger, isValidUrl, toCamelCase } from '../../helpers';
+import type {
+  RemoteEntryUrls,
+  RemoteManifest,
+  RemoteManifestUrls,
+  RemotesRegistryManifest,
 } from '../../models';
 
 import { downloadRemoteEntryManifest } from './downloadRemoteEntryManifest';
@@ -11,8 +12,9 @@ import { downloadRemoteEntryManifest } from './downloadRemoteEntryManifest';
  * Download remote entry manifest file(s)
  * The origin of a remote entry URL is used as base URL for type definitions
  */
-export async function downloadRemoteEntryURLsFromManifests(remoteManifestUrls?: RemoteManifestUrls)
-  : Promise<RemoteEntryUrls> {
+export async function downloadRemoteEntryURLsFromManifests(
+  remoteManifestUrls?: RemoteManifestUrls,
+): Promise<RemoteEntryUrls> {
   if (!remoteManifestUrls) {
     return {};
   }
@@ -38,7 +40,9 @@ export async function downloadRemoteEntryURLsFromManifests(remoteManifestUrls?: 
         });
       } else {
         Object.entries(remotesManifest as RemoteEntryUrls).forEach(([appName, url]) => {
-          remoteEntryURLs[toCamelCase(appName)] = isValidUrl(url) ? url : `${artifactsBaseUrl}/${appName}/${url}`;
+          remoteEntryURLs[toCamelCase(appName)] = isValidUrl(url)
+            ? url
+            : `${artifactsBaseUrl}/${appName}/${url}`;
         });
       }
     } else {

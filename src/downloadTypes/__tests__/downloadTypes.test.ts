@@ -1,32 +1,31 @@
+import { afterEach, describe, expect, test, vi } from 'vitest';
+
 import { setLogger } from '../../helpers';
 import { downloadTypes } from '../downloadTypes';
-import {
-  downloadRemoteEntryTypes, downloadRemoteEntryURLsFromManifests,
-} from '../helpers';
+import { downloadRemoteEntryTypes, downloadRemoteEntryURLsFromManifests } from '../helpers';
 
-jest.mock('../helpers', () => ({
-  ...jest.requireActual('../helpers'),
-  downloadRemoteEntryTypes: jest.fn(),
-  downloadRemoteEntryURLsFromManifests: jest.fn().mockResolvedValue({}),
+vi.mock('../helpers', () => ({
+  ...vi.importActual('../helpers'),
+  downloadRemoteEntryTypes: vi.fn(),
+  downloadRemoteEntryURLsFromManifests: vi.fn().mockResolvedValue({}),
 }));
-const mockDownloadRemoteEntryTypes = downloadRemoteEntryTypes as jest
-  .MockedFunction<typeof downloadRemoteEntryTypes>;
-const mockDownloadRemoteEntryURLsFromManifests = downloadRemoteEntryURLsFromManifests as jest
-  .MockedFunction<typeof downloadRemoteEntryURLsFromManifests>;
+
+const mockDownloadRemoteEntryTypes = vi.mocked(downloadRemoteEntryTypes);
+const mockDownloadRemoteEntryURLsFromManifests = vi.mocked(downloadRemoteEntryURLsFromManifests);
 
 const dirEmittedTypes = 'dist/@types';
 const dirDownloadedTypes = 'src/@types/remotes';
 
 const mockLogger = {
-  log: jest.fn(),
-  warn: jest.fn(),
-  error: jest.fn(),
+  log: vi.fn(),
+  warn: vi.fn(),
+  error: vi.fn(),
 };
 setLogger(mockLogger);
 
 describe('downloadTypes', () => {
   afterEach(() => {
-    mockDownloadRemoteEntryURLsFromManifests.mockResolvedValue({});
+    vi.resetAllMocks();
   });
 
   test('handles successful download', async () => {
@@ -80,7 +79,10 @@ describe('downloadTypes', () => {
       remoteManifestUrls,
     );
 
-    expect(mockLogger.warn).toHaveBeenCalledWith('Failed to load remote manifest file:', 'invalid-url');
+    expect(mockLogger.warn).toHaveBeenCalledWith(
+      'Failed to load remote manifest file:',
+      'invalid-url',
+    );
     expect(mockLogger.log).toHaveBeenCalledWith(error);
   });
 
@@ -90,14 +92,11 @@ describe('downloadTypes', () => {
     const remoteEntryUrls = { [remoteName]: 'http://example.com/remoteEntry.js' };
     const error = new Error('Download failed');
 
-    mockDownloadRemoteEntryTypes.mockImplementationOnce(() => { throw error; });
+    mockDownloadRemoteEntryTypes.mockImplementationOnce(() => {
+      throw error;
+    });
 
-    await downloadTypes(
-      dirEmittedTypes,
-      dirDownloadedTypes,
-      remotesFromConfig,
-      remoteEntryUrls,
-    );
+    await downloadTypes(dirEmittedTypes, dirDownloadedTypes, remotesFromConfig, remoteEntryUrls);
 
     expect(mockLogger.error).toHaveBeenCalledWith(
       `${remoteName}: '${remotesFromConfig[remoteName]}' is not a valid remote federated module URL`,
@@ -114,14 +113,12 @@ describe('downloadTypes', () => {
 
     mockDownloadRemoteEntryTypes.mockRejectedValue(error);
 
-    await downloadTypes(
-      dirEmittedTypes,
-      dirDownloadedTypes,
-      remotesFromConfig,
-      remoteEntryUrls,
-    );
+    await downloadTypes(dirEmittedTypes, dirDownloadedTypes, remotesFromConfig, remoteEntryUrls);
 
-    expect(mockLogger.warn).toHaveBeenCalledWith('Failed to load remote types from:', 'invalid-url');
+    expect(mockLogger.warn).toHaveBeenCalledWith(
+      'Failed to load remote types from:',
+      'invalid-url',
+    );
     expect(mockLogger.log).toHaveBeenCalledWith(error);
   });
 });

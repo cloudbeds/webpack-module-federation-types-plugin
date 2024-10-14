@@ -2,24 +2,17 @@
 
 import parseArgs from 'minimist';
 
-import {
-  DEFAULT_DIR_DOWNLOADED_TYPES, DEFAULT_DIR_EMITTED_TYPES,
-} from '../constants';
-import {
-  downloadTypes, getRemoteManifestUrls,
-} from '../downloadTypes';
-import {
-  isEveryUrlValid, setLogger,
-} from '../helpers';
-
-import {
-  assertRunningFromRoot, getOptionsFromWebpackConfig, getWebpackConfigPathFromArgs,
-} from './helpers';
+import { DEFAULT_DIR_DOWNLOADED_TYPES, DEFAULT_DIR_EMITTED_TYPES } from '../constants';
+import { downloadTypes, getRemoteManifestUrls } from '../downloadTypes';
+import { isEveryUrlValid, setLogger } from '../helpers';
+import { assertRunningFromRoot } from './helpers/assertRunningFromRoot';
+import { getOptionsFromWebpackConfig } from './helpers/getOptionsFromWebpackConfig';
+import { getWebpackConfigPathFromArgs } from './helpers/getWebpackConfigPathFromArgs';
 
 assertRunningFromRoot();
 
 type Argv = {
-  'webpack-config'?: string,
+  'webpack-config'?: string;
 };
 
 const argv = parseArgs<Argv>(process.argv.slice(2));

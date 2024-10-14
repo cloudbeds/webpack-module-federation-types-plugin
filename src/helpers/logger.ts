@@ -1,6 +1,4 @@
-import {
-  Compilation, Compiler,
-} from 'webpack';
+import type { Compilation, Compiler } from 'webpack';
 
 let loggerInstance: Compilation['logger'];
 

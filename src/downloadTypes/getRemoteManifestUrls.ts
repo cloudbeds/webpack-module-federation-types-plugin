@@ -1,8 +1,8 @@
-import {
-  ModuleFederationTypesPluginOptions, RemoteManifestUrls,
-} from '../models';
+import type { ModuleFederationTypesPluginOptions, RemoteManifestUrls } from '../models';
 
-export function getRemoteManifestUrls(options?: ModuleFederationTypesPluginOptions): RemoteManifestUrls | undefined {
+export function getRemoteManifestUrls(
+  options?: ModuleFederationTypesPluginOptions,
+): RemoteManifestUrls | undefined {
   if (options?.remoteManifestUrl) {
     return {
       ...options?.remoteManifestUrls,

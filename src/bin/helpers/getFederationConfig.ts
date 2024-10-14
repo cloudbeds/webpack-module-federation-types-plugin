@@ -1,7 +1,7 @@
-import path from 'path';
+import path from 'node:path';
 
 import { FEDERATION_CONFIG_FILE } from '../../constants';
-import { FederationConfig } from '../../models';
+import type { FederationConfig } from '../../models';
 
 export function getFederationConfig(customConfigPath?: string): FederationConfig {
   const federationConfigPath = path.resolve(customConfigPath || FEDERATION_CONFIG_FILE);
