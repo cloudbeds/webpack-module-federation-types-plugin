@@ -1,3 +1,10 @@
+## [2.0.2](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v2.0.1...v2.0.2) (2024-10-14)
+
+
+### Bug Fixes
+
+* update getTSConfigCompilerOptions to handle TypeScript >= 5.4, resolves issue introduced by [#40](https://github.com/cloudbeds/webpack-module-federation-types-plugin/issues/40) ([767c771](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/767c7717e393221d2d1afd8b8ef0fc867d6b91c3))
+
 ## [2.0.1](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v2.0.0...v2.0.1) (2024-10-14)
 
 

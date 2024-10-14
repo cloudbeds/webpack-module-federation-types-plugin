@@ -1,6 +1,6 @@
 {
   "name": "@cloudbeds/webpack-module-federation-types-plugin",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Webpack module federation tools to share types among module-federated apps/components",
   "license": "MIT",
   "author": "Steven Prybylynskyi <stepan.prybylynskyi@cloudbeds.com>",
@@ -9,7 +9,9 @@
     "url": "https://github.com/cloudbeds/webpack-module-federation-types-plugin.git"
   },
   "main": "dist/plugin.js",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "bin": {
     "make-federated-types": "dist/bin/make-federated-types.js",
     "download-federated-types": "dist/bin/download-federated-types.js"
