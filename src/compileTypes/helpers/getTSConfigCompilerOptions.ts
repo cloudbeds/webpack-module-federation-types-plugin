@@ -15,12 +15,22 @@ export function getTSConfigCompilerOptions(
     process.exit(1);
   }
 
-  const tsconfigJsonFile = ts.readJsonConfigFile(tsconfigPath, ts.sys.readFile);
-  const parsedConfig = ts.parseJsonSourceFileConfigFileContent(
-    tsconfigJsonFile,
-    ts.sys,
-    path.dirname(tsconfigPath),
-  );
+  if (ts.version.match(/^[5-9]\.([4-9]|[1-9]\d)/)) {
+    const tsconfigJsonFile = ts.readJsonConfigFile(tsconfigPath, ts.sys.readFile);
+    const parsedConfig = ts.parseJsonSourceFileConfigFileContent(
+      tsconfigJsonFile,
+      ts.sys,
+      path.dirname(tsconfigPath),
+    );
 
-  return parsedConfig.options;
+    logger.groupCollapsed(
+      `Parsed tsconfig compiler options for TypeScript >= 5.4 (current version: ${ts.version})`,
+    );
+    logger.log(parsedConfig.options);
+    logger.groupEnd();
+
+    return parsedConfig.options;
+  }
+
+  return require(tsconfigPath).compilerOptions;
 }
