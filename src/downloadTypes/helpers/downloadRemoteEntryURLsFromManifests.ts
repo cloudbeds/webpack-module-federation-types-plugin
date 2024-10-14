@@ -1,5 +1,6 @@
 import { getLogger, isValidUrl, toCamelCase } from '../../helpers';
 import type {
+  CommonLogger,
   RemoteEntryUrls,
   RemoteManifest,
   RemoteManifestUrls,
@@ -14,15 +15,15 @@ import { downloadRemoteEntryManifest } from './downloadRemoteEntryManifest';
  */
 export async function downloadRemoteEntryURLsFromManifests(
   remoteManifestUrls?: RemoteManifestUrls,
+  logger: CommonLogger = getLogger(),
 ): Promise<RemoteEntryUrls> {
   if (!remoteManifestUrls) {
     return {};
   }
 
-  const logger = getLogger();
   const remoteEntryURLs: RemoteEntryUrls = {};
 
-  logger.log('Remote manifest URLs', remoteManifestUrls);
+  logger.log('Remote manifest URLs:', remoteManifestUrls);
 
   const { artifactsBaseUrl, ...manifestUrls } = remoteManifestUrls;
 
@@ -50,7 +51,9 @@ export async function downloadRemoteEntryURLsFromManifests(
     }
   });
 
-  logger.log('Remote entry URLs', remoteEntryURLs);
+  logger.groupCollapsed('Remote entry URLs', `(${Object.keys(remoteEntryURLs).length} microapps)`);
+  logger.log(remoteEntryURLs);
+  logger.groupEnd();
 
   return remoteEntryURLs;
 }

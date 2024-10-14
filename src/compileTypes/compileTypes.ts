@@ -54,8 +54,13 @@ export function compileTypes(
       ...getAllFilePaths(`./${dirGlobalTypes}`).filter(filePath => filePath.endsWith('.d.ts')),
     );
   }
-  logger.log('[compileTypes]: Including a set of root files in compilation');
-  logger.log(JSON.stringify(exposedFileNames, null, 2));
+
+  logger.groupCollapsed(
+    '[compileTypes]: Including a set of exposed modules in compilation',
+    `(${exposedFileNames.length} npm packages and root paths)`,
+  );
+  logger.log(exposedFileNames);
+  logger.groupEnd();
 
   const program = ts.createProgram(exposedFileNames, compilerOptions, host);
   const { diagnostics, emitSkipped } = program.emit();

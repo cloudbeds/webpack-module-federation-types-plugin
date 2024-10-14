@@ -18,7 +18,15 @@ export function rewritePathsWithExposedFederatedModules(
   const regexDeclareModule = /declare module "(.*)"/g;
   const declaredModulePaths = Array.from(typings.matchAll(regexDeclareModule), match => match[1]);
 
-  logger.debug(`Declared module paths: ${JSON.stringify(declaredModulePaths, null, 2)}`);
+  logger.groupCollapsed(
+    '[rewritePathsWithExposedFederatedModules] Collected module declaration paths',
+    `(${declaredModulePaths.length} declarations)`,
+  );
+  logger.log(
+    declaredModulePaths.length > 20 ? 'first 20 items:' : '',
+    declaredModulePaths.slice(0, 20),
+  );
+  logger.groupEnd();
 
   let typingsUpdated: string = typings;
 
