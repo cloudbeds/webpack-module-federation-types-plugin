@@ -1,6 +1,6 @@
 import path from 'node:path';
 
-import type ts from 'typescript';
+import ts from 'typescript';
 
 import { getLogger } from '../../helpers';
 import type { CommonLogger } from '../../models';
