@@ -1,3 +1,10 @@
+## [2.0.4](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v2.0.3...v2.0.4) (2024-10-15)
+
+
+### Bug Fixes
+
+* retrieving compiler options ([12bc59b](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/12bc59bf54d7aa9934d92bcd9275b52f4d7c570c))
+
 ## [2.0.3](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v2.0.2...v2.0.3) (2024-10-14)
 
 ## [2.0.2](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v2.0.1...v2.0.2) (2024-10-14)
