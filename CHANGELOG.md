@@ -1,3 +1,10 @@
+## [2.0.5](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v2.0.4...v2.0.5) (2024-10-15)
+
+
+### Bug Fixes
+
+* **getAllFilePaths:** reassign updated array of files ([d756825](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/d756825f702085bb446a856d20e1d392efb62c1b))
+
 ## [2.0.4](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v2.0.3...v2.0.4) (2024-10-15)
 
 
