@@ -15,6 +15,8 @@ export function getTSConfigCompilerOptions(
     process.exit(1);
   }
 
+  logger.log('tsc compiler version:', ts.version);
+
   if (ts.version.match(/^[5-9]\.([4-9]|[1-9]\d)/)) {
     const tsconfigJsonFile = ts.readJsonConfigFile(tsconfigPath, ts.sys.readFile);
     const parsedConfig = ts.parseJsonSourceFileConfigFileContent(
@@ -23,9 +25,7 @@ export function getTSConfigCompilerOptions(
       path.dirname(tsconfigPath),
     );
 
-    logger.groupCollapsed(
-      `Parsed tsconfig compiler options for TypeScript >= 5.4 (current version: ${ts.version})`,
-    );
+    logger.groupCollapsed('Parsed tsconfig compiler options for TypeScript >= 5.4');
     logger.log(parsedConfig.options);
     logger.groupEnd();
 
