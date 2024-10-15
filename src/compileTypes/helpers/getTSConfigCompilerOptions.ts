@@ -32,7 +32,7 @@ export function getTSConfigCompilerOptions(
     return parsedConfig.options;
   }
 
-  const { allowJs, ...compilerOptions } = require(tsconfigPath);
+  const { allowJs, ...compilerOptions } = require(tsconfigPath).compilerOptions;
 
   return compilerOptions;
 }
