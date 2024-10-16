@@ -16,10 +16,11 @@ export function compileTypesAsync(
 ): Promise<void> {
   const logger = getLogger();
   workerIndex++;
+  const innerWorkerIndex = workerIndex;
 
   return new Promise((resolve, reject) => {
     if (worker) {
-      logger.log(`Terminating existing worker process #${workerIndex}`);
+      logger.log(`Terminating existing worker process #${innerWorkerIndex}`);
       worker.postMessage({ type: 'exit' });
     }
 
@@ -29,35 +30,35 @@ export function compileTypesAsync(
     worker.on('message', (result: CompileTypesWorkerResultMessage) => {
       switch (result.status) {
         case 'log':
-          logger[result.level](`[Worker #${workerIndex}]:`, result.message);
+          logger[result.level](`[Worker] run #${innerWorkerIndex}:`, result.message);
           return;
         case 'success':
           resolve();
           break;
         case 'failure':
           logger.warn(
-            `[Worker #${workerIndex}]: Failed to compile types for exposed modules.`,
+            `[Worker] run #${innerWorkerIndex}: Failed to compile types for exposed modules.`,
             loggerHint,
           );
           reject(new Error('Failed to compile types for exposed modules.'));
           break;
         case 'error':
           logger.warn(
-            `[Worker #${workerIndex}]: Error compiling types for exposed modules.`,
+            `[Worker] run #${innerWorkerIndex}: Error compiling types for exposed modules.`,
             loggerHint,
           );
           reject(result.error);
           break;
       }
-      worker?.terminate();
+      worker?.postMessage({ type: 'exit' });
       worker = null;
     });
 
     worker.on('error', error => {
-      logger.warn(`[Worker #${workerIndex}]: Unexpected error.`, loggerHint);
+      logger.warn(`[Worker] run #${innerWorkerIndex}: Unexpected error.`, loggerHint);
       logger.log(error);
       reject(error);
-      worker?.terminate();
+      worker?.postMessage({ type: 'exit' });
       worker = null;
     });
 
@@ -65,7 +66,7 @@ export function compileTypesAsync(
       if (code === null || code === 0) {
         resolve();
       } else {
-        reject(new Error(`[Worker #${workerIndex}]: Process exited with code ${code}`));
+        reject(new Error(`[Worker] run #${innerWorkerIndex}: Process exited with code ${code}`));
       }
       worker = null;
     });
