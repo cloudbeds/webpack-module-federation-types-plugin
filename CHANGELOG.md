@@ -1,3 +1,10 @@
+## [2.0.6](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v2.0.5...v2.0.6) (2024-10-16)
+
+
+### Bug Fixes
+
+* worker process termination and logging ([aacc3f5](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/aacc3f56c187d0fd1ad6cc508a6aa4b4a869a652))
+
 ## [2.0.5](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v2.0.4...v2.0.5) (2024-10-15)
 
 
