@@ -24,8 +24,8 @@ export function getOptionsFromWebpackConfig(webpackConfigPath: string) {
   }
 
   function getModuleFederationPluginOptions(config: Compiler['options']) {
-    const plugin = config.plugins.find(
-      nextPlugin => /^_?ModuleFederationPlugin$/.test(nextPlugin!.constructor.name),
+    const plugin = config.plugins.find(nextPlugin =>
+      /^_?ModuleFederationPlugin$/.test(nextPlugin!.constructor.name),
     );
     return (plugin as Dict)?._options as Dict & { remotes?: Dict<string> };
   }
