@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
 import type { FederationConfig } from '../../models';
 import { compileTypes } from '../compileTypes';
-import type { CompileTypesWorkerMessage, ExitMessage } from '../compileTypesWorker';
+import type { CompileTypesWorkerMessage } from '../compileTypesWorker';
 import { rewritePathsWithExposedFederatedModules } from '../rewritePathsWithExposedFederatedModules';
 import { workerLogger } from '../workerLogger';
 
@@ -34,7 +34,7 @@ describe('compileTypesWorker', () => {
   const mockCompileTypes = vi.mocked(compileTypes);
   const mockRewritePaths = vi.mocked(rewritePathsWithExposedFederatedModules);
 
-  let messageHandler: (message: CompileTypesWorkerMessage | ExitMessage) => void;
+  let messageHandler: (message: CompileTypesWorkerMessage) => void;
 
   beforeEach(async () => {
     vi.resetAllMocks();
@@ -54,16 +54,6 @@ describe('compileTypesWorker', () => {
 
   afterEach(() => {
     vi.resetModules();
-  });
-
-  test('handles exit message', () => {
-    const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => undefined as never);
-    const exitMessage: ExitMessage = { type: 'exit' };
-
-    messageHandler(exitMessage);
-
-    expect(workerLogger.log).toHaveBeenCalledWith('Exiting by request');
-    expect(exitSpy).toHaveBeenCalledWith(0);
   });
 
   test('handles successful compilation and rewrite', () => {
