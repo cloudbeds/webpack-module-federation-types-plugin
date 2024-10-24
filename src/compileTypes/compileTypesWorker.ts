@@ -14,23 +14,14 @@ export type CompileTypesWorkerMessage = CompileTypesParams & {
   federationConfig: FederationConfig;
 };
 
-export type ExitMessage = {
-  type: 'exit';
-};
-
 export type CompileTypesWorkerResultMessage =
   | { status: 'success' }
   | { status: 'failure' }
   | CompileTypesWorkerResultMessageError
   | { status: 'log'; level: LogLevel; message: string };
 
-parentPort?.on('message', (message: CompileTypesWorkerMessage | ExitMessage) => {
-  if ((message as ExitMessage).type === 'exit') {
-    workerLogger.log('Exiting by request');
-    process.exit(0);
-  }
-
-  const { federationConfig, ...params } = message as CompileTypesWorkerMessage;
+parentPort?.on('message', (message: CompileTypesWorkerMessage) => {
+  const { federationConfig, ...params } = message;
 
   try {
     const startTime = performance.now();
