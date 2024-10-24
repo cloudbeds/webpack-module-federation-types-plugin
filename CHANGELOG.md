@@ -1,3 +1,10 @@
+## [2.0.9](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v2.0.8...v2.0.9) (2024-10-24)
+
+
+### Bug Fixes
+
+* **plugin:** improve regex pattern for finding ModuleFederationPlugin ([dcfa975](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/dcfa975fdb323a66729c7f9782a163e5efea7221))
+
 ## [2.0.8](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v2.0.7...v2.0.8) (2024-10-24)
 
 
