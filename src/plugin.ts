@@ -68,7 +68,8 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
     // Get ModuleFederationPlugin config
     const federationOptions = compiler.options.plugins.find(
       plugin =>
-        plugin!.constructor.name && moduleFederationPluginNames.includes(plugin!.constructor.name.replace(/^_/, '')),
+        plugin!.constructor.name &&
+        moduleFederationPluginNames.includes(plugin!.constructor.name.replace(/^_/, '')),
     );
 
     const federationPluginOptions: ModuleFederationPluginOptions = (federationOptions as Dict)
