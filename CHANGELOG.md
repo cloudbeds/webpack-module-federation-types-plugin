@@ -1,3 +1,10 @@
+## [2.0.8](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v2.0.7...v2.0.8) (2024-10-24)
+
+
+### Bug Fixes
+
+* **compileTypesAsync:** improve worker termination logic ([e4c8264](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/e4c8264eba927f281908f0e5bc6a9c87c1240f3c))
+
 ## [2.0.7](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v2.0.6...v2.0.7) (2024-10-20)
 
 ## [2.0.6](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v2.0.5...v2.0.6) (2024-10-16)
