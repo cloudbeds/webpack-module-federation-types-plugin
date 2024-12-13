@@ -82,6 +82,19 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
       return;
     }
 
+    // In MF2 an item can be an object with `import` and `name` properties
+    federationPluginOptions.exposes = Object.entries(federationPluginOptions.exposes || {}).reduce(
+      (acc, [key, value]) => {
+        if (value && typeof value === 'object' && 'import' in value) {
+          acc[key] = (value as Dict<string>).import[0];
+        } else {
+          acc[key] = value;
+        }
+        return acc;
+      },
+      {} as Dict<string>,
+    );
+
     // Define path for the emitted typings file
     const { exposes, remotes } = federationPluginOptions;
 
@@ -100,7 +113,7 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
         await compileTypesAsync(
           {
             tsconfigPath: TS_CONFIG_FILE,
-            exposedModules: exposes as string[],
+            exposedModules: exposes as Dict<string>,
             outFile,
             dirGlobalTypes,
             federationConfig: federationPluginOptions as FederationConfig,
