@@ -59,7 +59,10 @@ describe('compileTypesWorker', () => {
   test('handles successful compilation and rewrite', () => {
     const workerMessage: CompileTypesWorkerMessage = {
       tsconfigPath: 'tsconfig.json',
-      exposedModules: ['moduleA', 'moduleB'],
+      exposedModules: {
+        './moduleA': 'moduleA',
+        './moduleB': 'moduleB',
+      },
       outFile: 'dist/types.d.ts',
       dirGlobalTypes: 'src/@types',
       federationConfig: {} as FederationConfig,
@@ -72,7 +75,10 @@ describe('compileTypesWorker', () => {
     expect(mockCompileTypes).toHaveBeenCalledWith(
       expect.objectContaining({
         tsconfigPath: 'tsconfig.json',
-        exposedModules: ['moduleA', 'moduleB'],
+        exposedModules: {
+          './moduleA': 'moduleA',
+          './moduleB': 'moduleB',
+        },
         outFile: 'dist/types.d.ts',
         dirGlobalTypes: 'src/@types',
       }),
@@ -92,7 +98,7 @@ describe('compileTypesWorker', () => {
   test('handles compilation failure', () => {
     const workerMessage: CompileTypesWorkerMessage = {
       tsconfigPath: 'tsconfig.json',
-      exposedModules: ['moduleA'],
+      exposedModules: { './moduleA': 'moduleA' },
       outFile: 'dist/types.d.ts',
       dirGlobalTypes: 'src/@types',
       federationConfig: {} as FederationConfig,
@@ -108,7 +114,7 @@ describe('compileTypesWorker', () => {
   test('handles errors during compilation', () => {
     const workerMessage: CompileTypesWorkerMessage = {
       tsconfigPath: 'tsconfig.json',
-      exposedModules: ['moduleA'],
+      exposedModules: { './moduleA': 'moduleA' },
       outFile: 'dist/types.d.ts',
       dirGlobalTypes: 'src/@types',
       federationConfig: {} as FederationConfig,
@@ -130,7 +136,7 @@ describe('compileTypesWorker', () => {
   test('logs performance metrics', () => {
     const workerMessage: CompileTypesWorkerMessage = {
       tsconfigPath: 'tsconfig.json',
-      exposedModules: ['moduleA'],
+      exposedModules: { './moduleA': 'moduleA' },
       outFile: 'dist/types.d.ts',
       dirGlobalTypes: 'src/@types',
       federationConfig: {} as FederationConfig,

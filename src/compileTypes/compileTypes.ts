@@ -9,7 +9,7 @@ import { getTSConfigCompilerOptions, reportCompileDiagnostic } from './helpers';
 
 export type CompileTypesParams = {
   tsconfigPath: string;
-  exposedModules: string[];
+  exposedModules: Dict<string>;
   outFile: string;
   dirGlobalTypes: string;
 };
