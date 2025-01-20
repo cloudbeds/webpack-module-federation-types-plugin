@@ -155,7 +155,7 @@ describe('compileTypesWorker', () => {
     expect(workerLogger.log).toHaveBeenCalledWith('Types compilation completed in 2.00 seconds');
     expect(workerLogger.log).toHaveBeenCalledWith('Typings file rewritten in 1.00 seconds');
     expect(workerLogger.info).toHaveBeenCalledWith(
-      'Types compilation and modification completed in 2.00 + 1.00 seconds',
+      'Types compiled in 2.00 + 1.00 seconds',
     );
   });
 });

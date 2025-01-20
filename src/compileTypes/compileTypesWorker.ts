@@ -45,7 +45,7 @@ parentPort?.on('message', (message: CompileTypesWorkerMessage) => {
       workerLogger.log(`Typings file rewritten in ${rewriteTimeTakenInSeconds} seconds`);
 
       workerLogger.info(
-        `Types compilation and modification completed in ${timeTakenInSeconds} + ${rewriteTimeTakenInSeconds} seconds`,
+        `Types compiled in ${timeTakenInSeconds} + ${rewriteTimeTakenInSeconds} seconds`,
       );
 
       parentPort?.postMessage({ status: 'success' } satisfies CompileTypesWorkerResultMessage);
