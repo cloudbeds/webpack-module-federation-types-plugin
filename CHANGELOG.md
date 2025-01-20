@@ -1,3 +1,17 @@
+# [2.1.0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v2.0.9...v2.1.0) (2025-01-20)
+
+
+### Bug Fixes
+
+* **compileTypesWorker:** update log messages for clarity in compilation timing ([ce2345e](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/ce2345ee3d8394c30092fdde9c74a0d6347135c1))
+* **release:** update GitHub Actions permissions and refine test log expectations ([512e144](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/512e14401aefdcb20b811fa94ebc4e7412c0efd2))
+* **release:** update GitHub Actions permissions to allow write access for contents ([a26f600](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/a26f600f115a1e2e9997047feb06df287f031285))
+
+
+### Features
+
+* **plugin:** support object-based MF2 exposed modules in ModuleFederationTypesPlugin ([1191757](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/1191757a14d6382f2d07bfcb47ff2c05b3a929bf))
+
 ## [2.0.9](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v2.0.8...v2.0.9) (2024-10-24)
 
 
