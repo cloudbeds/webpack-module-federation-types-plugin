@@ -9,3 +9,6 @@ jobs:
   publish:
     uses: cloudbeds/workflows/.github/workflows/npm-build-test-release.yml@main
     secrets: inherit
+    permissions:
+      id-token: write
+      contents: read
