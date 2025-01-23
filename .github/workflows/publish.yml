@@ -1,6 +1,4 @@
-# Generic workflow to lint, test, build and publish an npm package
-
-name: Test, Build and Publish npm package
+name: Release and Publish
 
 on:
   push:
