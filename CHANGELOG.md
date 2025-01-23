@@ -1,3 +1,10 @@
+## [2.1.1](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v2.1.0...v2.1.1) (2025-01-23)
+
+
+### Bug Fixes
+
+* **workflows:** rename workflows for clarity and consistency ([cb4b675](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/cb4b675224181ef9a32425a8c91cbe61397b775a))
+
 # [2.1.0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v2.0.9...v2.1.0) (2025-01-20)
 
 
