@@ -1,0 +1,35 @@
+name: Lint, Test and Build
+
+on:
+  workflow_call:
+    inputs:
+      shouldUploadArtifact:
+        required: false
+        type: string
+
+jobs:
+  lint-test-build:
+    name: Lint, Test, Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/npm-install
+        with:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Lint
+        run: npm run lint && npm run lint:ts
+
+      - name: Test
+        run: npm run test:coverage
+
+      - name: Build
+        run: npm run build
+
+      - name: Upload artifact
+        if: inputs.shouldUploadArtifact == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifact
+          path: dist
+          if-no-files-found: error

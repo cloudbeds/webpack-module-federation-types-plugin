@@ -1,0 +1,160 @@
+name: Semantic Release
+description: Release
+
+inputs:
+  artifactName:
+    description: Name of the uploaded build artifact
+    default: build-artifact
+    required: false
+  artifactPath:
+    description: Destination path for the downloaded build artifact
+    default: dist
+    required: false
+  publishToNpm:
+    description: Enable this to publish artifacts to NPM
+    required: false
+  withoutBuiltArtifact:
+    description: Indicates that no artifact should be downloaded
+    required: false
+  withoutChangelog:
+    description: Enable this to prevent @semantic-release/changelog from writing a CHANGELOG file
+    required: false
+  withoutNpmPlugin:
+    description: Enable this to prevent @semantic-release/npm from writing package.json
+    required: false
+  extraPlugins:
+    description: Additional array of plugins to be added to the .releaserc file in JSON format
+    required: false
+  GITHUB_TOKEN:
+    description: Github token with write permission
+    required: true
+  NPM_TOKEN:
+    description: Secret NPM token
+    required: false
+
+outputs:
+  isReleased:
+    description: Whether a new release was published. Contains "true" or "false" string
+    value: ${{ steps.semantic-release.outputs.new_release_published }}
+  releasedVersion:
+    description: The version of the release that actually happened
+    value: ${{ steps.semantic-release.outputs.new_release_version }}
+  previousVersion:
+    description: Version of the previous release, if there was one
+    value: ${{ steps.semantic-release.outputs.last_release_version }}
+  releasedSHA:
+    description: The SHA of the commit that was released, that contains the [skip-ci] commit
+    value: ${{ steps.released-sha.outputs.SHA }}
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v4
+      with:
+        token: ${{ inputs.GITHUB_TOKEN }}
+
+    # install node_modules since there might be a dependency from husky which is invoked during npm publish
+    - if: inputs.publishToNpm == 'true'
+      uses: ./.github/actions/npm-install
+
+    - if: inputs.withoutBuiltArtifact != 'true'
+      name: Download artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: ${{ inputs.artifactName }}
+        path: ${{ inputs.artifactPath }}
+
+    - shell: bash
+      run: |
+        echo ""
+        echo "::group::📂 Contents of the Root directory"
+        ls -la
+        echo "::endgroup::"
+        echo ""
+
+    - if: inputs.withoutBuiltArtifact != 'true'
+      shell: bash
+      run: |
+        echo ""
+        echo "::group::📂 Contents of the '${{ inputs.artifactPath }}' directory"
+        ls -la ${{ inputs.artifactPath }}
+        echo "::endgroup::"
+        echo ""
+
+    - name: Create config file for Semantic Release
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          const inputs = ${{ toJSON(inputs) }};
+
+          const plugins = [
+            ['@semantic-release/commit-analyzer', {
+              releaseRules: [
+                { type: 'perf', release: 'patch' },
+                { type: 'refactor', release: 'patch' },
+                { type: 'revert', release: 'patch' }
+              ]
+            }],
+            '@semantic-release/release-notes-generator',
+          ];
+
+          if (inputs.withoutChangelog !== 'true') {
+            plugins.push('@semantic-release/changelog');
+          }
+
+          if (inputs.withoutNpmPlugin !== 'true') {
+            plugins.push([
+              '@semantic-release/npm',
+              { npmPublish: inputs.publishToNpm === 'true' },
+            ]);
+          }
+
+          plugins.push('@semantic-release/github');
+          plugins.push('@semantic-release/git');
+
+          const extraPlugins = JSON.parse(inputs.extraPlugins || '[]');
+
+          if (extraPlugins.length) {
+            extraPlugins.forEach(plugin => plugins.push(plugin));
+          }
+
+          fs.writeFileSync('.releaserc', JSON.stringify({ plugins }, null, 2));
+
+          const extraPluginNames = extraPlugins.map(plugin => Array.isArray(plugin) ? plugin[0] : plugin).join(' ');
+          core.exportVariable('EXTRA_PLUGINS', extraPluginNames);
+
+          console.log('::group::📂 Contents of .releaserc:');
+          console.log(fs.readFileSync('.releaserc'));
+          console.log('::endgroup::');
+
+    - name: Semantic Release
+      uses: cycjimmy/semantic-release-action@v4
+      id: semantic-release
+      with:
+        branches: |
+          [
+            'main',
+            '+([0-9])?(.{+([0-9]),x}).x'
+          ]
+        extra_plugins: |
+          @semantic-release/changelog
+          @semantic-release/git
+          ${{ env.EXTRA_PLUGINS }}
+      env:
+        GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
+        NPM_TOKEN: ${{ inputs.NPM_TOKEN }}
+        HUSKY: '0'
+
+    - name: Output commit hash
+      id: released-sha
+      shell: bash
+      run: |
+        echo ""
+        if [[ "${{ steps.semantic-release.outputs.new_release_published }}" == true ]]; then
+          echo "::notice::🎉 Application version was updated to ${{ steps.semantic-release.outputs.new_release_version }}"
+        else
+          echo "::warning::No new version is released"
+          echo "::warning::Make sure that commit messages follow the semantic-release format"
+        fi
+        echo "SHA=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT

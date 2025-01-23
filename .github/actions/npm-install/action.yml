@@ -1,0 +1,30 @@
+name: Install NPM packages
+description: Adds NPM token and install node modules
+
+inputs:
+  NPM_TOKEN:
+    description: NPM token
+    required: false
+
+runs:
+  using: composite
+  steps:
+    - name: Add NPM token to .npmrc
+      if: inputs.NPM_TOKEN != ''
+      shell: bash
+      run: |
+        if [[ -f .npmrc ]]; then
+          export NPM_TOKEN=${{ inputs.NPM_TOKEN }}
+        else
+          echo "//registry.npmjs.org/:_authToken=${{ inputs.NPM_TOKEN }}" > .npmrc
+        fi
+
+    - name: Install dependencies
+      shell: bash
+      run: |
+        export HUSKY=0
+        export SKIP_INSTALL_SIMPLE_GIT_HOOKS=1
+
+        npm config set audit=false fund=false
+
+        npm ci

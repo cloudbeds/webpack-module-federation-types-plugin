@@ -1,11 +1,11 @@
-name: Push to branch
+name: Lint, Test and Build
 
 on:
   push:
-    branches-ignore:
-      - main
+    branches-ignore: main
 
 jobs:
-  push:
-    uses: cloudbeds/workflows/.github/workflows/npm-build-test.yml@main
+  lint-test-build:
+    name: Validate
+    uses: ./.github/workflows/on-call-lint-test-build.yml
     secrets: inherit

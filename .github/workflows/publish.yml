@@ -1,0 +1,30 @@
+# Generic workflow to lint, test, build and publish an npm package
+
+name: Test, Build and Publish npm package
+
+on:
+  push:
+    branches: main
+
+jobs:
+  lint-test-build:
+    name: Validate
+    uses: ./.github/workflows/on-call-lint-test-build.yml
+    secrets: inherit
+    with:
+      shouldUploadArtifact: true
+
+  release:
+    name: Publish to NPM 🚀
+    runs-on: ubuntu-latest
+    needs: lint-test-build
+    permissions:
+      id-token: write
+      contents: write
+    steps:
+      - name: Semantic Release
+        uses: cloudbeds/webpack-module-federation-types-plugin/.github/actions/semantic-release@main
+        with:
+          publishToNpm: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
