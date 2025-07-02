@@ -180,9 +180,9 @@ Example of a configuration:
 ```js
 new ModuleFederationTypesPlugin({
   remoteManifestUrls: {
-    mfeApp1: 'https://localhost:4480/remotes/dev/mfe-app-1-remote-entry.json',
-    mfeApp2: 'https://localhost:4480/remotes/dev/mfe-app-2-remote-entry.json',
-    registry: 'https://localhost:4480/remotes/dev/remote-entries.json',
+    mfeApp1: 'http://localhost:4480/remotes/dev/mfe-app-1-remote-entry.json',
+    mfeApp2: 'http://localhost:4480/remotes/dev/mfe-app-2-remote-entry.json',
+    registry: 'http://localhost:4480/remotes/dev/remote-entries.json',
   }
 })
 ```
@@ -191,7 +191,7 @@ Example with a single manifest file:
 
 ```js
 new ModuleFederationTypesPlugin({
-  remoteManifestUrl: 'https://localhost:4480/remotes/dev/remote-entries.json',
+  remoteManifestUrl: 'http://localhost:4480/remotes/dev/remote-entries.json',
 })
 ```
 
