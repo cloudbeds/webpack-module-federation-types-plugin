@@ -47,5 +47,8 @@
   },
   "simple-git-hooks": {
     "pre-commit": "npm run lint"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   }
 }
