@@ -1,3 +1,10 @@
+# [2.2.0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v2.1.1...v2.2.0) (2025-11-03)
+
+
+### Features
+
+* **PEN-382:** Add GitHub packages registry configuration ([7da352a](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/7da352ac7912082a4ff50cea724fe94b20ab3acc))
+
 ## [2.1.1](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v2.1.0...v2.1.1) (2025-01-23)
 
 
