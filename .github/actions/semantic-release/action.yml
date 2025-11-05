@@ -140,6 +140,7 @@ runs:
           ${{ env.EXTRA_PLUGINS }}
       env:
         GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
+        NPM_TOKEN: ${{ inputs.GITHUB_TOKEN }}
         HUSKY: '0'
 
     - name: Output commit hash
