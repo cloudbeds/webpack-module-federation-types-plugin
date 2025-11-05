@@ -2,7 +2,7 @@ name: Release and Publish
 
 on:
   push:
-    branches: main
+    branches: [main]
 
 jobs:
   lint-test-build:
@@ -13,16 +13,16 @@ jobs:
       shouldUploadArtifact: true
 
   release:
-    name: Publish to NPM 🚀
+    name: Publish to GitHub Packages 🚀
     runs-on: ubuntu-latest
     needs: lint-test-build
     permissions:
       id-token: write
       contents: write
+      packages: write
     steps:
       - name: Semantic Release
         uses: cloudbeds/webpack-module-federation-types-plugin/.github/actions/semantic-release@main
         with:
           publishToNpm: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

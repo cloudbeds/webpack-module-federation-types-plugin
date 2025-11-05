@@ -11,6 +11,32 @@ All paths can be customized to meet your environment.
 
 ## Installation
 
+This package is published to GitHub Packages. To install it, you need to configure npm to use GitHub Packages registry for the `@cloudbeds` scope.
+
+### Configure npm for GitHub Packages
+
+**Option 1: Using `.npmrc` file**
+
+Create or update your `.npmrc` file in your project root or home directory:
+
+```sh
+@cloudbeds:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
+```
+
+Replace `${GITHUB_TOKEN}` with your GitHub personal access token that has `read:packages` permission, or set it as an environment variable.
+
+**Option 2: Using npm config commands**
+
+```sh
+npm config set @cloudbeds:registry https://npm.pkg.github.com
+npm config set //npm.pkg.github.com/:_authToken YOUR_GITHUB_TOKEN
+```
+
+Replace `YOUR_GITHUB_TOKEN` with your GitHub personal access token that has `read:packages` permission.
+
+### Install the package
+
 ```sh
 npm i @cloudbeds/webpack-module-federation-types-plugin
 ```

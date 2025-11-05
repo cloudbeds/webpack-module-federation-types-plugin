@@ -28,9 +28,6 @@ inputs:
   GITHUB_TOKEN:
     description: Github token with write permission
     required: true
-  NPM_TOKEN:
-    description: Secret NPM token
-    required: false
 
 outputs:
   isReleased:
@@ -143,7 +140,6 @@ runs:
           ${{ env.EXTRA_PLUGINS }}
       env:
         GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
-        NPM_TOKEN: ${{ inputs.NPM_TOKEN }}
         HUSKY: '0'
 
     - name: Output commit hash
