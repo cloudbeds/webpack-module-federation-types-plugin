@@ -35,16 +35,16 @@ npm config set //npm.pkg.github.com/:_authToken YOUR_GITHUB_TOKEN
 
 Replace `YOUR_GITHUB_TOKEN` with your GitHub personal access token that has `read:packages` permission.
 
-**Option 3: Using GitHub CLI (Recommended)**
+**Option 3: Using GitHub CLI**
 
-If you have the [GitHub CLI](https://cli.github.com/) installed and authenticated, you can automatically configure npm:
+If you have the [GitHub CLI](https://cli.github.com/) installed and authenticated with a Personal Access Token, you can automatically configure npm:
 
 ```sh
 npm config set @cloudbeds:registry https://npm.pkg.github.com
 npm config set //npm.pkg.github.com/:_authToken $(gh auth token)
 ```
 
-This uses your existing GitHub CLI authentication, eliminating the need to manually manage tokens.
+**Note:** This only works reliably if you authenticated GitHub CLI with a PAT (using `gh auth login --with-token`). If you used OAuth web flow, the token may expire and you'll need to reconfigure npm.
 
 ### Install the package
 
