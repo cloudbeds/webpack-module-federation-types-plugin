@@ -78,6 +78,13 @@ runs:
         echo "::endgroup::"
         echo ""
 
+    - name: Configure npm for GitHub Packages
+      if: inputs.publishToNpm == 'true'
+      shell: bash
+      run: |
+        npm config set @cloudbeds:registry https://npm.pkg.github.com
+        npm config set //npm.pkg.github.com/:_authToken ${{ inputs.GITHUB_TOKEN }}
+
     - name: Create config file for Semantic Release
       uses: actions/github-script@v7
       with:
@@ -140,7 +147,6 @@ runs:
           ${{ env.EXTRA_PLUGINS }}
       env:
         GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
-        NPM_TOKEN: ${{ inputs.GITHUB_TOKEN }}
         HUSKY: '0'
 
     - name: Output commit hash
