@@ -1,3 +1,10 @@
+## [2.2.1](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v2.2.0...v2.2.1) (2025-11-05)
+
+
+### Bug Fixes
+
+* Set NPM_TOKEN to GITHUB_TOKEN for GitHub Packages authentication ([d0ddcec](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/d0ddcec27b613e75b860751d2b8a880d89711f63))
+
 # [2.2.0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v2.1.1...v2.2.0) (2025-11-03)
 
 
