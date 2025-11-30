@@ -10,9 +10,6 @@ inputs:
     description: Destination path for the downloaded build artifact
     default: dist
     required: false
-  publishToNpm:
-    description: Enable this to publish artifacts to NPM
-    required: false
   withoutBuiltArtifact:
     description: Indicates that no artifact should be downloaded
     required: false
@@ -51,8 +48,7 @@ runs:
         token: ${{ inputs.GITHUB_TOKEN }}
 
     # install node_modules since there might be a dependency from husky which is invoked during npm publish
-    - if: inputs.publishToNpm == 'true'
-      uses: ./.github/actions/npm-install
+    - uses: ./.github/actions/npm-install
 
     - if: inputs.withoutBuiltArtifact != 'true'
       name: Download artifact
@@ -79,7 +75,6 @@ runs:
         echo ""
 
     - name: Configure npm for GitHub Packages
-      if: inputs.publishToNpm == 'true'
       shell: bash
       run: |
         npm config set @cloudbeds:registry https://npm.pkg.github.com
@@ -110,7 +105,7 @@ runs:
           if (inputs.withoutNpmPlugin !== 'true') {
             plugins.push([
               '@semantic-release/npm',
-              { npmPublish: inputs.publishToNpm === 'true' },
+              { npmPublish: true },
             ]);
           }
 

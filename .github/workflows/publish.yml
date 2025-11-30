@@ -24,5 +24,4 @@ jobs:
       - name: Semantic Release
         uses: cloudbeds/webpack-module-federation-types-plugin/.github/actions/semantic-release@main
         with:
-          publishToNpm: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
