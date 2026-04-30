@@ -4,9 +4,8 @@ import path from 'node:path';
 import { mkdirp } from 'mkdirp';
 
 import { PREFIX_NOT_FOR_IMPORT } from '../constants';
-import type { CommonLogger, FederationConfig } from '../models';
-
 import { getLogger } from '../helpers';
+import type { CommonLogger, FederationConfig } from '../models';
 import { includeTypesFromNodeModules, substituteAliasedModules } from './helpers';
 
 export function rewritePathsWithExposedFederatedModules(
