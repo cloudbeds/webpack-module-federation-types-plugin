@@ -1,3 +1,10 @@
+## [2.2.3](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v2.2.2...v2.2.3) (2026-05-04)
+
+
+### Bug Fixes
+
+* preserve moduleResolution from parsed tsconfig ([031cf0c](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/031cf0c94434cf0bd33bcb53bedc5dcb8f845175)), closes [#52](https://github.com/cloudbeds/webpack-module-federation-types-plugin/issues/52)
+
 ## [2.2.2](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v2.2.1...v2.2.2) (2025-11-05)
 
 ## [2.2.1](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v2.2.0...v2.2.1) (2025-11-05)
