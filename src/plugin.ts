@@ -72,8 +72,9 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
         moduleFederationPluginNames.includes(plugin!.constructor.name.replace(/^_/, '')),
     );
 
-    const federationPluginOptions: ModuleFederationPluginOptions = (federationOptions as Dict)
-      ?._options as ModuleFederationPluginOptions;
+    // webpack >= 5.100 exposes `options`; earlier versions used `_options`.
+    const federationPluginOptions: ModuleFederationPluginOptions = ((federationOptions as Dict)
+      ?.options ?? (federationOptions as Dict)?._options) as ModuleFederationPluginOptions;
 
     if (!federationPluginOptions?.name) {
       logger.warn(

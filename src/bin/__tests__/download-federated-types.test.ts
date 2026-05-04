@@ -12,7 +12,7 @@ vi.mock('node:fs', async () => ({
 
 vi.mock('minimist', () => ({
   default: (args: string[]) => {
-    const webpackConfigIndex = args.findIndex(arg => arg === '--webpack-config');
+    const webpackConfigIndex = args.indexOf('--webpack-config');
     return webpackConfigIndex > -1 ? { 'webpack-config': args[webpackConfigIndex + 1] } : {};
   },
 }));

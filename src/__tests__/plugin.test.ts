@@ -2,11 +2,14 @@ import { describe, expect, test, vi } from 'vitest';
 import webpack, { type Compilation, type Compiler } from 'webpack';
 
 import { DEFAULT_DIR_DOWNLOADED_TYPES, DEFAULT_DIR_EMITTED_TYPES } from '../constants';
-import { downloadTypes } from '../downloadTypes/downloadTypes';
+import { downloadTypes } from '../downloadTypes';
 import type { ModuleFederationPluginOptions, ModuleFederationTypesPluginOptions } from '../models';
 import { ModuleFederationTypesPlugin } from '../plugin';
 
-vi.mock('../downloadTypes/downloadTypes');
+vi.mock('../downloadTypes', async importActual => ({
+  ...(await importActual<typeof import('../downloadTypes')>()),
+  downloadTypes: vi.fn(),
+}));
 
 const mockDownloadTypes = vi.mocked(downloadTypes);
 const mockAfterEmit = vi.fn();
@@ -37,13 +40,15 @@ function installPlugin(
         tap: mockAfterEmit as unknown,
       },
       beforeRun: {
-        tapPromise: (_, callback) => callback({} as Compiler) as unknown,
+        tapPromise: (_: unknown, callback: (compiler: Compiler) => unknown) =>
+          callback({} as Compiler) as unknown,
       },
       watchRun: {
-        tap: (_, callback) => callback({} as Compiler) as unknown,
+        tap: (_: unknown, callback: (compiler: Compiler) => unknown) =>
+          callback({} as Compiler) as unknown,
       },
     },
-  } as Compiler);
+  } as unknown as Compiler);
 
   return pluginInstance;
 }

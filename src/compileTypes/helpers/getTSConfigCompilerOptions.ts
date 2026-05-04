@@ -17,7 +17,9 @@ export function getTSConfigCompilerOptions(
 
   logger.log('tsc compiler version:', ts.version);
 
-  if (ts.version.match(/^[5-9]\.([4-9]|[1-9]\d)/)) {
+  const [major, minor] = ts.version.split('.').map(Number);
+  const isTs54OrNewer = major > 5 || (major === 5 && minor >= 4);
+  if (isTs54OrNewer) {
     const tsconfigJsonFile = ts.readJsonConfigFile(tsconfigPath, ts.sys.readFile);
     const parsedConfig = ts.parseJsonSourceFileConfigFileContent(
       tsconfigJsonFile,

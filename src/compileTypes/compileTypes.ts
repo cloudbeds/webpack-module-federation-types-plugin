@@ -24,7 +24,13 @@ export function compileTypes(
   logger: CommonLogger = getLogger(),
 ): CompileTypesResult {
   const exposedFileNames = Object.values(exposedModules);
-  const { moduleResolution, ...compilerOptions } = getTSConfigCompilerOptions(tsconfigPath, logger);
+  const compilerOptions = getTSConfigCompilerOptions(tsconfigPath, logger);
+
+  // Strip the legacy raw-string `moduleResolution` ("Node") which `ts.createProgram` rejects;
+  // keep the enum value returned by the TS >= 5.4 parsed-config path.
+  if (typeof compilerOptions.moduleResolution === 'string') {
+    delete compilerOptions.moduleResolution;
+  }
 
   Object.assign(compilerOptions, {
     declaration: true,
@@ -64,7 +70,9 @@ export function compileTypes(
 
   const program = ts.createProgram(exposedFileNames, compilerOptions, host);
   const { diagnostics, emitSkipped } = program.emit();
-  diagnostics.forEach(item => reportCompileDiagnostic(item, logger));
+  for (const item of diagnostics) {
+    reportCompileDiagnostic(item, logger);
+  }
 
   if (emitSkipped) {
     logger.log('[compileTypes]: TypeScript program emit skipped');

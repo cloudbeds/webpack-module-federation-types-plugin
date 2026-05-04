@@ -1,7 +1,5 @@
 import { parentPort } from 'node:worker_threads';
-
-import type { CommonLogger } from '../models';
-import type { LogLevel } from '../models';
+import type { CommonLogger, LogLevel } from '../models';
 
 export function sendLog(level: LogLevel, items: unknown[]) {
   parentPort?.postMessage({
