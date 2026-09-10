@@ -127,14 +127,19 @@ export class ModuleFederationTypesPlugin implements WebpackPluginInstance {
     };
 
     // Import types from remote modules
-    const downloadRemoteTypes = async () =>
-      downloadTypes(
+    // Tapped on both beforeRun (one-shot build) and watchRun. Neither reads the per-remote
+    // outcome: a build must not fail because a remote is briefly unreachable. The consequence is
+    // that a failed download leaves an empty <dirDownloadedTypes>/<remote>/ and typecheck passes
+    // vacuously; the download-federated-types CLI is the path that fails loudly.
+    const downloadRemoteTypes = async (): Promise<void> => {
+      await downloadTypes(
         dirEmittedTypes,
         dirDownloadedTypes,
         remotes as Dict<string>,
         remoteEntryUrls,
         remoteManifestUrls,
       );
+    };
 
     // Determine whether compilation of types should be performed continuously
     // followed by downloading of types when idle for a certain period of time

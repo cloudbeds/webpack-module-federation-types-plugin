@@ -57,6 +57,7 @@ describe('download-federated-types', () => {
       mfPluginOptions: {},
       mfTypesPluginOptions: {},
     });
+    mockDownloadTypes.mockResolvedValue({ downloaded: [], failed: [] });
   });
 
   afterEach(() => {
@@ -117,6 +118,53 @@ describe('download-federated-types', () => {
       manifestUrls,
     );
     expect(mockConsoleLog).toHaveBeenCalledWith('Successfully downloaded federated types.');
+  });
+
+  test('exits with an error when a remote fails to download', async () => {
+    mockGetOptionsFromWebpackConfig.mockReturnValue(validOptions);
+    mockDownloadTypes.mockResolvedValue({
+      downloaded: ['app1'],
+      failed: [
+        {
+          remoteName: 'app2',
+          remoteLocation: 'app1@https://app2-url/remoteEntry.js',
+          url: 'https://app2-url/dist/@types/index.d.ts',
+          error: new Error('Response code 404 (Not Found)'),
+        },
+      ],
+    });
+
+    await import('../download-federated-types');
+
+    expect(mockConsoleError).toHaveBeenCalledWith(
+      'Failed to download federated types for 1 of 2 remotes:',
+    );
+    expect(mockConsoleError).toHaveBeenCalledWith(
+      '  app2: https://app2-url/dist/@types/index.d.ts (Response code 404 (Not Found))',
+    );
+    expect(mockConsoleLog).not.toHaveBeenCalledWith('Successfully downloaded federated types.');
+    expect(process.exit).toHaveBeenCalledWith(1);
+  });
+
+  test('exits with an error when the remote manifest cannot be read', async () => {
+    mockGetOptionsFromWebpackConfig.mockReturnValue(validOptions);
+    mockDownloadTypes.mockResolvedValue({
+      downloaded: [],
+      failed: [],
+      manifestError: {
+        url: 'https://manifest-registry/remote-entries.json',
+        error: new Error('Response code 404 (Not Found)'),
+      },
+    });
+
+    await import('../download-federated-types');
+
+    expect(mockConsoleError).toHaveBeenCalledWith(
+      'No federated types were downloaded: the remote manifest could not be read from',
+      'https://manifest-registry/remote-entries.json',
+    );
+    expect(mockConsoleLog).not.toHaveBeenCalledWith('Successfully downloaded federated types.');
+    expect(process.exit).toHaveBeenCalledWith(1);
   });
 
   test('exits with error when downloadTypes throws an error', async () => {

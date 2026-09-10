@@ -40,7 +40,7 @@ describe('downloadTypes', () => {
     mockDownloadRemoteEntryURLsFromManifests.mockResolvedValue({});
     mockDownloadRemoteEntryTypes.mockResolvedValue();
 
-    await downloadTypes(
+    const result = await downloadTypes(
       dirEmittedTypes,
       dirDownloadedTypes,
       remotesFromConfig,
@@ -48,6 +48,7 @@ describe('downloadTypes', () => {
       remoteManifestUrls,
     );
 
+    expect(result).toEqual({ downloaded: ['mfdApp1', 'mfdApp2'], failed: [] });
     expect(mockDownloadRemoteEntryURLsFromManifests).toHaveBeenCalledWith(remoteManifestUrls);
     expect(mockDownloadRemoteEntryTypes).toHaveBeenCalledWith(
       'mfdApp1',
@@ -71,7 +72,7 @@ describe('downloadTypes', () => {
 
     mockDownloadRemoteEntryURLsFromManifests.mockRejectedValue(error);
 
-    await downloadTypes(
+    const result = await downloadTypes(
       dirEmittedTypes,
       dirDownloadedTypes,
       remotesFromConfig,
@@ -79,6 +80,8 @@ describe('downloadTypes', () => {
       remoteManifestUrls,
     );
 
+    expect(result.manifestError).toEqual({ url: 'invalid-url', error });
+    expect(result.downloaded).toEqual([]);
     expect(mockLogger.warn).toHaveBeenCalledWith(
       'Failed to load remote manifest file:',
       'invalid-url',
@@ -96,8 +99,17 @@ describe('downloadTypes', () => {
       throw error;
     });
 
-    await downloadTypes(dirEmittedTypes, dirDownloadedTypes, remotesFromConfig, remoteEntryUrls);
+    const result = await downloadTypes(
+      dirEmittedTypes,
+      dirDownloadedTypes,
+      remotesFromConfig,
+      remoteEntryUrls,
+    );
 
+    expect(result.downloaded).toEqual([]);
+    expect(result.failed).toEqual([
+      { remoteName, remoteLocation: remotesFromConfig[remoteName], error },
+    ]);
     expect(mockLogger.error).toHaveBeenCalledWith(
       `${remoteName}: '${remotesFromConfig[remoteName]}' is not a valid remote federated module URL`,
     );
@@ -113,12 +125,82 @@ describe('downloadTypes', () => {
 
     mockDownloadRemoteEntryTypes.mockRejectedValue(error);
 
-    await downloadTypes(dirEmittedTypes, dirDownloadedTypes, remotesFromConfig, remoteEntryUrls);
+    const result = await downloadTypes(
+      dirEmittedTypes,
+      dirDownloadedTypes,
+      remotesFromConfig,
+      remoteEntryUrls,
+    );
 
+    expect(result.downloaded).toEqual([]);
+    expect(result.failed).toEqual([
+      {
+        remoteName,
+        remoteLocation: remotesFromConfig[remoteName],
+        url: 'invalid-url',
+        error,
+      },
+    ]);
     expect(mockLogger.warn).toHaveBeenCalledWith(
       'Failed to load remote types from:',
       'invalid-url',
     );
     expect(mockLogger.log).toHaveBeenCalledWith(error);
+  });
+
+  test('keeps each remote with its own outcome when the failure modes differ', async () => {
+    const remotesFromConfig = {
+      mfdBadUrl: 'mfdBadUrl',
+      mfdOk: 'mfdOk@https://ok.example.com/remoteEntry.js',
+      mfdNotFound: 'mfdNotFound@https://missing.example.com/remoteEntry.js',
+    };
+    const downloadError = new Error('Response code 404 (Not Found)');
+
+    mockDownloadRemoteEntryURLsFromManifests.mockResolvedValue({});
+    mockDownloadRemoteEntryTypes.mockImplementation(async remoteName => {
+      if (remoteName === 'mfdNotFound') {
+        throw downloadError;
+      }
+    });
+
+    const result = await downloadTypes(dirEmittedTypes, dirDownloadedTypes, remotesFromConfig);
+
+    expect(result.downloaded).toEqual(['mfdOk']);
+    expect(result.failed).toEqual([
+      {
+        remoteName: 'mfdBadUrl',
+        remoteLocation: remotesFromConfig.mfdBadUrl,
+        error: expect.any(TypeError),
+      },
+      {
+        remoteName: 'mfdNotFound',
+        remoteLocation: remotesFromConfig.mfdNotFound,
+        url: `https://missing.example.com/${dirEmittedTypes}/index.d.ts`,
+        error: downloadError,
+      },
+    ]);
+  });
+
+  test('reports every remote when one fails and another succeeds', async () => {
+    const remotesFromConfig = {
+      mfdApp1: 'mfdApp1@https://app1.example.com/remoteEntry.js',
+      mfdApp2: 'mfdApp2@https://app2.example.com/remoteEntry.js',
+    };
+    const error = new Error('Response code 404 (Not Found)');
+
+    mockDownloadRemoteEntryURLsFromManifests.mockResolvedValue({});
+    mockDownloadRemoteEntryTypes.mockResolvedValueOnce().mockRejectedValueOnce(error);
+
+    const result = await downloadTypes(dirEmittedTypes, dirDownloadedTypes, remotesFromConfig);
+
+    expect(result.downloaded).toEqual(['mfdApp1']);
+    expect(result.failed).toEqual([
+      {
+        remoteName: 'mfdApp2',
+        remoteLocation: remotesFromConfig.mfdApp2,
+        url: `https://app2.example.com/${dirEmittedTypes}/index.d.ts`,
+        error,
+      },
+    ]);
   });
 });

@@ -35,14 +35,32 @@ if (!isEveryUrlValid(Object.values({ ...remoteManifestUrls }))) {
   setLogger(console);
 
   try {
-    await downloadTypes(
+    const { downloaded, failed, manifestError } = await downloadTypes(
       mfTypesPluginOptions?.dirEmittedTypes || DEFAULT_DIR_EMITTED_TYPES,
       mfTypesPluginOptions?.dirDownloadedTypes || DEFAULT_DIR_DOWNLOADED_TYPES,
       mfPluginOptions.remotes,
       mfTypesPluginOptions.remoteEntryUrls,
       remoteManifestUrls,
     );
-    console.log('Successfully downloaded federated types.');
+
+    if (manifestError) {
+      console.error(
+        'No federated types were downloaded: the remote manifest could not be read from',
+        manifestError.url || remoteManifestUrls,
+      );
+      process.exit(1);
+    } else if (failed.length) {
+      console.error(
+        `Failed to download federated types for ${failed.length} of ${failed.length + downloaded.length} remotes:`,
+      );
+      failed.forEach(({ remoteName, url, error }) => {
+        const reason = (error as Error)?.message || String(error);
+        console.error(`  ${remoteName}: ${url || 'no resolvable URL'} (${reason})`);
+      });
+      process.exit(1);
+    } else {
+      console.log('Successfully downloaded federated types.');
+    }
   } catch (error) {
     console.error('Error downloading federated types:', error);
     process.exit(1);

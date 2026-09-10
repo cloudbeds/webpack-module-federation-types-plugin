@@ -1,7 +1,14 @@
 import { getLogger } from '../helpers';
-import type { RemoteEntryUrls, RemoteManifestUrls } from '../models';
+import type {
+  DownloadTypesFailure,
+  DownloadTypesResult,
+  RemoteEntryUrls,
+  RemoteManifestUrls,
+} from '../models';
 
 import { downloadRemoteEntryTypes, downloadRemoteEntryURLsFromManifests } from './helpers';
+
+type Settlement = { remoteName: string; failure?: DownloadTypesFailure };
 
 export async function downloadTypes(
   dirEmittedTypes: string,
@@ -9,8 +16,9 @@ export async function downloadTypes(
   remotesFromFederationConfig?: Dict<string>,
   remoteEntryUrls?: RemoteEntryUrls,
   remoteManifestUrls?: RemoteManifestUrls,
-): Promise<void> {
+): Promise<DownloadTypesResult> {
   const logger = getLogger();
+  const result: DownloadTypesResult = { downloaded: [], failed: [] };
   let remoteEntryUrlsResolved: RemoteEntryUrls = {};
 
   try {
@@ -21,40 +29,61 @@ export async function downloadTypes(
   } catch (err) {
     logger.warn('Failed to load remote manifest file:', (err as Dict)?.url);
     logger.log(err);
-    return;
+    result.manifestError = { url: (err as Dict)?.url as string | undefined, error: err };
+    return result;
   }
 
-  const promises: Promise<void>[] = [];
+  // Each remote carries its own outcome, so no index correlates one list against another.
+  const settlements = await Promise.all(
+    Object.entries(remotesFromFederationConfig || {}).map(
+      async ([remoteName, remoteLocation]): Promise<Settlement> => {
+        let dtsUrl: string;
+        let promiseDownload: Promise<void>;
 
-  Object.entries(remotesFromFederationConfig || {}).forEach(([remoteName, remoteLocation]) => {
-    try {
-      const remoteEntryUrl = remoteEntryUrlsResolved[remoteName] || remoteLocation.split('@')[1];
+        try {
+          const remoteEntryUrl =
+            remoteEntryUrlsResolved[remoteName] || remoteLocation.split('@')[1];
 
-      const remoteEntryBaseUrl = remoteEntryUrl.endsWith('.js')
-        ? remoteEntryUrl.split('/').slice(0, -1).join('/')
-        : remoteEntryUrl;
+          const remoteEntryBaseUrl = remoteEntryUrl.endsWith('.js')
+            ? remoteEntryUrl.split('/').slice(0, -1).join('/')
+            : remoteEntryUrl;
 
-      const promiseDownload = downloadRemoteEntryTypes(
-        remoteName,
-        remoteLocation,
-        `${remoteEntryBaseUrl}/${dirEmittedTypes}/index.d.ts`,
-        dirDownloadedTypes,
-      );
+          dtsUrl = `${remoteEntryBaseUrl}/${dirEmittedTypes}/index.d.ts`;
+          promiseDownload = downloadRemoteEntryTypes(
+            remoteName,
+            remoteLocation,
+            dtsUrl,
+            dirDownloadedTypes,
+          );
+        } catch (error) {
+          logger.error(
+            `${remoteName}: '${remoteLocation}' is not a valid remote federated module URL`,
+          );
+          logger.log(error);
+          return { remoteName, failure: { remoteName, remoteLocation, error } };
+        }
 
-      promises.push(promiseDownload);
-    } catch (err) {
-      logger.error(`${remoteName}: '${remoteLocation}' is not a valid remote federated module URL`);
-      logger.log(err);
+        try {
+          await promiseDownload;
+          return { remoteName };
+        } catch (error) {
+          const url = ((error as Dict)?.url as string | undefined) || dtsUrl;
+
+          logger.warn('Failed to load remote types from:', url);
+          logger.log(error);
+          return { remoteName, failure: { remoteName, remoteLocation, url, error } };
+        }
+      },
+    ),
+  );
+
+  settlements.forEach(({ remoteName, failure }) => {
+    if (failure) {
+      result.failed.push(failure);
+    } else {
+      result.downloaded.push(remoteName);
     }
   });
 
-  try {
-    await Promise.all(promises);
-  } catch (err) {
-    logger.warn('Failed to load remote types from:', (err as Dict)?.url);
-    logger.log(err);
-    return;
-  }
-
-  return;
+  return result;
 }
