@@ -1,3 +1,5 @@
+## [2.2.5](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v2.2.4...v2.2.5) (2026-09-11)
+
 ## [2.2.4](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v2.2.3...v2.2.4) (2026-09-11)
 
 
