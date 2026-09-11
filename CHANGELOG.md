@@ -1,3 +1,10 @@
+## [2.2.4](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v2.2.3...v2.2.4) (2026-09-11)
+
+
+### Bug Fixes
+
+* **downloadTypes:** exit non-zero when a remote's types fail to download ([e4d0652](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/e4d0652d07e1d56161900a1bd3e2dc1b2d141cc2))
+
 ## [2.2.3](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v2.2.2...v2.2.3) (2026-05-04)
 
 
