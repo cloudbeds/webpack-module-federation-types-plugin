@@ -1,4 +1,5 @@
 export * from './CommonLogger';
+export * from './DownloadTypesResult';
 export * from './FederationConfig';
 export * from './LogLevel';
 export * from './ModuleFederationPluginOptions';

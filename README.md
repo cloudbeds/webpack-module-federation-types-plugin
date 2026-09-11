@@ -90,6 +90,15 @@ If the config is written in TypeScript, the script should be called with `ts-nod
 ts-node node_modules/bin/download-federated-types --webpack-config webpack/prod.ts
 ```
 
+**Exit code.** `0` only when every remote's `index.d.ts` was fetched. If the remote manifest cannot
+be read, or any remote's types fail to download, the command exits `1` and names each failed remote
+with its `.d.ts` URL and the reason. Treat a non-zero exit as "the local type mirror is incomplete,
+so a typecheck run now proves nothing" — the output directory for a remote is created before its
+download, so a failed remote leaves an empty directory rather than an obviously missing one.
+
+The `ModuleFederationTypesPlugin` build hooks behave differently on purpose: they log the same
+warnings and let the build continue, so a briefly unreachable remote does not break a build.
+
 #### make-federated-types
 | Option                        | Default value       | Description                                                                    |
 |-------------------------------|---------------------|--------------------------------------------------------------------------------|
@@ -311,6 +320,9 @@ remotes: {
 ```
 
 ### CI/CD
+
+Use the `download-federated-types` CLI rather than a build for this, and do not swallow its exit
+code: it is the only entry point that fails when a remote's types did not arrive.
 
 It is suggested to download types in a CI workflow only when a dev branch is merged
 to the `main` branch, that is the time when the deployment to dev/stage/prod is about to happen.
