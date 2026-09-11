@@ -4,8 +4,8 @@ import { setLogger } from '../../helpers';
 import { downloadTypes } from '../downloadTypes';
 import { downloadRemoteEntryTypes, downloadRemoteEntryURLsFromManifests } from '../helpers';
 
-vi.mock('../helpers', () => ({
-  ...vi.importActual('../helpers'),
+vi.mock('../helpers', async () => ({
+  ...(await vi.importActual<typeof import('../helpers')>('../helpers')),
   downloadRemoteEntryTypes: vi.fn(),
   downloadRemoteEntryURLsFromManifests: vi.fn().mockResolvedValue({}),
 }));
@@ -170,7 +170,9 @@ describe('downloadTypes', () => {
       {
         remoteName: 'mfdBadUrl',
         remoteLocation: remotesFromConfig.mfdBadUrl,
-        error: expect.any(TypeError),
+        error: expect.objectContaining({
+          message: "'mfdBadUrl' carries no @<url> half, and no remote entry URL is known",
+        }),
       },
       {
         remoteName: 'mfdNotFound',
