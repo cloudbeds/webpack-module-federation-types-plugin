@@ -6,7 +6,11 @@ import type {
   RemoteManifestUrls,
 } from '../models';
 
-import { downloadRemoteEntryTypes, downloadRemoteEntryURLsFromManifests } from './helpers';
+import {
+  downloadRemoteEntryTypes,
+  downloadRemoteEntryURLsFromManifests,
+  resolveRemoteDtsUrl,
+} from './helpers';
 
 type Settlement = { remoteName: string; failure?: DownloadTypesFailure };
 
@@ -41,14 +45,12 @@ export async function downloadTypes(
         let promiseDownload: Promise<void>;
 
         try {
-          const remoteEntryUrl =
-            remoteEntryUrlsResolved[remoteName] || remoteLocation.split('@')[1];
-
-          const remoteEntryBaseUrl = remoteEntryUrl.endsWith('.js')
-            ? remoteEntryUrl.split('/').slice(0, -1).join('/')
-            : remoteEntryUrl;
-
-          dtsUrl = `${remoteEntryBaseUrl}/${dirEmittedTypes}/index.d.ts`;
+          dtsUrl = resolveRemoteDtsUrl(
+            remoteName,
+            remoteLocation,
+            remoteEntryUrlsResolved,
+            dirEmittedTypes,
+          );
           promiseDownload = downloadRemoteEntryTypes(
             remoteName,
             remoteLocation,
