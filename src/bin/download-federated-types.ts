@@ -5,6 +5,7 @@ import parseArgs from 'minimist';
 import { DEFAULT_DIR_DOWNLOADED_TYPES, DEFAULT_DIR_EMITTED_TYPES } from '../constants';
 import { downloadTypes, getRemoteManifestUrls } from '../downloadTypes';
 import { isEveryUrlValid, setLogger } from '../helpers';
+import { formatSharedDepsMismatch } from '../sharedDeps';
 import { assertRunningFromRoot } from './helpers/assertRunningFromRoot';
 import { getOptionsFromWebpackConfig } from './helpers/getOptionsFromWebpackConfig';
 import { getWebpackConfigPathFromArgs } from './helpers/getWebpackConfigPathFromArgs';
@@ -35,12 +36,13 @@ if (!isEveryUrlValid(Object.values({ ...remoteManifestUrls }))) {
   setLogger(console);
 
   try {
-    const { downloaded, failed, manifestError } = await downloadTypes(
+    const { downloaded, failed, manifestError, sharedDepsMismatches } = await downloadTypes(
       mfTypesPluginOptions?.dirEmittedTypes || DEFAULT_DIR_EMITTED_TYPES,
       mfTypesPluginOptions?.dirDownloadedTypes || DEFAULT_DIR_DOWNLOADED_TYPES,
       mfPluginOptions.remotes,
       mfTypesPluginOptions.remoteEntryUrls,
       remoteManifestUrls,
+      mfTypesPluginOptions.strictSharedDeps,
     );
 
     if (manifestError) {
@@ -60,6 +62,17 @@ if (!isEveryUrlValid(Object.values({ ...remoteManifestUrls }))) {
       failed.forEach(({ remoteName, url, error }) => {
         const reason = (error as Error)?.message || String(error);
         console.error(`  ${remoteName}: ${url || 'no resolvable URL'} (${reason})`);
+      });
+      return process.exit(1);
+    }
+
+    const strictMismatches = sharedDepsMismatches.filter(mismatch => mismatch.strict);
+    if (strictMismatches.length) {
+      console.error(
+        'Downloaded federated types were compiled against different shared package versions:',
+      );
+      strictMismatches.forEach(mismatch => {
+        console.error(`  ${formatSharedDepsMismatch(mismatch)}`);
       });
       return process.exit(1);
     }

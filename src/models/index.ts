@@ -8,3 +8,4 @@ export * from './RemoteEntryUrls';
 export * from './RemoteManifest';
 export * from './RemoteManifestUrls';
 export * from './RemotesRegistryManifest';
+export * from './SharedDeps';

@@ -1,6 +1,8 @@
+import path from 'node:path';
 import { parentPort } from 'node:worker_threads';
 
 import type { FederationConfig, LogLevel } from '../models';
+import { writeSharedDepsManifest } from '../sharedDeps';
 import { type CompileTypesParams, compileTypes } from './compileTypes';
 import { rewritePathsWithExposedFederatedModules } from './rewritePathsWithExposedFederatedModules';
 import { workerLogger } from './workerLogger';
@@ -43,6 +45,14 @@ parentPort?.on('message', (message: CompileTypesWorkerMessage) => {
       );
       const rewriteTimeTakenInSeconds = ((performance.now() - rewriteStartTime) / 1000).toFixed(2);
       workerLogger.log(`Typings file rewritten in ${rewriteTimeTakenInSeconds} seconds`);
+
+      const sharedDeps = writeSharedDepsManifest(
+        federationConfig.shared,
+        path.dirname(params.outFile),
+      );
+      workerLogger.log(
+        `Recorded versions of ${Object.keys(sharedDeps).length} shared packages next to the typings file`,
+      );
 
       workerLogger.info(
         `Types compiled in ${timeTakenInSeconds} + ${rewriteTimeTakenInSeconds} seconds`,

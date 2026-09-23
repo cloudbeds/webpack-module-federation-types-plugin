@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import { resolveRemoteDtsUrl } from '../resolveRemoteDtsUrl';
+import { resolveRemoteDtsUrl, resolveRemoteSharedDepsUrl } from '../resolveRemoteDtsUrl';
 
 const dirEmittedTypes = 'dist/@types';
 
@@ -51,6 +51,25 @@ describe('resolveRemoteDtsUrl', () => {
 
   test('throws a reportable message when the entry carries no URL half', () => {
     expect(() => resolveRemoteDtsUrl('mfdApp1', 'mfdApp1', {}, dirEmittedTypes)).toThrow(
+      "'mfdApp1' carries no @<url> half, and no remote entry URL is known",
+    );
+  });
+});
+
+describe('resolveRemoteSharedDepsUrl', () => {
+  test('points at shared-deps.json in the same folder as index.d.ts', () => {
+    const url = resolveRemoteSharedDepsUrl(
+      'mfdApp1',
+      'mfdApp1@[mfdApp1Url]/remoteEntry.js',
+      { mfdApp1: 'https://app1.example.com/remoteEntry.js' },
+      dirEmittedTypes,
+    );
+
+    expect(url).toBe(`https://app1.example.com/${dirEmittedTypes}/shared-deps.json`);
+  });
+
+  test('throws the same reportable message when the entry carries no URL half', () => {
+    expect(() => resolveRemoteSharedDepsUrl('mfdApp1', 'mfdApp1', {}, dirEmittedTypes)).toThrow(
       "'mfdApp1' carries no @<url> half, and no remote entry URL is known",
     );
   });

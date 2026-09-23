@@ -84,6 +84,27 @@ describe('ModuleFederationTypesPlugin', () => {
       moduleFederationPluginOptions.remotes,
       typesPluginOptions.remoteEntryUrls,
       typesPluginOptions.remoteManifestUrls,
+      undefined,
+    );
+  });
+
+  test('strictSharedDeps setting is passed on to the remote types download', () => {
+    const moduleFederationPluginOptions = {
+      name: 'mfeDashboard',
+      remotes: { mfeOther: 'mfeOther@https://example.com/remoteEntry.js' },
+    };
+    const typesPluginOptions: ModuleFederationTypesPluginOptions = {
+      strictSharedDeps: ['@cloudbeds/ui-library', 'react'],
+    };
+    installPlugin(moduleFederationPluginOptions, typesPluginOptions);
+
+    expect(mockDownloadTypes).toHaveBeenCalledWith(
+      DEFAULT_DIR_EMITTED_TYPES,
+      DEFAULT_DIR_DOWNLOADED_TYPES,
+      moduleFederationPluginOptions.remotes,
+      undefined,
+      undefined,
+      ['@cloudbeds/ui-library', 'react'],
     );
   });
 });
