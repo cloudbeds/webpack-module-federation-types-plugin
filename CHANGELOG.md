@@ -1,3 +1,10 @@
+## [2.3.1](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v2.3.0...v2.3.1) (2026-09-23)
+
+
+### Bug Fixes
+
+* **sharedDeps:** make the shared versions check warn-only unless strictSharedDeps opts in ([1204f06](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/1204f06a3a103ba7dc2739e437377e6b50b5a212))
+
 # [2.3.0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v2.2.5...v2.3.0) (2026-09-23)
 
 
