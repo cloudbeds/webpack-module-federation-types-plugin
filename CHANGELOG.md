@@ -1,3 +1,15 @@
+# [2.3.0](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v2.2.5...v2.3.0) (2026-09-23)
+
+
+### Bug Fixes
+
+* **sharedDeps:** never fail a remote over its shared-deps.json ([2884283](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/28842831ba58b17d1317000b1b15919cdee430fd))
+
+
+### Features
+
+* **sharedDeps:** RG-6553 record shared package versions with emitted types and check them on download ([c2d67f5](https://github.com/cloudbeds/webpack-module-federation-types-plugin/commit/c2d67f50c73a32155d650192a23b9d2a524d8e8b))
+
 ## [2.2.5](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v2.2.4...v2.2.5) (2026-09-11)
 
 ## [2.2.4](https://github.com/cloudbeds/webpack-module-federation-types-plugin/compare/v2.2.3...v2.2.4) (2026-09-11)
