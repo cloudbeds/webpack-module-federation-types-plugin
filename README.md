@@ -186,7 +186,7 @@ To enable verbose logging add folowing in webpack config:
 | `downloadTypesWhenIdleIntervalInSeconds` |    `number`, `-1`    |           `60`           | Synchronize types continusouly - compile types after every compilation, download when idle with a specified delay value in seconds. <br><br> `-1` - disables continuous synchronization (compile and download will happen only on startup).                                                                                              |
 |                        `remoteEntryUrls` |  `RemoteEntryUrls`   |           `{}`           | Base URLs for types. These should target compiled bundles that also contain the types. E.g. with `{ mfeApp: 'https://assets.mydomain.com/mfe-app' }` the types will be downloaded from `'https://assets.mydomain.com/mfe-app/@types/index.d.ts'`. More details available in [this section](#templated-remote-urls)                       |
 |                     `remoteManifestUrls` | `RemoteManifestUrls` |           `{}`           | URLs to remote manifest files. A manifest contains a URL to a remote entry that is substituted in runtime.  <br><br> More details available in [this section](#templated-remote-urls)                                                                                                                                                    |
-|                       `strictSharedDeps` |      `string[]`      | `['@cloudbeds/ui-library']` | Shared packages whose installed version must match the version the remote compiled its types with; a mismatch fails `download-federated-types`. Other shared packages only warn. <br><br> More details available in [this section](#shared-package-versions)                                                                                          |
+|                       `strictSharedDeps` |      `string[]`      |           `[]`           | Shared packages whose installed version must match the version the remote compiled its types with; a mismatch fails `download-federated-types`. Other shared packages only warn. <br><br> More details available in [this section](#shared-package-versions)                                                                                          |
 |             `moduleFederationPluginName` |       `string`       | `ModuleFederationPlugin` | The name of the Module Federation plugin. Change this to `NextFederationPlugin` if you are using this plugin with [@module-federation/nextjs-mf](https://www.npmjs.com/package/@module-federation/nextjs-mf)                                                                                                                             |
 
 
@@ -339,9 +339,10 @@ the older library in the consumer does not have, and a consumer with a newer lib
 values the remote's parameters do not accept. A remote that publishes no `shared-deps.json` is
 not checked.
 
-A mismatch in a package listed in `strictSharedDeps` fails `download-federated-types`; a mismatch
-in any other shared package is reported as a warning. The message names the remote, the package,
-both versions and the fix: install the remote's version, or rebuild the remote's types with yours.
+A mismatch is reported as a warning. To fail `download-federated-types` on a mismatch instead,
+list the package in `strictSharedDeps`, e.g. `strictSharedDeps: ['@cloudbeds/ui-library']`.
+The message names the remote, the package, both versions and the fix: install the remote's
+version, or rebuild the remote's types with yours.
 
 ### CI/CD
 

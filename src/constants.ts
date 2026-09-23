@@ -5,7 +5,7 @@ export const DEFAULT_DIR_DIST = 'dist';
 export const DEFAULT_DIR_EMITTED_TYPES = '@types';
 
 export const SHARED_DEPS_FILE = 'shared-deps.json';
-export const DEFAULT_STRICT_SHARED_DEPS = ['@cloudbeds/ui-library'];
+export const DEFAULT_STRICT_SHARED_DEPS: string[] = [];
 
 export const DEFAULT_DIR_GLOBAL_TYPES = 'src/@types';
 export const DEFAULT_DIR_DOWNLOADED_TYPES = 'src/@types/remotes';
