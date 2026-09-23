@@ -1,17 +1,30 @@
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
 import { setLogger } from '../../helpers';
+import { checkSharedDeps } from '../../sharedDeps';
 import { downloadTypes } from '../downloadTypes';
-import { downloadRemoteEntryTypes, downloadRemoteEntryURLsFromManifests } from '../helpers';
+import {
+  downloadRemoteEntrySharedDeps,
+  downloadRemoteEntryTypes,
+  downloadRemoteEntryURLsFromManifests,
+} from '../helpers';
 
 vi.mock('../helpers', async () => ({
   ...(await vi.importActual<typeof import('../helpers')>('../helpers')),
+  downloadRemoteEntrySharedDeps: vi.fn(),
   downloadRemoteEntryTypes: vi.fn(),
   downloadRemoteEntryURLsFromManifests: vi.fn().mockResolvedValue({}),
 }));
 
+vi.mock('../../sharedDeps', async () => ({
+  ...(await vi.importActual<typeof import('../../sharedDeps')>('../../sharedDeps')),
+  checkSharedDeps: vi.fn().mockReturnValue([]),
+}));
+
+const mockDownloadRemoteEntrySharedDeps = vi.mocked(downloadRemoteEntrySharedDeps);
 const mockDownloadRemoteEntryTypes = vi.mocked(downloadRemoteEntryTypes);
 const mockDownloadRemoteEntryURLsFromManifests = vi.mocked(downloadRemoteEntryURLsFromManifests);
+const mockCheckSharedDeps = vi.mocked(checkSharedDeps);
 
 const dirEmittedTypes = 'dist/@types';
 const dirDownloadedTypes = 'src/@types/remotes';
@@ -48,7 +61,11 @@ describe('downloadTypes', () => {
       remoteManifestUrls,
     );
 
-    expect(result).toEqual({ downloaded: ['mfdApp1', 'mfdApp2'], failed: [] });
+    expect(result).toEqual({
+      downloaded: ['mfdApp1', 'mfdApp2'],
+      failed: [],
+      sharedDepsMismatches: [],
+    });
     expect(mockDownloadRemoteEntryURLsFromManifests).toHaveBeenCalledWith(remoteManifestUrls);
     expect(mockDownloadRemoteEntryTypes).toHaveBeenCalledWith(
       'mfdApp1',
@@ -62,6 +79,92 @@ describe('downloadTypes', () => {
       `${remoteEntryBaseUrl}/${dirEmittedTypes}/index.d.ts`,
       dirDownloadedTypes,
     );
+    expect(mockDownloadRemoteEntrySharedDeps).toHaveBeenCalledWith(
+      'mfdApp1',
+      `[mfdApp1Url]/${dirEmittedTypes}/shared-deps.json`,
+      dirDownloadedTypes,
+    );
+    expect(mockDownloadRemoteEntrySharedDeps).toHaveBeenCalledWith(
+      'mfdApp2',
+      `${remoteEntryBaseUrl}/${dirEmittedTypes}/shared-deps.json`,
+      dirDownloadedTypes,
+    );
+  });
+
+  test('skips the shared versions check when the remote publishes no shared-deps.json', async () => {
+    const remotesFromConfig = { mfdApp1: 'mfdApp1@https://app1.example.com/remoteEntry.js' };
+
+    mockDownloadRemoteEntryTypes.mockResolvedValue();
+    mockDownloadRemoteEntrySharedDeps.mockResolvedValue(undefined);
+
+    const result = await downloadTypes(dirEmittedTypes, dirDownloadedTypes, remotesFromConfig);
+
+    expect(result).toEqual({ downloaded: ['mfdApp1'], failed: [], sharedDepsMismatches: [] });
+    expect(mockCheckSharedDeps).not.toHaveBeenCalled();
+  });
+
+  test('checks shared versions against the remote manifest and logs by severity', async () => {
+    const remotesFromConfig = { mfdCommon: 'mfdCommon@https://common.example.com/remoteEntry.js' };
+    const producerSharedDeps = { '@cloudbeds/ui-library': '2.237.0', react: '18.3.1' };
+    const strictMismatch = {
+      remoteName: 'mfdCommon',
+      packageName: '@cloudbeds/ui-library',
+      producerVersion: '2.237.0',
+      consumerVersion: '2.223.4',
+      strict: true,
+    };
+    const softMismatch = {
+      remoteName: 'mfdCommon',
+      packageName: 'react',
+      producerVersion: '18.3.1',
+      consumerVersion: '18.2.0',
+      strict: false,
+    };
+
+    mockDownloadRemoteEntryTypes.mockResolvedValue();
+    mockDownloadRemoteEntrySharedDeps.mockResolvedValue(producerSharedDeps);
+    mockCheckSharedDeps.mockReturnValue([strictMismatch, softMismatch]);
+
+    const result = await downloadTypes(
+      dirEmittedTypes,
+      dirDownloadedTypes,
+      remotesFromConfig,
+      undefined,
+      undefined,
+      ['@cloudbeds/ui-library'],
+    );
+
+    expect(mockCheckSharedDeps).toHaveBeenCalledWith('mfdCommon', producerSharedDeps, [
+      '@cloudbeds/ui-library',
+    ]);
+    expect(result.downloaded).toEqual(['mfdCommon']);
+    expect(result.sharedDepsMismatches).toEqual([strictMismatch, softMismatch]);
+    expect(mockLogger.error).toHaveBeenCalledWith(
+      expect.stringContaining('mfdCommon built its types with @cloudbeds/ui-library 2.237.0'),
+    );
+    expect(mockLogger.warn).toHaveBeenCalledWith(
+      expect.stringContaining('mfdCommon built its types with react 18.3.1'),
+    );
+  });
+
+  test('reports a remote as failed when its shared-deps.json cannot be fetched', async () => {
+    const remotesFromConfig = { mfdApp1: 'mfdApp1@https://app1.example.com/remoteEntry.js' };
+    const error = new Error('Response code 500 (Internal Server Error)');
+
+    mockDownloadRemoteEntryTypes.mockResolvedValue();
+    mockDownloadRemoteEntrySharedDeps.mockRejectedValue(error);
+
+    const result = await downloadTypes(dirEmittedTypes, dirDownloadedTypes, remotesFromConfig);
+
+    expect(result.downloaded).toEqual([]);
+    expect(result.failed).toEqual([
+      {
+        remoteName: 'mfdApp1',
+        remoteLocation: remotesFromConfig.mfdApp1,
+        url: `https://app1.example.com/${dirEmittedTypes}/shared-deps.json`,
+        error,
+      },
+    ]);
   });
 
   test('handles invalid remote URLs', async () => {

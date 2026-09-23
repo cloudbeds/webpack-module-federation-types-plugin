@@ -1,18 +1,27 @@
+import { DEFAULT_STRICT_SHARED_DEPS } from '../constants';
 import { getLogger } from '../helpers';
 import type {
   DownloadTypesFailure,
   DownloadTypesResult,
   RemoteEntryUrls,
   RemoteManifestUrls,
+  SharedDepsMismatch,
 } from '../models';
+import { checkSharedDeps, formatSharedDepsMismatch } from '../sharedDeps';
 
 import {
+  downloadRemoteEntrySharedDeps,
   downloadRemoteEntryTypes,
   downloadRemoteEntryURLsFromManifests,
   resolveRemoteDtsUrl,
+  resolveRemoteSharedDepsUrl,
 } from './helpers';
 
-type Settlement = { remoteName: string; failure?: DownloadTypesFailure };
+type Settlement = {
+  remoteName: string;
+  failure?: DownloadTypesFailure;
+  sharedDepsMismatches?: SharedDepsMismatch[];
+};
 
 export async function downloadTypes(
   dirEmittedTypes: string,
@@ -20,9 +29,10 @@ export async function downloadTypes(
   remotesFromFederationConfig?: Dict<string>,
   remoteEntryUrls?: RemoteEntryUrls,
   remoteManifestUrls?: RemoteManifestUrls,
+  strictSharedDeps: string[] = DEFAULT_STRICT_SHARED_DEPS,
 ): Promise<DownloadTypesResult> {
   const logger = getLogger();
-  const result: DownloadTypesResult = { downloaded: [], failed: [] };
+  const result: DownloadTypesResult = { downloaded: [], failed: [], sharedDepsMismatches: [] };
   let remoteEntryUrlsResolved: RemoteEntryUrls = {};
 
   try {
@@ -42,10 +52,17 @@ export async function downloadTypes(
     Object.entries(remotesFromFederationConfig || {}).map(
       async ([remoteName, remoteLocation]): Promise<Settlement> => {
         let dtsUrl: string;
+        let sharedDepsUrl: string;
         let promiseDownload: Promise<void>;
 
         try {
           dtsUrl = resolveRemoteDtsUrl(
+            remoteName,
+            remoteLocation,
+            remoteEntryUrlsResolved,
+            dirEmittedTypes,
+          );
+          sharedDepsUrl = resolveRemoteSharedDepsUrl(
             remoteName,
             remoteLocation,
             remoteEntryUrlsResolved,
@@ -67,7 +84,6 @@ export async function downloadTypes(
 
         try {
           await promiseDownload;
-          return { remoteName };
         } catch (error) {
           const url = ((error as Dict)?.url as string | undefined) || dtsUrl;
 
@@ -75,16 +91,45 @@ export async function downloadTypes(
           logger.log(error);
           return { remoteName, failure: { remoteName, remoteLocation, url, error } };
         }
+
+        try {
+          const producerSharedDeps = await downloadRemoteEntrySharedDeps(
+            remoteName,
+            sharedDepsUrl,
+            dirDownloadedTypes,
+          );
+          const sharedDepsMismatches = producerSharedDeps
+            ? checkSharedDeps(remoteName, producerSharedDeps, strictSharedDeps)
+            : [];
+
+          sharedDepsMismatches.forEach(mismatch => {
+            const message = formatSharedDepsMismatch(mismatch);
+            if (mismatch.strict) {
+              logger.error(message);
+            } else {
+              logger.warn(message);
+            }
+          });
+
+          return { remoteName, sharedDepsMismatches };
+        } catch (error) {
+          const url = ((error as Dict)?.url as string | undefined) || sharedDepsUrl;
+
+          logger.warn('Failed to load remote shared versions from:', url);
+          logger.log(error);
+          return { remoteName, failure: { remoteName, remoteLocation, url, error } };
+        }
       },
     ),
   );
 
-  settlements.forEach(({ remoteName, failure }) => {
+  settlements.forEach(({ remoteName, failure, sharedDepsMismatches = [] }) => {
     if (failure) {
       result.failed.push(failure);
     } else {
       result.downloaded.push(remoteName);
     }
+    result.sharedDepsMismatches.push(...sharedDepsMismatches);
   });
 
   return result;

@@ -186,6 +186,7 @@ To enable verbose logging add folowing in webpack config:
 | `downloadTypesWhenIdleIntervalInSeconds` |    `number`, `-1`    |           `60`           | Synchronize types continusouly - compile types after every compilation, download when idle with a specified delay value in seconds. <br><br> `-1` - disables continuous synchronization (compile and download will happen only on startup).                                                                                              |
 |                        `remoteEntryUrls` |  `RemoteEntryUrls`   |           `{}`           | Base URLs for types. These should target compiled bundles that also contain the types. E.g. with `{ mfeApp: 'https://assets.mydomain.com/mfe-app' }` the types will be downloaded from `'https://assets.mydomain.com/mfe-app/@types/index.d.ts'`. More details available in [this section](#templated-remote-urls)                       |
 |                     `remoteManifestUrls` | `RemoteManifestUrls` |           `{}`           | URLs to remote manifest files. A manifest contains a URL to a remote entry that is substituted in runtime.  <br><br> More details available in [this section](#templated-remote-urls)                                                                                                                                                    |
+|                       `strictSharedDeps` |      `string[]`      | `['@cloudbeds/ui-library']` | Shared packages whose installed version must match the version the remote compiled its types with; a mismatch fails `download-federated-types`. Other shared packages only warn. <br><br> More details available in [this section](#shared-package-versions)                                                                                          |
 |             `moduleFederationPluginName` |       `string`       | `ModuleFederationPlugin` | The name of the Module Federation plugin. Change this to `NextFederationPlugin` if you are using this plugin with [@module-federation/nextjs-mf](https://www.npmjs.com/package/@module-federation/nextjs-mf)                                                                                                                             |
 
 
@@ -319,10 +320,34 @@ remotes: {
 }
 ```
 
+### Shared package versions
+
+Next to `index.d.ts` the plugin writes `shared-deps.json`: the installed version of every package
+listed in the Module Federation `shared` option at the time the types were compiled, e.g.
+
+```json
+{
+  "@cloudbeds/ui-library": "2.237.0",
+  "react": "18.3.1"
+}
+```
+
+When remote types are downloaded, the file is fetched from the same folder and saved next to the
+remote's `index.d.ts`. Each version is then compared with the version installed in the consuming
+project. Versions must match exactly: a remote built with a newer shared library can emit types
+the older library in the consumer does not have, and a consumer with a newer library can pass
+values the remote's parameters do not accept. A remote that publishes no `shared-deps.json` is
+not checked.
+
+A mismatch in a package listed in `strictSharedDeps` fails `download-federated-types`; a mismatch
+in any other shared package is reported as a warning. The message names the remote, the package,
+both versions and the fix: install the remote's version, or rebuild the remote's types with yours.
+
 ### CI/CD
 
 Use the `download-federated-types` CLI rather than a build for this, and do not swallow its exit
-code: it is the only entry point that fails when a remote's types did not arrive.
+code: it is the only entry point that fails when a remote's types did not arrive or were compiled
+against a different version of a strict shared package.
 
 It is suggested to download types in a CI workflow only when a dev branch is merged
 to the `main` branch, that is the time when the deployment to dev/stage/prod is about to happen.

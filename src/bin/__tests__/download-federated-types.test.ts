@@ -57,7 +57,7 @@ describe('download-federated-types', () => {
       mfPluginOptions: {},
       mfTypesPluginOptions: {},
     });
-    mockDownloadTypes.mockResolvedValue({ downloaded: [], failed: [] });
+    mockDownloadTypes.mockResolvedValue({ downloaded: [], failed: [], sharedDepsMismatches: [] });
   });
 
   afterEach(() => {
@@ -116,14 +116,88 @@ describe('download-federated-types', () => {
       validOptions.mfPluginOptions.remotes,
       validOptions.mfTypesPluginOptions.remoteEntryUrls,
       manifestUrls,
+      undefined,
     );
     expect(mockConsoleLog).toHaveBeenCalledWith('Successfully downloaded federated types.');
+  });
+
+  test('passes strictSharedDeps from the plugin options to downloadTypes', async () => {
+    mockGetOptionsFromWebpackConfig.mockReturnValue({
+      ...validOptions,
+      mfTypesPluginOptions: {
+        ...validOptions.mfTypesPluginOptions,
+        strictSharedDeps: ['@cloudbeds/ui-library', 'react'],
+      },
+    });
+
+    await import('../download-federated-types');
+
+    expect(mockDownloadTypes).toHaveBeenCalledWith(
+      validOptions.mfTypesPluginOptions.dirEmittedTypes,
+      validOptions.mfTypesPluginOptions.dirDownloadedTypes,
+      validOptions.mfPluginOptions.remotes,
+      validOptions.mfTypesPluginOptions.remoteEntryUrls,
+      {},
+      ['@cloudbeds/ui-library', 'react'],
+    );
+  });
+
+  test('exits with an error on a strict shared package version mismatch', async () => {
+    mockGetOptionsFromWebpackConfig.mockReturnValue(validOptions);
+    mockDownloadTypes.mockResolvedValue({
+      downloaded: ['app1', 'app2'],
+      failed: [],
+      sharedDepsMismatches: [
+        {
+          remoteName: 'app1',
+          packageName: '@cloudbeds/ui-library',
+          producerVersion: '2.237.0',
+          consumerVersion: '2.223.4',
+          strict: true,
+        },
+      ],
+    });
+
+    await import('../download-federated-types');
+
+    expect(mockConsoleError).toHaveBeenCalledWith(
+      'Downloaded federated types were compiled against different shared package versions:',
+    );
+    expect(mockConsoleError).toHaveBeenCalledWith(
+      '  app1 built its types with @cloudbeds/ui-library 2.237.0; this repo resolves 2.223.4. ' +
+        'Install 2.237.0 here, or rebuild app1 types with 2.223.4.',
+    );
+    expect(mockConsoleLog).not.toHaveBeenCalledWith('Successfully downloaded federated types.');
+    expect(process.exit).toHaveBeenCalledWith(1);
+  });
+
+  test('succeeds when only non-strict shared package versions mismatch', async () => {
+    mockGetOptionsFromWebpackConfig.mockReturnValue(validOptions);
+    mockDownloadTypes.mockResolvedValue({
+      downloaded: ['app1', 'app2'],
+      failed: [],
+      sharedDepsMismatches: [
+        {
+          remoteName: 'app1',
+          packageName: 'react',
+          producerVersion: '18.3.1',
+          consumerVersion: '18.2.0',
+          strict: false,
+        },
+      ],
+    });
+
+    await import('../download-federated-types');
+
+    expect(mockConsoleLog).toHaveBeenCalledWith('Successfully downloaded federated types.');
+    expect(process.exit).not.toHaveBeenCalled();
   });
 
   test('exits with an error when a remote fails to download', async () => {
     mockGetOptionsFromWebpackConfig.mockReturnValue(validOptions);
     mockDownloadTypes.mockResolvedValue({
       downloaded: ['app1'],
+      sharedDepsMismatches: [],
       failed: [
         {
           remoteName: 'app2',
@@ -151,6 +225,7 @@ describe('download-federated-types', () => {
     mockDownloadTypes.mockResolvedValue({
       downloaded: [],
       failed: [],
+      sharedDepsMismatches: [],
       manifestError: {
         url: 'https://manifest-registry/remote-entries.json',
         error: new Error('Response code 404 (Not Found)'),
@@ -188,6 +263,7 @@ describe('download-federated-types', () => {
       undefined,
       undefined,
       {},
+      undefined,
     );
   });
 

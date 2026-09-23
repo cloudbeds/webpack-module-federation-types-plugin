@@ -13,4 +13,6 @@ export type ModuleFederationTypesPluginOptions = {
   remoteEntryUrls?: RemoteEntryUrls;
   remoteManifestUrls?: RemoteManifestUrls;
   remoteManifestUrl?: string;
+  /** Shared packages whose version must match the remote's exactly; the rest only warn. */
+  strictSharedDeps?: string[];
 };

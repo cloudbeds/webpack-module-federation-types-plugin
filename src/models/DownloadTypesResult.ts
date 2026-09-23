@@ -1,3 +1,5 @@
+import type { SharedDepsMismatch } from './SharedDeps';
+
 export type DownloadTypesFailure = {
   remoteName: string;
   remoteLocation: string;
@@ -15,6 +17,8 @@ export type DownloadTypesResult = {
   /** Names of the remotes whose types were fetched and written. */
   downloaded: string[];
   failed: DownloadTypesFailure[];
+  /** Shared packages installed at a different version than the remote compiled its types with. */
+  sharedDepsMismatches: SharedDepsMismatch[];
   /** Set when the remote manifest could not be read, in which case no remote was attempted. */
   manifestError?: DownloadTypesManifestError;
 };
