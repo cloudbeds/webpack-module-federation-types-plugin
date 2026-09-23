@@ -3,6 +3,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 
+import { DEFAULT_STRICT_SHARED_DEPS } from '../../constants';
 import { checkSharedDeps, formatSharedDepsMismatch } from '../checkSharedDeps';
 import { resolveInstalledVersions } from '../resolveInstalledVersions';
 import { writeSharedDepsManifest } from '../writeSharedDepsManifest';
@@ -116,6 +117,19 @@ describe('checkSharedDeps', () => {
         strict: false,
       },
     ]);
+  });
+
+  test('only warns for every package with the default strict list', () => {
+    installPackage(UI_LIBRARY, '2.223.4');
+
+    expect(
+      checkSharedDeps(
+        'mfdCommon',
+        { [UI_LIBRARY]: '2.237.0' },
+        DEFAULT_STRICT_SHARED_DEPS,
+        projectDirectory,
+      ),
+    ).toEqual([expect.objectContaining({ packageName: UI_LIBRARY, strict: false })]);
   });
 
   test('skips packages the consumer does not have installed', () => {
