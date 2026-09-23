@@ -92,33 +92,25 @@ export async function downloadTypes(
           return { remoteName, failure: { remoteName, remoteLocation, url, error } };
         }
 
-        try {
-          const producerSharedDeps = await downloadRemoteEntrySharedDeps(
-            remoteName,
-            sharedDepsUrl,
-            dirDownloadedTypes,
-          );
-          const sharedDepsMismatches = producerSharedDeps
-            ? checkSharedDeps(remoteName, producerSharedDeps, strictSharedDeps)
-            : [];
+        const producerSharedDeps = await downloadRemoteEntrySharedDeps(
+          remoteName,
+          sharedDepsUrl,
+          dirDownloadedTypes,
+        );
+        const sharedDepsMismatches = producerSharedDeps
+          ? checkSharedDeps(remoteName, producerSharedDeps, strictSharedDeps)
+          : [];
 
-          sharedDepsMismatches.forEach(mismatch => {
-            const message = formatSharedDepsMismatch(mismatch);
-            if (mismatch.strict) {
-              logger.error(message);
-            } else {
-              logger.warn(message);
-            }
-          });
+        sharedDepsMismatches.forEach(mismatch => {
+          const message = formatSharedDepsMismatch(mismatch);
+          if (mismatch.strict) {
+            logger.error(message);
+          } else {
+            logger.warn(message);
+          }
+        });
 
-          return { remoteName, sharedDepsMismatches };
-        } catch (error) {
-          const url = ((error as Dict)?.url as string | undefined) || sharedDepsUrl;
-
-          logger.warn('Failed to load remote shared versions from:', url);
-          logger.log(error);
-          return { remoteName, failure: { remoteName, remoteLocation, url, error } };
-        }
+        return { remoteName, sharedDepsMismatches };
       },
     ),
   );

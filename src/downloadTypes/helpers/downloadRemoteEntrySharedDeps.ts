@@ -10,10 +10,14 @@ import type { SharedDepsManifest } from '../../models';
 
 import { downloadOptions } from './downloadOptions';
 
+// S3-backed CDNs answer a missing object with 403 unless the bucket allows ListBucket
+const NOT_PUBLISHED_STATUS_CODES = [403, 404];
+
 /**
  * Fetches a remote's `shared-deps.json` and stores it next to its downloaded `index.d.ts`.
- * A remote built before it emitted the file has none to fetch; that resolves to `undefined`
- * and removes any stale copy, so every other error is a real download failure.
+ * The manifest is optional metadata, so no failure here fails the remote: a remote that
+ * publishes none resolves to `undefined` (removing any stale copy) and any other fetch
+ * error is logged and skipped.
  */
 export async function downloadRemoteEntrySharedDeps(
   remoteName: string,
@@ -28,15 +32,25 @@ export async function downloadRemoteEntrySharedDeps(
   try {
     content = (await download(sharedDepsUrl, downloadOptions)).toString();
   } catch (error) {
-    if ((error as { statusCode?: number })?.statusCode === 404) {
+    const statusCode = (error as { statusCode?: number })?.statusCode;
+    if (statusCode && NOT_PUBLISHED_STATUS_CODES.includes(statusCode)) {
       logger.log(`${remoteName} publishes no ${SHARED_DEPS_FILE}, skipping shared versions check`);
       fs.rmSync(outFile, { force: true });
       return undefined;
     }
-    throw error;
+    logger.warn('Failed to load remote shared versions from:', sharedDepsUrl);
+    logger.log(error);
+    return undefined;
   }
 
-  const manifest = JSON.parse(content) as SharedDepsManifest;
+  let manifest: SharedDepsManifest;
+  try {
+    manifest = JSON.parse(content) as SharedDepsManifest;
+  } catch (error) {
+    logger.warn('Ignoring malformed remote shared versions from:', sharedDepsUrl);
+    logger.log(error);
+    return undefined;
+  }
 
   mkdirp.sync(outDir);
   if (!fs.existsSync(outFile) || fs.readFileSync(outFile).toString() !== content) {

@@ -47,10 +47,12 @@ describe('downloadRemoteEntrySharedDeps', () => {
     expect(mockDownload).toHaveBeenCalledWith(sharedDepsUrl, expect.any(Object));
   });
 
-  test('treats a remote that publishes no manifest as having nothing to check', async () => {
+  test.each([
+    404, 403,
+  ])('treats a remote that publishes no manifest (%i) as having nothing to check', async statusCode => {
     fs.mkdirSync(path.dirname(outFile), { recursive: true });
     fs.writeFileSync(outFile, '{"react":"17.0.0"}');
-    mockDownload.mockRejectedValue(httpError(404));
+    mockDownload.mockRejectedValue(httpError(statusCode));
 
     const result = await downloadRemoteEntrySharedDeps(
       'mfdApp1',
@@ -65,11 +67,32 @@ describe('downloadRemoteEntrySharedDeps', () => {
     );
   });
 
-  test('rethrows any other download failure', async () => {
+  test('skips the check on any other download failure without throwing', async () => {
     mockDownload.mockRejectedValue(httpError(500));
 
-    await expect(
-      downloadRemoteEntrySharedDeps('mfdApp1', sharedDepsUrl, dirDownloadedTypes),
-    ).rejects.toThrow('Response code 500');
+    const result = await downloadRemoteEntrySharedDeps(
+      'mfdApp1',
+      sharedDepsUrl,
+      dirDownloadedTypes,
+    );
+
+    expect(result).toBeUndefined();
+    expect(mockLogger.warn).toHaveBeenCalledWith(
+      'Failed to load remote shared versions from:',
+      sharedDepsUrl,
+    );
+  });
+
+  test('ignores a malformed manifest', async () => {
+    mockDownload.mockResolvedValue(Buffer.from('not json') as never);
+
+    const result = await downloadRemoteEntrySharedDeps(
+      'mfdApp1',
+      sharedDepsUrl,
+      dirDownloadedTypes,
+    );
+
+    expect(result).toBeUndefined();
+    expect(fs.existsSync(outFile)).toBe(false);
   });
 });

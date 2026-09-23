@@ -147,26 +147,6 @@ describe('downloadTypes', () => {
     );
   });
 
-  test('reports a remote as failed when its shared-deps.json cannot be fetched', async () => {
-    const remotesFromConfig = { mfdApp1: 'mfdApp1@https://app1.example.com/remoteEntry.js' };
-    const error = new Error('Response code 500 (Internal Server Error)');
-
-    mockDownloadRemoteEntryTypes.mockResolvedValue();
-    mockDownloadRemoteEntrySharedDeps.mockRejectedValue(error);
-
-    const result = await downloadTypes(dirEmittedTypes, dirDownloadedTypes, remotesFromConfig);
-
-    expect(result.downloaded).toEqual([]);
-    expect(result.failed).toEqual([
-      {
-        remoteName: 'mfdApp1',
-        remoteLocation: remotesFromConfig.mfdApp1,
-        url: `https://app1.example.com/${dirEmittedTypes}/shared-deps.json`,
-        error,
-      },
-    ]);
-  });
-
   test('handles invalid remote URLs', async () => {
     const remotesFromConfig = { mfdExample: 'mfdApp1@https://example.com/remoteEntry.js' };
     const remoteManifestUrls = { mfdExample: 'invalid-url' };
